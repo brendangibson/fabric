@@ -13,6 +13,8 @@ import ViewEvent from './Components/ViewEvent';
 import Colours from './Components/Colours';
 import Styles from './Components/Styles';
 import StylesColours from './Components/StylesColours';
+import StyleColour from './Components/StyleColour';
+import Roll from './Components/Roll';
 
 const App = () => (
   <Router>
@@ -20,6 +22,8 @@ const App = () => (
       <Route exact={true} path="/" component={Colours} />
       <Route path="/styles" component={Styles} />
       <Route path="/stylescolours" component={StylesColours} />
+      <Route path="/stylecolour/:id" component={StyleColour} />
+      <Route path="/roll/:id" component={Roll} />
 
       <Route path="/event/:id" component={ViewEvent} />
       <Route path="/newEvent" component={NewEvent} />
