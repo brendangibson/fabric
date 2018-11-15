@@ -1,0 +1,64 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Colour {
+  id: ID!
+  name: String!
+}
+
+type Defect {
+  code: String!
+  description: String
+  id: ID!
+  name: String!
+}
+
+type FriendlyStyleColour {
+  colour: Colour
+  id: ID!
+  style: Style
+  swatchUrl: String
+}
+
+type Mutation {
+  createColour(name: String!): Colour
+  createDefect(code: String!, description: String, name: String!): Defect
+  createStyle(name: String!, patternHeight: Float, patternWidth: Float, thickness: Float, weight: Float): Style
+  createStyleColour(colourId: String!, styleId: String!, swatchUrl: String): StyleColour
+  deleteColour(id: ID!): [Colour]
+  deleteDefect(id: ID!): Defect
+  deleteStyle(id: ID!): [Style]
+}
+
+type Query {
+  getColour(id: ID!): Colour
+  getColours: [Colour]
+  getDefects: [Defect]
+  getFriendlyStylesColours: [FriendlyStyleColour]
+  getStyle(id: ID!): Style
+  getStyleColours: [StyleColour]
+  getStyles: [Style]
+}
+
+type Style {
+  id: ID!
+  name: String!
+  patternHeight: Float!
+  patternWidth: Float!
+  thickness: Float!
+  weight: Float!
+}
+
+type StyleColour {
+  colourId: String!
+  id: ID!
+  styleId: String!
+  swatchUrl: String
+}
+
+type Subscription {
+  addedColour(id: String!): Colour @aws_subscribe(mutations : ["createColour"])
+}
