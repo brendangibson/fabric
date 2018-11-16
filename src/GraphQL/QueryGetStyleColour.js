@@ -15,6 +15,7 @@ query($id: ID!) {
         rolls{
             id
             glenRavenId
+            originalLength
         }
       }
 }`);

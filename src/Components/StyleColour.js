@@ -1,10 +1,30 @@
 import React, { Component } from "react";
 import { Query, Mutation } from "react-apollo";
 import { Link } from "react-router-dom";
-
+import Form from 'react-bootstrap/lib/Form';
+import Button from 'react-bootstrap/lib/Button';
 import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
 import MutationCreateRoll from "../GraphQL/MutationCreateRoll";
+import RollIcon from './RollIcon'
 
+const topStyle = {
+    width: "100vw"
+}
+
+const swatchStyle = {
+    width: "40vw",
+    marginRight: "5vw"
+}
+
+const labelStyle = {
+    fontSize: "6vw",
+    display: "inline-block",
+    verticalAlign: "top"
+}
+
+const rollStyle = {
+    display: "block"
+}
 
 class StyleColour extends Component {
 
@@ -17,7 +37,7 @@ class StyleColour extends Component {
     onChange = (index) => {
 
         return ({ target: { value } }) => {
-            this.setState({[index]:value});
+            this.setState({ [index]: value });
         }
     }
 
@@ -40,20 +60,26 @@ class StyleColour extends Component {
                     const styleColour = data.getStyleColourPage;
                     const label = styleColour.style.name + ' ' + styleColour.colour.name
                     return (<div>
-                        <div>{label}</div>
-                        <img src={styleColour.swatchUrl} alt={label} />
+                        <div style={topStyle}>
+                            <img src={styleColour.swatchUrl} alt={label} style={swatchStyle} />
+                            <div style={labelStyle}>{label}</div>
+                        </div>
                         {styleColour.rolls.map((roll) => {
-                            return (<Link to={`/roll/${roll.id}`} key={roll.id}>
-                                {roll.glenRavenId}</Link>)
+                            return (<Link to={`/roll/${roll.id}`} key={roll.id} style={rollStyle}>
+                                <RollIcon originalLength={roll.originalLength} swatchUrl={styleColour.swatchUrl} glenRavenId={roll.glenRavenId}/></Link>)
                         })}
 
                         <Mutation mutation={MutationCreateRoll}>
                             {(addRoll, { data }) => (
-                                <form>
-                                    <input type="text" id='originalLength' name='originalLength' onChange={this.onChange('originalLength')} />
-                                    <input type="text" id='glenRavenId' name='glenRavenId' onChange={this.onChange('glenRavenId')} />
-                                    <button onClick={this.addRoll(addRoll)}>Add</button>
-                                </form>)}
+                                <Form>
+                                    <Form.Group controlId="formBasicEmail">
+                                    <Form.Label>Length</Form.Label>
+                                    <Form.Control type="text" id='originalLength' name='originalLength' onChange={this.onChange('originalLength')} placeholder="Length in yards" />
+                                    <Form.Label>Glen Raven Id</Form.Label>
+                                    <Form.Control type="text" id='glenRavenId' name='glenRavenId' onChange={this.onChange('glenRavenId')} placeholder="From sticker on bag"/>
+                                    <Button variant="primary" size="lg" onClick={this.addRoll(addRoll)}>Add</Button>
+                                    </Form.Group>
+                                </Form>)}
                         </Mutation>
                     </div>);
                 }}

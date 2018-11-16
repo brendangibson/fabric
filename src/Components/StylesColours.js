@@ -5,6 +5,22 @@ import QueryGetStylesColours from "../GraphQL/QueryGetStylesColours";
 import { Link } from "react-router-dom";
 
 
+const wrapperStyle = {
+    display: "grid",
+    gridTemplateColumns: "40vw 40vw",
+    gridColumnGap: "5vw",
+    gridRowGap: "5vw",
+    justifyItems: "center"
+}
+
+const swatchStyle = {
+    width: "100%"
+}
+
+const cardStyle = {
+    textAlign: "center"
+}
+
 class StylesColours extends Component {
 
     state = {
@@ -21,11 +37,11 @@ class StylesColours extends Component {
         const label = stylecolour.style.name + ' ' + stylecolour.colour.name
 
         return (
-            <Link to={`/stylecolour/${stylecolour.id}`} className="card" key={stylecolour.id}>
-
+            <Link to={`/stylecolour/${stylecolour.id}`} style={cardStyle} key={stylecolour.id}>
                 <div key={stylecolour.id}>
-                    <img src={stylecolour.swatchUrl} alt={label}/>
-                    <span>{label}</span></div>
+                    <img src={stylecolour.swatchUrl} alt={label} style={swatchStyle} />
+                    <span>{label}</span>
+                </div>
             </Link>);
     };
 
@@ -33,10 +49,8 @@ class StylesColours extends Component {
         const { stylesColours } = this.props;
 
         return (
-            <div>
-                <div className="giraffe">
-                    {stylesColours.map(this.renderStyleColour)}
-                </div>
+            <div style={wrapperStyle}>
+                {stylesColours.map(this.renderStyleColour)}
             </div>
         );
     }
