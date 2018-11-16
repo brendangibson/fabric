@@ -3,13 +3,11 @@ import React, { Component } from "react";
 import { graphql, compose, withApollo } from "react-apollo";
 import QueryGetStyles from "../GraphQL/QueryGetStyles";
 import MutationCreateStyle from "../GraphQL/MutationCreateStyle";
-import { v4 as uuid } from "uuid";
 
 
 class Styles extends Component {
 
     state = {
-        busy: false,
         style: {
             name: ''
         }
@@ -40,26 +38,12 @@ class Styles extends Component {
         this.setState({ style });
     }
 
-    handleSync = async () => {
-        const { client } = this.props;
-        const query = QueryGetStyles;
-
-        this.setState({ busy: true });
-
-        await client.query({
-            query,
-            fetchPolicy: 'network-only',
-        });
-
-        this.setState({ busy: false });
-    }
 
     renderStyle = (style) => (
         <div key={style.id}>{style.name}</div>
     );
 
     render() {
-        const { busy } = this.state;
         const { styles } = this.props;
         const {style} = this.state;
 

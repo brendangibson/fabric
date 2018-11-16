@@ -14,9 +14,10 @@ const Roll = ({match})=> (
             if (error) return `Error! ${error.message}`;
             const roll = data.getFriendlyRoll;
             console.log('roll: ', roll)
+            const label = roll.styleColour.style.name + ' ' + roll.styleColour.colour.name
            return ( <div>
-                <div>{roll.styleColour.style.name} {roll.styleColour.colour.name}</div>
-                <img src={roll.styleColour.swatchUrl} />
+                <div>label</div>
+                <img src={roll.styleColour.swatchUrl} alt={label}/>
                 <div>{roll.glenRavenId}</div>
             </div>);
         }}

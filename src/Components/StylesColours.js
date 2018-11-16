@@ -2,7 +2,6 @@ import React, { Component } from "react";
 
 import { graphql, compose, withApollo } from "react-apollo";
 import QueryGetStylesColours from "../GraphQL/QueryGetStylesColours";
-import { v4 as uuid } from "uuid";
 import { Link } from "react-router-dom";
 
 
@@ -17,14 +16,18 @@ class StylesColours extends Component {
     }
 
 
-    renderStyleColour = (stylecolour) => (
-        <Link to={`/stylecolour/${stylecolour.id}`} className="card" key={stylecolour.id}>
+    renderStyleColour = (stylecolour) => {
 
-        <div key={stylecolour.id}>
-            <img src={stylecolour.swatchUrl} />
-            <span>{stylecolour.style.name} {stylecolour.colour.name}</span></div>
-        </Link>
-    );
+        const label = stylecolour.style.name + ' ' + stylecolour.colour.name
+
+        return (
+            <Link to={`/stylecolour/${stylecolour.id}`} className="card" key={stylecolour.id}>
+
+                <div key={stylecolour.id}>
+                    <img src={stylecolour.swatchUrl} alt={label}/>
+                    <span>{label}</span></div>
+            </Link>);
+    };
 
     render() {
         const { stylesColours } = this.props;
@@ -52,6 +55,6 @@ export default withApollo(compose(
             })
         }
     )
-    
-    
+
+
 )(StylesColours));

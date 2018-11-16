@@ -3,13 +3,11 @@ import React, { Component } from "react";
 import { graphql, compose, withApollo } from "react-apollo";
 import QueryGetColours from "../GraphQL/QueryGetColours";
 import MutationCreateColour from "../GraphQL/MutationCreateColour";
-import { v4 as uuid } from "uuid";
 
 
 class Colours extends Component {
 
     state = {
-        busy: false,
         colour: {
             name: ''
         }
@@ -46,7 +44,6 @@ class Colours extends Component {
     );
 
     render() {
-        const { busy } = this.state;
         const { colours } = this.props;
         const {colour} = this.state;
 

@@ -5,7 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import appSyncConfig from "./aws-exports";
 import { ApolloProvider } from "react-apollo";
-import AWSAppSyncClient, { defaultDataIdFromObject } from "aws-appsync";
+import AWSAppSyncClient from "aws-appsync";
 import { Rehydrated } from "aws-appsync-react";
 import './App.css';
 import NewEvent from './Components/NewEvent';
