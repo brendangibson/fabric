@@ -8,7 +8,7 @@ import MutationCreateRoll from "../GraphQL/MutationCreateRoll";
 import RollIcon from './RollIcon'
 
 const topStyle = {
-    width: "100vw"
+    padding: "5vw 0 5vw 0"
 }
 
 const swatchStyle = {
@@ -66,19 +66,31 @@ class StyleColour extends Component {
                         </div>
                         {styleColour.rolls.map((roll) => {
                             return (<Link to={`/roll/${roll.id}`} key={roll.id} style={rollStyle}>
-                                <RollIcon originalLength={roll.originalLength} swatchUrl={styleColour.swatchUrl} glenRavenId={roll.glenRavenId}/></Link>)
+                                <RollIcon originalLength={roll.originalLength} swatchUrl={styleColour.swatchUrl} glenRavenId={roll.glenRavenId} /></Link>)
                         })}
 
-                        <Mutation mutation={MutationCreateRoll}>
-                            {(addRoll, { data }) => (
+                        <Mutation mutation={MutationCreateRoll} update={(cache, { data: { createRoll } }) => {
+                            if (createRoll) {
+                                const { getStyleColourPage } = cache.readQuery({ query: QueryGetStyleColour, variables: { id: match.params.id } });
+                                getStyleColourPage.rolls = getStyleColourPage.rolls.concat(createRoll);
+                                cache.writeQuery({
+                                    query: QueryGetStyleColour,
+                                    data: { getStyleColourPage: getStyleColourPage }
+                                });
+                            }
+                        }}>
+                            {addRoll => (
                                 <Form>
-                                    <Form.Group controlId="formBasicEmail">
-                                    <Form.Label>Length</Form.Label>
-                                    <Form.Control type="text" id='originalLength' name='originalLength' onChange={this.onChange('originalLength')} placeholder="Length in yards" />
-                                    <Form.Label>Glen Raven Id</Form.Label>
-                                    <Form.Control type="text" id='glenRavenId' name='glenRavenId' onChange={this.onChange('glenRavenId')} placeholder="From sticker on bag"/>
-                                    <Button variant="primary" size="lg" onClick={this.addRoll(addRoll)}>Add</Button>
+                                    <Form.Group>
+                                        <Form.Label>Length</Form.Label>
+                                        <Form.Control type="text" id='originalLength' name='originalLength' onChange={this.onChange('originalLength')} placeholder="Length in yards" />
                                     </Form.Group>
+                                    <Form.Group>
+                                        <Form.Label>Glen Raven Id</Form.Label>
+                                        <Form.Control type="text" id='glenRavenId' name='glenRavenId' onChange={this.onChange('glenRavenId')} placeholder="From sticker on bag" />
+                                    </Form.Group>
+
+                                    <Button variant="primary" size="lg" onClick={this.addRoll(addRoll)}>Add Roll</Button>
                                 </Form>)}
                         </Mutation>
                     </div>);

@@ -10,7 +10,8 @@ const wrapperStyle = {
     gridTemplateColumns: "40vw 40vw",
     gridColumnGap: "5vw",
     gridRowGap: "5vw",
-    justifyItems: "center"
+    justifyItems: "center",
+    padding: "5vw 0"
 }
 
 const swatchStyle = {

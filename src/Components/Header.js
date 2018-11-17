@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-const HEIGHT = "5vh"
+const HEIGHT = "8vh"
 
 const headerStyle = {
     height: HEIGHT,
-    width: "100vw",
+    width: "90vw",
     position: "fixed",
-    backgroundColor: "white"
+    backgroundColor: "white",
+    zIndex: 100,
+    borderBottom: "1px solid #666"
 }
 
 const wrapperStyle = {
@@ -24,7 +26,8 @@ const titleStyle = {
     position: "absolute",
     top: 0,
     width: "100%",
-    lineHeight: HEIGHT
+    lineHeight: HEIGHT,
+    zIndex: -1
 }
 
 export default function Header() {
