@@ -15,11 +15,6 @@ const topStyle = {
     gridGap: "5vw"
 }
 
-const swatchStyle = {
-    width: "40vw",
-    marginRight: "5vw"
-}
-
 const labelStyle = {
     fontSize: "6vw",
     display: "inline-block",
