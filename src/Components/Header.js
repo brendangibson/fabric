@@ -35,7 +35,7 @@ export default function Header() {
         <div>
             <div style={headerStyle}>
                 <Link to="/">
-                    <img src="/logo.png" alt="*" style={logoStyle} />
+                    <img src="/bigLogo.png" alt="*" style={logoStyle} />
                 </Link>
                 <div style={titleStyle}>Warehouse</div>
             </div>
