@@ -13,20 +13,22 @@ const Roll = ({ match }) => (
 
     <Query query={QueryGetRoll} variables={{ id: match.params.id }}>
         {({ loading, error, data }) => {
-            if (loading) return <Loading/>
+            if (loading) return <Loading />
             if (error) return `Error! ${error.message}`
             const roll = data.roll;
             const label = roll.styleColour.style.name + ' ' + roll.styleColour.colour.name
+            const remaining = roll.originalLength - roll.cuts.reduce((accumulator, currentValue) => accumulator + currentValue.length, 0)
+
             return (<div>
                 <RollIcon originalLength={roll.originalLength} swatchUrl={roll.styleColour.swatchUrl} glenRavenId={roll.glenRavenId} />
                 <ul>
                     <li>Style Colour: {label}</li>
-                    <li>Original Length: {roll.originalLength} yards</li>
+                    <li>Length: {remaining}/{roll.originalLength} yards</li>
                     <li>Shipment: {roll.shipment && (roll.shipment.name || roll.shipment.dateRecieved || roll.shipment.dateSent)}</li>
                     <li>Notes: {roll.notes}</li>
                 </ul>
                 <h1>Cuts</h1>
-                {roll.cuts.map((cut)=>(
+                {roll.cuts.map((cut) => (
                     <ul>
                         <li>Length: {cut.length}</li>
                         <li>Reason: {cut.reason}</li>
@@ -34,7 +36,7 @@ const Roll = ({ match }) => (
                         <li>Order Id: {cut.orderId}</li>
                     </ul>
                 ))}
-                <AddCut rollId={match.params.id} refetchQueries={[{query: QueryGetRoll, variables: {id: match.params.id}}]}/>
+                <AddCut rollId={match.params.id} remaining={remaining} refetchQueries={[{ query: QueryGetRoll, variables: { id: match.params.id } }]} />
             </div>);
         }}
     </Query>

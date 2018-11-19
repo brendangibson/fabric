@@ -2,7 +2,7 @@ import React from 'react'
 
 
 const imgStyle = {
-    width: "100vw",
+    width: "100%",
     animation: `pulse 2s infinite`,
     display: "block"
 }

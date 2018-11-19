@@ -6,9 +6,13 @@ import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
 import RollIcon from './RollIcon'
 import AddRoll from './AddRoll'
 import Loading from './Loading'
+import Swatch from './Swatch'
 
 const topStyle = {
-    padding: "5vw 0 5vw 0"
+    padding: "5vw 0 5vw 0",
+    display: "grid",
+    gridTemplateColumns: "50% auto",
+    gridGap: "5vw"
 }
 
 const swatchStyle = {
@@ -44,13 +48,15 @@ class StyleColour extends Component {
                     const styleColour = styleColourPage.styleColour
                     const label = styleColour.style.name + ' ' + styleColour.colour.name
                     const remaining = styleColourPage.rolls.reduce(
-                        (outerAccum, outerValue) =>
-                            outerAccum + outerValue.originalLength - outerValue.cuts.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+                        (outerAccum, outerValue) => {
+                            return outerAccum + outerValue.originalLength - outerValue.cuts.reduce((accumulator, currentValue) => accumulator + currentValue.length, 0)
+                        }
                         , 0)
                     return (<div>
                         <div style={topStyle}>
-                            <img src={styleColour.swatchUrl} alt={label} style={swatchStyle} />
-                            <div style={{display: 'inline-block'}}>
+                            {/* <img src={styleColour.swatchUrl} alt={label} style={swatchStyle} /> */}
+                            <Swatch src={styleColour.swatchUrl} />
+                            <div style={{ display: 'inline-block' }}>
                                 <div style={labelStyle}>{label}</div>
                                 <div style={lengthStyle}>{remaining} yard{remaining === 1 ? '' : 's'} remaining</div>
                             </div>
@@ -60,7 +66,7 @@ class StyleColour extends Component {
                                 <RollIcon originalLength={roll.originalLength} swatchUrl={styleColour.swatchUrl} glenRavenId={roll.glenRavenId} /></Link>)
                         })}
 
-                        <AddRoll shipments={styleColourPage.shipments} styleColourId={match.params.id} refetchQueries={[{query: QueryGetStyleColour, variables: {id: match.params.id}}]} />
+                        <AddRoll shipments={styleColourPage.shipments} styleColourId={match.params.id} refetchQueries={[{ query: QueryGetStyleColour, variables: { id: match.params.id } }]} />
                     </div>);
                 }}
             </Query>)

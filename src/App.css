@@ -1,14 +1,27 @@
-.new-event.content {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-}
-.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list {
-    padding-left: 0;
-    padding-right: 0;
-}
+body {
+    font-family: Helvetica, Verdana, Arial, sans-serif;
+    color: #222;
+  }
 
-.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box {
-    width: 80px;
-}
+  .fabricApp a, .fabricApp a:hover {
+    text-decoration: none;
+    color: #222;
+  }
+
+  .fabricApp h1 {
+      font-size: larger;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.7);
+    }
+
+    50% {
+      transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0.7);
+      }
+  }

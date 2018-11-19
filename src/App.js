@@ -7,7 +7,7 @@ const wrapperStyle = {
 }
 
 const App = (props) => (
-    <div style={wrapperStyle}>
+    <div style={wrapperStyle} className="fabricApp">
         <Header />
         {props.children}
     </div>

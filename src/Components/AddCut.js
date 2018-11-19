@@ -1,10 +1,10 @@
 import React, { Component } from "react"
-import {Mutation} from 'react-apollo'
+import { Mutation } from 'react-apollo'
 import Form from 'react-bootstrap/lib/Form'
 import Button from 'react-bootstrap/lib/Button'
 import DropdownButton from 'react-bootstrap/lib/DropdownButton'
 import Dropdown from 'react-bootstrap/lib/Dropdown'
-
+import FormError from './FormError'
 import Loading from './Loading'
 import MutationCreateCut from "../GraphQL/MutationCreateCut"
 
@@ -14,7 +14,7 @@ const reasons = [
     ['defect', 'Defect'],
     ['waste', 'Waste'],
     ['personal', 'Personal'],
-    ['product', 'Product'], 
+    ['product', 'Product'],
     ['reconciliation', 'Reconciliation']
 ]
 
@@ -24,20 +24,22 @@ class AddCut extends Component {
         length: 0,
         reason: reasons[0][0],
         notes: null,
-        orderId: null
+        orderId: null,
+        errors: {}
     }
 
     onChange = (index) => {
 
         return ({ target: { value } }) => {
-            this.setState({ [index]: value });
+            this.setState({ [index]: value })
+            this.setErrors(index, value)
         }
     }
 
     addCut = (mutator) => {
         return () => {
             const { length, reason, notes, orderId } = this.state
-            const {rollId} = this.props
+            const { rollId } = this.props
             mutator({ variables: { rollId, length, reason, notes, orderId } })
         }
     }
@@ -48,20 +50,58 @@ class AddCut extends Component {
         })[1]
     }
 
+    setErrors = (index, value) => {
+        let { errors } = this.state
+        const { remaining } = this.props
+        switch (index) {
+            case 'length':
+                if (isNaN(value)) {
+                    errors[index] = "Enter the number of yards"
+                } else {
+                    if (value <= 0) {
+                        errors[index] = "Too short"
+                    } else {
+                        if (value > 100 || value > remaining) {
+                            errors[index] = "Too long"
+                        } else {
+                            errors[index] = null
+                        }
+                    }
+                }
+                break;
+            default:
+        }
+        this.setState({ errors })
+
+    }
+
+    isDisabled = () => {
+        const { errors, length } = this.state
+
+        return !length || Object.keys(errors).some((error) => {
+            return errors[error] !== null
+        })
+    }
+
     render() {
+
+        const { errors } = this.state
 
         return (
             <Mutation mutation={MutationCreateCut} refetchQueries={this.props.refetchQueries}>
-                {(addCut, {loading, error}) => (
+                {(addCut, { loading, error }) => (
                     <div>
+                        {loading && <Loading />}
+                        {error && <p>Error :( Please try again</p>}
                         <Form.Group>
                             <Form.Label>Length</Form.Label>
                             <Form.Control type="text" id='length' name='length' onChange={this.onChange('length')} placeholder="Length in yards" />
+                            <FormError errorMsg={errors.length} />
                         </Form.Group>
-                       
+
                         <Form.Group>
                             <Form.Label>Reason</Form.Label>
-                            <DropdownButton id="dropdown-basic-button" title={this.getCurrentReasonName()}>
+                            <DropdownButton variant="dark" id="dropdown-basic-button" title={this.getCurrentReasonName()}>
                                 {reasons.map((reason) =>
                                     <Dropdown.Item as="button" onClick={this.onChange('reason')} value={reason[0]} key={reason[0]}>{reason[1]}</Dropdown.Item>
                                 )}
@@ -75,9 +115,8 @@ class AddCut extends Component {
                             <Form.Label>Notes</Form.Label>
                             <Form.Control type="textarea" id='notes' name='notes' onChange={this.onChange('notes')} placeholder="Notes" />
                         </Form.Group>
-                        <Button variant="primary" size="lg" onClick={this.addCut(addCut)}>Add Cut</Button>
-                        {loading && <Loading />}
-                        {error && <p>Error :( Please try again</p>}
+                        <Button disabled={loading || this.isDisabled()} variant="dark" size="lg" onClick={this.addCut(addCut)}>Add Cut</Button>
+
                     </div>)}
             </Mutation>)
     }
