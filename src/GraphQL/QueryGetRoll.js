@@ -2,16 +2,26 @@ import gql from "graphql-tag";
 
 export default gql(`
 query($id: ID!) {
-  getFriendlyRoll(id: $id) {
+  roll(id: $id) {
     id
     originalLength
-    styleColour{colour {
-      name
+    styleColour{
+      colour {
+        name
+      }
+      style {
+        name
+      }
+      swatchUrl
     }
-    style {
-      name
-    }
-    swatchUrl}
     glenRavenId
+    notes
+    
+    cuts {
+      length
+      reason
+      orderId
+      notes
+    }
   }
 }`);

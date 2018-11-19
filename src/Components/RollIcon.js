@@ -34,7 +34,7 @@ const RollIcon = (props) => (
             textAlign: "center",
             backgroundRepeat: "repeat",
             backgroundSize: "5vw",
-            width: "calc(70% + " + getHeight(props.originalLength)/2 + 'vw' + ")",
+            width: "calc(70% + " + getHeight(props.originalLength)/2 + "vw)",
             height: getHeight(props.originalLength) + 'vw',
             position: "relative"
         }}>

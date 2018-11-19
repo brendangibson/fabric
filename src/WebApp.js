@@ -7,9 +7,6 @@ import { ApolloProvider } from "react-apollo";
 import AWSAppSyncClient from "aws-appsync";
 import { Rehydrated } from "aws-appsync-react";
 import './App.css';
-import NewEvent from './Components/NewEvent';
-import ViewEvent from './Components/ViewEvent';
-import Colours from './Components/Colours';
 import Styles from './Components/Styles';
 import StylesColours from './Components/StylesColours';
 import StyleColour from './Components/StyleColour';
@@ -25,9 +22,6 @@ const WebApp = () => (
       <Route path="/stylescolours" component={StylesColours} />
       <Route path="/stylecolour/:id" component={StyleColour} />
       <Route path="/roll/:id" component={Roll} />
-
-      <Route path="/event/:id" component={ViewEvent} />
-      <Route path="/newEvent" component={NewEvent} />
     </App>
   </Router>
 );

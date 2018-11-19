@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React from "react"
 
-import { graphql, compose, withApollo } from "react-apollo";
-import QueryGetStylesColours from "../GraphQL/QueryGetStylesColours";
-import { Link } from "react-router-dom";
-
+import {Query} from 'react-apollo'
+import QueryGetStylesColours from "../GraphQL/QueryGetStylesColours"
+import { Link } from "react-router-dom"
+import Loading from './Loading'
 
 const wrapperStyle = {
     display: "grid",
@@ -22,18 +22,7 @@ const cardStyle = {
     textAlign: "center"
 }
 
-class StylesColours extends Component {
-
-    state = {
-        busy: false
-    }
-
-    static defaultProps = {
-        stylesColours: [],
-    }
-
-
-    renderStyleColour = (stylecolour) => {
+ const   renderStyleColour = (stylecolour) => {
 
         const label = stylecolour.style.name + ' ' + stylecolour.colour.name
 
@@ -46,30 +35,19 @@ class StylesColours extends Component {
             </Link>);
     };
 
-    render() {
-        const { stylesColours } = this.props;
-
+const StylesColours = () => (
+    <Query query={QueryGetStylesColours}>
+      {({ loading, error, data }) => {
+        if (loading) return <Loading/>;
+        if (error) return `Error! ${error.message}`;
+  
         return (
             <div style={wrapperStyle}>
-                {stylesColours.map(this.renderStyleColour)}
+                {data.stylesColours.map(renderStyleColour)}
             </div>
         );
-    }
+      }}
+    </Query>
+  );
 
-}
-
-export default withApollo(compose(
-    graphql(
-        QueryGetStylesColours,
-        {
-            options: {
-                fetchPolicy: 'network-only',
-            },
-            props: ({ data: { getFriendlyStylesColours = [] } }) => ({
-                stylesColours: getFriendlyStylesColours
-            })
-        }
-    )
-
-
-)(StylesColours));
+  export default StylesColours
