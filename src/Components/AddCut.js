@@ -7,16 +7,8 @@ import Dropdown from 'react-bootstrap/lib/Dropdown'
 import FormError from './FormError'
 import Loading from './Loading'
 import MutationCreateCut from "../GraphQL/MutationCreateCut"
+import { reasons } from '../DataFunctions/Cuts'
 
-const reasons = [
-    ['shopifyOrder', 'Shopify Order'],
-    ['otherOrder', 'Other Order'],
-    ['defect', 'Defect'],
-    ['waste', 'Waste'],
-    ['personal', 'Personal'],
-    ['product', 'Product'],
-    ['reconciliation', 'Reconciliation']
-]
 
 class AddCut extends Component {
 
@@ -91,6 +83,7 @@ class AddCut extends Component {
             <Mutation mutation={MutationCreateCut} refetchQueries={this.props.refetchQueries}>
                 {(addCut, { loading, error }) => (
                     <div>
+                        <h1>Add Cut</h1>
                         {loading && <Loading />}
                         {error && <p>Error :( Please try again</p>}
                         <Form.Group>

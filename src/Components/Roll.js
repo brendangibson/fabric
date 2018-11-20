@@ -5,7 +5,10 @@ import RollIcon from './RollIcon'
 import AddCut from './AddCut'
 import Loading from './Loading'
 import QueryGetRoll from "../GraphQL/QueryGetRoll";
+import Table from 'react-bootstrap/lib/Table'
+import { getReasonName } from '../DataFunctions/Cuts'
 
+const humanize = (x) => x.toFixed(2).replace(/\.?0*$/, '');
 
 
 const Roll = ({ match }) => (
@@ -21,20 +24,24 @@ const Roll = ({ match }) => (
 
             return (<div>
                 <RollIcon originalLength={roll.originalLength} swatchUrl={roll.styleColour.swatchUrl} glenRavenId={roll.glenRavenId} />
-                <ul>
-                    <li>Style Colour: {label}</li>
-                    <li>Length: {remaining}/{roll.originalLength} yards</li>
-                    <li>Shipment: {roll.shipment && (roll.shipment.name || roll.shipment.dateRecieved || roll.shipment.dateSent)}</li>
-                    <li>Notes: {roll.notes}</li>
-                </ul>
+                <Table>
+                    <tbody>
+                        <tr><td>Style Colour</td><td><b>{label}</b></td></tr>
+                        <tr><td>Length</td><td>{humanize(remaining)}/{roll.originalLength} yards</td></tr>
+                        {roll.shipment && <tr><td>Shipment</td><td>{(roll.shipment.name || roll.shipment.dateRecieved || roll.shipment.dateSent)}</td></tr>}
+                        {roll.notes && <tr><td>Notes</td><td>{roll.notes}</td></tr>}
+                    </tbody>
+                </Table>
                 <h1>Cuts</h1>
                 {roll.cuts.map((cut) => (
-                    <ul>
-                        <li>Length: {cut.length}</li>
-                        <li>Reason: {cut.reason}</li>
-                        <li>Notes: {cut.notes}</li>
-                        <li>Order Id: {cut.orderId}</li>
-                    </ul>
+                    <Table>
+                        <tbody>
+                            <tr><td>Length</td><td>{cut.length} yard{cut.length === 1 ? '' : 's'}</td></tr>
+                            <tr><td>Reason</td><td>{getReasonName(cut.reason)}</td></tr>
+                            {cut.notes && <tr><td>Notes</td><td>{cut.notes}</td></tr>}
+                            {cut.orderId && <tr><td>Order Id</td><td>{cut.orderId}</td></tr>}
+                        </tbody>
+                    </Table>
                 ))}
                 <AddCut rollId={match.params.id} remaining={remaining} refetchQueries={[{ query: QueryGetRoll, variables: { id: match.params.id } }]} />
             </div>);
