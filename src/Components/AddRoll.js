@@ -85,12 +85,12 @@ class AddRoll extends Component {
                         <h1>Add Roll</h1>
                         <Form.Group>
                             <Form.Label>Length</Form.Label>
-                            <Form.Control type="text" id='originalLength' name='originalLength' onChange={this.onChange('originalLength')} placeholder="Length in yards" />
+                            <Form.Control type="number" id='originalLength' name='originalLength' onChange={this.onChange('originalLength')} placeholder="Length in yards" />
                             <FormError errorMsg={errors.originalLength} />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Glen Raven Id</Form.Label>
-                            <Form.Control type="text" id='glenRavenId' name='glenRavenId' onChange={this.onChange('glenRavenId')} placeholder="From sticker on bag" />
+                            <Form.Control type="number" id='glenRavenId' name='glenRavenId' onChange={this.onChange('glenRavenId')} placeholder="From sticker on bag" />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Shipment</Form.Label>

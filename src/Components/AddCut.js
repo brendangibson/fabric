@@ -88,7 +88,7 @@ class AddCut extends Component {
                         {error && <p>Error :( Please try again</p>}
                         <Form.Group>
                             <Form.Label>Length</Form.Label>
-                            <Form.Control type="text" id='length' name='length' onChange={this.onChange('length')} placeholder="Length in yards" />
+                            <Form.Control type="number" id='length' name='length' onChange={this.onChange('length')} placeholder="Length in yards" />
                             <FormError errorMsg={errors.length} />
                         </Form.Group>
 
