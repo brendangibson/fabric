@@ -45,7 +45,6 @@ const cfg = {
 }
 
 
-console.log('cfg: ', cfg)
 const client = new AWSAppSyncClient(cfg);
 
 const WithProvider = () => (
