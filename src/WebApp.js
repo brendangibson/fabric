@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import Amplify, { Auth } from 'aws-amplify';
+import { withAuthenticator } from 'aws-amplify-react';
 
-
-import appSyncConfig from "./aws-exports";
+import awsconfig from "./aws-exports";
 import { ApolloProvider } from "react-apollo";
 import AWSAppSyncClient from "aws-appsync";
 import { Rehydrated } from "aws-appsync-react";
@@ -13,6 +14,19 @@ import StyleColour from './Components/StyleColour';
 import Roll from './Components/Roll';
 import App from './App'
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+
+const cfg = {
+  url: awsconfig.aws_appsync_graphqlEndpoint,
+  region: awsconfig.aws_appsync_region,
+  auth: {
+    type: awsconfig.aws_appsync_authenticationType,
+    // apiKey: appSyncConfig.aws_appsync_apiKey
+    jwtToken: async () => (await Auth.currentSession()).getIdToken().getJwtToken()
+  }
+}
+
+Amplify.configure(awsconfig);
 
 const WebApp = () => (
   <Router>
@@ -26,20 +40,14 @@ const WebApp = () => (
   </Router>
 );
 
-const client = new AWSAppSyncClient({
-  url: appSyncConfig.aws_appsync_graphqlEndpoint,
-  region: appSyncConfig.aws_appsync_region,
-  auth: {
-    type: appSyncConfig.aws_appsync_authenticationType,
-    apiKey: appSyncConfig.aws_appsync_apiKey
+const WebAppWithAuth = withAuthenticator(WebApp, true);
 
-  }
-});
+const client = new AWSAppSyncClient(cfg);
 
 const WithProvider = () => (
   <ApolloProvider client={client}>
     <Rehydrated>
-      <WebApp />
+      <WebAppWithAuth />
     </Rehydrated>
   </ApolloProvider>
 );
