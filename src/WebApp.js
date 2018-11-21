@@ -1,22 +1,19 @@
-import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import Amplify, { Auth } from 'aws-amplify';
-import { withAuthenticator, Authenticator } from 'aws-amplify-react';
+import React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import Amplify, { Auth } from "aws-amplify";
+import { withAuthenticator } from "aws-amplify-react";
 
 import awsconfig from "./aws-exports";
 import { ApolloProvider } from "react-apollo";
 import AWSAppSyncClient from "aws-appsync";
 import { Rehydrated } from "aws-appsync-react";
-import './App.css';
-import Styles from './Components/Styles';
-import StylesColours from './Components/StylesColours';
-import StyleColour from './Components/StyleColour';
-import Roll from './Components/Roll';
-import App from './App'
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-
-
+import "./App.css";
+import Styles from "./Components/Styles";
+import StylesColours from "./Components/StylesColours";
+import StyleColour from "./Components/StyleColour";
+import Roll from "./Components/Roll";
+import App from "./App";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 Amplify.configure(awsconfig);
 
@@ -40,10 +37,10 @@ const cfg = {
   auth: {
     type: awsconfig.aws_appsync_authenticationType,
     apiKey: awsconfig.aws_appsync_apiKey,
-    jwtToken: async () => (await Auth.currentSession()).getAccessToken().getJwtToken()
+    jwtToken: async () =>
+      (await Auth.currentSession()).getAccessToken().getJwtToken()
   }
-}
-
+};
 
 const client = new AWSAppSyncClient(cfg);
 
