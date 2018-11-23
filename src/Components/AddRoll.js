@@ -61,7 +61,27 @@ class AddRoll extends Component {
           originalLength: originalLength,
           notes: notes,
           shipmentId: shipmentId
+        },
+        optimisticResponse: {
+          __typename: "Mutation",
+          createRoll: {
+            __typename: "Roll",
+            id: "12345",
+            colourStyleId: styleColourId,
+            glenRavenId: glenRavenId,
+            originalLength: originalLength,
+            notes: notes,
+            shipmentId: shipmentId
+          }
         }
+      });
+      this.setState({
+        originalLength: 0,
+        glenRavenId: null,
+        notes: null,
+        shipmentId: this.props.shipments[0].id,
+        errors: {},
+        realMutationLoading: false
       });
     };
   };
@@ -83,78 +103,82 @@ class AddRoll extends Component {
 
     return (
       <Mutation mutation={MutationCreateRoll} refetchQueries={refetchQueries}>
-        {(addRoll, { loading, error }) => (
-          <div>
-            <h1>Add Roll</h1>
-            {loading ? (
-              <Loading />
-            ) : (
-              <div>
-                <Form.Group>
-                  <Form.Label>Length</Form.Label>
-                  <Form.Control
-                    type="number"
-                    id="originalLength"
-                    name="originalLength"
-                    onChange={this.onChange("originalLength")}
-                    placeholder="Length in yards"
-                  />
-                  <FormError errorMsg={errors.originalLength} />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Glen Raven Id</Form.Label>
-                  <Form.Control
-                    type="number"
-                    id="glenRavenId"
-                    name="glenRavenId"
-                    onChange={this.onChange("glenRavenId")}
-                    placeholder="From sticker on bag"
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Shipment</Form.Label>
-                  <DropdownButton
+        {(addRoll, { loading, error }) => {
+          return (
+            <div>
+              <h1>Add Roll</h1>
+              {error && <p>Error :( Please try again</p>}
+              {loading ? (
+                <Loading />
+              ) : (
+                <div>
+                  <Form.Group>
+                    <Form.Label>Length</Form.Label>
+                    <Form.Control
+                      type="number"
+                      id="originalLength"
+                      name="originalLength"
+                      onChange={this.onChange("originalLength")}
+                      placeholder="Length in yards"
+                      value={this.state.originalLength || ""}
+                    />
+                    <FormError errorMsg={errors.originalLength} />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Glen Raven Id</Form.Label>
+                    <Form.Control
+                      type="number"
+                      id="glenRavenId"
+                      name="glenRavenId"
+                      onChange={this.onChange("glenRavenId")}
+                      placeholder="From sticker on bag"
+                      value={this.state.glenRavenId || ""}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Shipment</Form.Label>
+                    <DropdownButton
+                      variant="dark"
+                      id="dropdown-basic-button"
+                      title={getShipmentName(this.getCurrentShipment())}
+                    >
+                      {shipments.map(shipment => (
+                        <Dropdown.Item
+                          as="button"
+                          href="#"
+                          onClick={this.onChange("shipmentId")}
+                          value={shipment.id}
+                          key={shipment.id}
+                        >
+                          {getShipmentName(shipment)}
+                        </Dropdown.Item>
+                      ))}
+                    </DropdownButton>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Notes</Form.Label>
+                    <Form.Control
+                      type="textarea"
+                      id="notes"
+                      name="notes"
+                      onChange={this.onChange("notes")}
+                      placeholder="Notes"
+                      value={this.state.notes || ""}
+                    />
+                  </Form.Group>
+                  <Button
+                    disabled={this.hasErrors()}
                     variant="dark"
-                    id="dropdown-basic-button"
-                    title={getShipmentName(this.getCurrentShipment())}
+                    size="lg"
+                    onClick={this.addRoll(addRoll)}
                   >
-                    {shipments.map(shipment => (
-                      <Dropdown.Item
-                        as="button"
-                        href="#"
-                        onClick={this.onChange("shipmentId")}
-                        value={shipment.id}
-                        key={shipment.id}
-                      >
-                        {getShipmentName(shipment)}
-                      </Dropdown.Item>
-                    ))}
-                  </DropdownButton>
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Notes</Form.Label>
-                  <Form.Control
-                    type="textarea"
-                    id="notes"
-                    name="notes"
-                    onChange={this.onChange("notes")}
-                    placeholder="Notes"
-                  />
-                </Form.Group>
-                <Button
-                  disabled={this.hasErrors()}
-                  variant="dark"
-                  size="lg"
-                  onClick={this.addRoll(addRoll)}
-                >
-                  Add Roll
-                </Button>
-              </div>
-            )}
-            {loading && <p>Loading...</p>}
-            {error && <p>Error :( Please try again</p>}
-          </div>
-        )}
+                    Add Roll
+                  </Button>
+                </div>
+              )}
+            </div>
+          );
+        }}
       </Mutation>
     );
   }

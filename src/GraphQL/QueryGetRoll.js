@@ -18,6 +18,7 @@ query($id: ID!) {
     notes
     
     cuts {
+      id
       length
       reason
       orderId

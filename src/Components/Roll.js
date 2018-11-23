@@ -65,7 +65,7 @@ const Roll = ({ match }) => (
           </Table>
           <h1>Cuts</h1>
           {roll.cuts.map(cut => (
-            <Table>
+            <Table key={cut.id}>
               <tbody>
                 <tr>
                   <td>Length</td>
