@@ -76,11 +76,12 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId }) => {
         <div
           style={{
             overflow: "hidden",
-            right: 0,
-            top: 0,
+            right: "-1px",
+            top: "-1px",
+            bottom: "-1px",
             position: "absolute",
             width: endWidth,
-            height: height
+            padding: "1px 1px 1px 0"
           }}
         >
           <div
