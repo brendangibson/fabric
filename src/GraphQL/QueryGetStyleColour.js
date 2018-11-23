@@ -12,6 +12,7 @@ query($id: ID!) {
                 name
             }
             swatchUrl
+            glenRavenName
         }
         rolls{
             id

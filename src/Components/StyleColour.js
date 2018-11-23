@@ -66,6 +66,9 @@ class StyleColour extends Component {
                     {humanize(remaining)} yard{remaining === 1 ? "" : "s"}{" "}
                     remaining
                   </div>
+                  <i style={{ fontSize: "smaller" }}>
+                    {styleColour.glenRavenName}
+                  </i>
                 </div>
               </div>
               {styleColourPage.rolls.map(roll => {
