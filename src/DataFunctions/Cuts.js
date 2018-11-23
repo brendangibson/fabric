@@ -5,7 +5,8 @@ const reasons = [
   ["waste", "Waste"],
   ["personal", "Personal"],
   ["product", "Product"],
-  ["reconciliation", "Reconciliation"]
+  ["reconciliation", "Reconciliation"],
+  ["samples", "Samples"]
 ];
 
 const getReasonName = reasonId => {
