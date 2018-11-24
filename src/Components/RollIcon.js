@@ -43,7 +43,7 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId }) => {
           display: "inline-block",
           textAlign: "center",
           backgroundRepeat: "repeat",
-          backgroundSize: "5vw",
+          backgroundSize: "cover",
           width: "calc(70% + " + getHeight(remaining) / 2 + "vw)",
           height: height,
           position: "relative"
@@ -52,12 +52,18 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId }) => {
         <div
           style={{
             borderRadius: "50%",
-            background: "#8E6033",
+            // background: "#8E6033",
+            backgroundImage:
+              "radial-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.1),rgba(0,0,0,0.5),rgba(0,0,0,0.1)), url(" +
+              swatchUrl +
+              ")",
+            backgroundSize: "1vw",
             transform: "translateX(-" + getHeight(remaining) / 4 + "vw)",
             width: endWidth,
             position: "absolute",
             height: height,
-            left: 0
+            left: 0,
+            zIndex: 1
           }}
         >
           <div
