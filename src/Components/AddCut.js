@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Mutation } from "react-apollo";
 import Form from "react-bootstrap/lib/Form";
 import Button from "react-bootstrap/lib/Button";
+import Col from "react-bootstrap/lib/Col";
+
 import DropdownButton from "react-bootstrap/lib/DropdownButton";
 import Dropdown from "react-bootstrap/lib/Dropdown";
 import FormError from "./FormError";
@@ -12,6 +14,7 @@ import { reasons } from "../DataFunctions/Cuts";
 class AddCut extends Component {
   state = {
     length: 0,
+    inches: 0,
     reason: reasons[0][0],
     notes: null,
     orderId: null,
@@ -27,17 +30,19 @@ class AddCut extends Component {
 
   addCut = mutator => {
     return () => {
-      const { length, reason, notes, orderId } = this.state;
+      const { length, inches, reason, notes, orderId } = this.state;
       const { rollId } = this.props;
+
+      const totalLength = parseInt(length, 10) + parseInt(inches, 10) / 36;
       mutator({
-        variables: { rollId, length, reason, notes, orderId },
+        variables: { rollId, length: totalLength, reason, notes, orderId },
         optimisticResponse: {
           __typename: "Mutation",
           createCut: {
             __typename: "Roll",
             id: "12345",
             rollId: rollId,
-            length: length,
+            length: totalLength,
             reason: reason,
             notes: notes,
             orderId: orderId
@@ -46,6 +51,7 @@ class AddCut extends Component {
       });
       this.setState({
         length: 0,
+        inches: 0,
         reason: reasons[0][0],
         notes: null,
         orderId: null,
@@ -85,10 +91,10 @@ class AddCut extends Component {
   };
 
   isDisabled = () => {
-    const { errors, length } = this.state;
+    const { errors, length, inches } = this.state;
 
     return (
-      !length ||
+      !(length + inches) ||
       Object.keys(errors).some(error => {
         return errors[error] !== null;
       })
@@ -110,14 +116,28 @@ class AddCut extends Component {
             {error && <p>Error :( Please try again</p>}
             <Form.Group>
               <Form.Label>Length</Form.Label>
-              <Form.Control
-                value={this.state.length || ""}
-                type="number"
-                id="length"
-                name="length"
-                onChange={this.onChange("length")}
-                placeholder="Length in yards"
-              />
+              <Form.Row>
+                <Col>
+                  <Form.Control
+                    value={this.state.length}
+                    type="number"
+                    id="length"
+                    name="length"
+                    onChange={this.onChange("length")}
+                    placeholder="yards"
+                  />
+                </Col>
+                <Col>
+                  <Form.Control
+                    value={this.state.inches}
+                    type="number"
+                    id="inches"
+                    name="inches"
+                    onChange={this.onChange("inches")}
+                    placeholder="inches"
+                  />
+                </Col>
+              </Form.Row>
               <FormError errorMsg={errors.length} />
             </Form.Group>
 

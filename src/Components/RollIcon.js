@@ -1,5 +1,6 @@
 import React from "react";
 
+import { humanize } from "../DataFunctions/Cuts";
 const coreHeight = 3;
 
 const getHeight = length => {
@@ -107,7 +108,8 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId }) => {
         />
       </div>
       <div style={dataStyle}>
-        {remaining}/{originalLength} yard{originalLength === 1 ? "" : "s"}
+        {humanize(remaining)}/{originalLength} yard
+        {originalLength === 1 ? "" : "s"}
       </div>
     </div>
   );

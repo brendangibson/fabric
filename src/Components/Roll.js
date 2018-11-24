@@ -70,7 +70,7 @@ const Roll = ({ match }) => (
                 <tr>
                   <td>Length</td>
                   <td>
-                    {cut.length} yard{cut.length === 1 ? "" : "s"}
+                    {humanize(cut.length)} yard{cut.length === 1 ? "" : "s"}
                   </td>
                 </tr>
                 <tr>
