@@ -127,6 +127,7 @@ class AddCut extends Component {
                     placeholder="yards"
                   />
                 </Col>
+                <Col style={{ lineHeight: "calc(2.25rem + 2px)" }}>yards</Col>
                 <Col>
                   <Form.Control
                     value={this.state.inches}
@@ -137,6 +138,7 @@ class AddCut extends Component {
                     placeholder="inches"
                   />
                 </Col>
+                <Col style={{ lineHeight: "calc(2.25rem + 2px)" }}>inches</Col>
               </Form.Row>
               <FormError errorMsg={errors.length} />
             </Form.Group>
