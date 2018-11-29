@@ -17,17 +17,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 Amplify.configure(awsconfig);
 
-const WebApp = () => (
-  <Router>
-    <App>
-      <Route exact={true} path="/" component={StylesColours} />
-      <Route path="/styles" component={Styles} />
-      <Route path="/stylescolours" component={StylesColours} />
-      <Route path="/stylecolour/:id" component={StyleColour} />
-      <Route path="/roll/:id" component={Roll} />
-    </App>
-  </Router>
-);
+const WebApp = props => {
+  return props.authState !== "signedIn" ? null : (
+    <Router>
+      <App>
+        <Route exact={true} path="/" component={StylesColours} />
+        <Route path="/styles" component={Styles} />
+        <Route path="/stylescolours" component={StylesColours} />
+        <Route path="/stylecolour/:id" component={StyleColour} />
+        <Route path="/roll/:id" component={Roll} />
+      </App>
+    </Router>
+  );
+};
 
 // const WebAppWithAuth = withAuthenticator(WebApp, false);
 
