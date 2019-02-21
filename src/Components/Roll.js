@@ -5,7 +5,7 @@ import RollIcon from "./RollIcon";
 import AddCut from "./AddCut";
 import Loading from "./Loading";
 import QueryGetRoll from "../GraphQL/QueryGetRoll";
-import Table from "react-bootstrap/lib/Table";
+import Table from "react-bootstrap/Table";
 import { getReasonName, humanize } from "../DataFunctions/Cuts";
 
 const Roll = ({ match }) => (

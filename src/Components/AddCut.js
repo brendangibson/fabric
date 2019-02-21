@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { Mutation } from "react-apollo";
-import Form from "react-bootstrap/lib/Form";
-import Button from "react-bootstrap/lib/Button";
-import Col from "react-bootstrap/lib/Col";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
 
-import DropdownButton from "react-bootstrap/lib/DropdownButton";
-import Dropdown from "react-bootstrap/lib/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
 import FormError from "./FormError";
 import Loading from "./Loading";
 import MutationCreateCut from "../GraphQL/MutationCreateCut";

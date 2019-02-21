@@ -6,12 +6,15 @@ import { Authenticator } from "aws-amplify-react";
 import awsconfig from "./aws-exports";
 import { ApolloProvider } from "react-apollo";
 import AWSAppSyncClient from "aws-appsync";
+import { InMemoryCache } from 'apollo-cache-inmemory';
+
 import { Rehydrated } from "aws-appsync-react";
 import "./App.css";
 import Styles from "./Components/Styles";
 import StylesColours from "./Components/StylesColours";
 import StyleColour from "./Components/StyleColour";
 import Roll from "./Components/Roll";
+import Shipments from './Components/Shipments';
 import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -26,6 +29,7 @@ const WebApp = props => {
         <Route path="/stylescolours" component={StylesColours} />
         <Route path="/stylecolour/:id" component={StyleColour} />
         <Route path="/roll/:id" component={Roll} />
+        <Route path="/shipments" component={Shipments} />
       </App>
     </Router>
   );
@@ -41,7 +45,8 @@ const cfg = {
     apiKey: awsconfig.aws_appsync_apiKey,
     jwtToken: async () =>
       (await Auth.currentSession()).getAccessToken().getJwtToken()
-  }
+  },
+  cache: new InMemoryCache()
 };
 
 const SienAndCoTheme = {
