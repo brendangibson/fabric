@@ -5,5 +5,9 @@ body {
 }
 
 #root > div > div > div:first-child {
-  display: none
+  display: none;
+}
+
+#basic-nav-dropdown:after {
+  display: none;
 }
