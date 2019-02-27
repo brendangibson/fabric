@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import NavDropdown from 'react-bootstrap/NavDropdown'
+
 const HEIGHT = "8vh"
 
 const headerStyle = {
@@ -8,7 +10,9 @@ const headerStyle = {
     position: "fixed",
     backgroundColor: "white",
     zIndex: 100,
-    borderBottom: "1px solid #666"
+    borderBottom: "1px solid #666",
+    display: "flex",
+    justifyContent: "space-between"
 }
 
 const wrapperStyle = {
@@ -30,6 +34,11 @@ const titleStyle = {
     zIndex: -1
 }
 
+const dropdownStyle = {
+    fontSize: "6vh",
+    lineHeight: "6vh"
+}
+
 export default function Header() {
     return (
         <div>
@@ -38,6 +47,9 @@ export default function Header() {
                     <img src="/bigLogo.png" alt="*" style={logoStyle} />
                 </Link>
                 <div style={titleStyle}>Warehouse</div>
+                <NavDropdown title="☰" id="basic-nav-dropdown" style={dropdownStyle}>
+                    <NavDropdown.Item href="/shipments">Shipments</NavDropdown.Item>
+                </NavDropdown>
             </div>
             <div style={wrapperStyle} />
 
