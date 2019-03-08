@@ -24,5 +24,13 @@ query($id: ID!) {
       orderId
       notes
     }
+
+    holds {
+      id
+      length
+      reason
+      orderId
+      notes
+    }
   }
 }`);

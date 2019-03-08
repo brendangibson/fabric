@@ -119,7 +119,7 @@ class AddShipment extends Component {
                       id="dateReceived"
                       name="dateReceived"
                       onChange={this.onChange("dateReceived")}
-                      value={this.state.dateSent || ""}
+                      value={this.state.dateReceived || ""}
                     />
                     <FormError errorMsg={errors.dateReceived} />
                   </Form.Group>

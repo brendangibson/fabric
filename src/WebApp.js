@@ -65,6 +65,9 @@ const SienAndCoTheme = {
   button: {
     backgroundColor: "#23272b",
     borderColor: "#1d2124"
+  },
+  navBar: {
+    display: 'none'
   }
 };
 

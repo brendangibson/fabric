@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import { Query } from "react-apollo";
 
 import RollIcon from "./RollIcon";
@@ -7,8 +7,52 @@ import Loading from "./Loading";
 import QueryGetRoll from "../GraphQL/QueryGetRoll";
 import Table from "react-bootstrap/Table";
 import { getReasonName, humanize } from "../DataFunctions/Cuts";
+import MutationCreateCut from '../GraphQL/MutationCreateCut';
+import MutationDeleteHold from '../GraphQL/MutationDeleteHold';
 
-const Roll = ({ match }) => (
+const scissorStyle = {
+  display: 'inline-block', 
+  marginLeft: 16, 
+  transform: 'rotate(90deg)', 
+  verticalAlign:'middle',
+  cursor: 'pointer'
+}
+
+class Roll extends Component {
+
+
+  cutHold = hold => {
+    return () => {
+      const { length, reason, notes, orderId } = hold;
+      const { rollId } = this.props;
+
+      console.log('cutHold')
+
+      MutationCreateCut({
+        variables: { rollId, length, reason, notes, orderId },
+        optimisticResponse: {
+          __typename: "Mutation",
+          createCut: {
+            __typename: "Roll",
+            id: "12345",
+            rollId: rollId,
+            length: length,
+            reason: reason,
+            notes: notes,
+            orderId: orderId
+          }
+        }
+      });
+      MutationDeleteHold({
+        variables: { id: hold.id }
+      })
+    };
+  };
+  
+  render () {
+    const {match} = this.props
+
+  return (
   <Query query={QueryGetRoll} variables={{ id: match.params.id }}>
     {({ loading, error, data }) => {
       if (loading) return <Loading />;
@@ -92,6 +136,36 @@ const Roll = ({ match }) => (
               </tbody>
             </Table>
           ))}
+          {roll.holds && roll.holds.length ? <h1>Holds</h1> : null}
+          {roll.holds.map(hold => (
+            <Table key={hold.id} style={{color: 'red'}}>
+              <tbody>
+                <tr>
+                  <td>Length</td>
+                  <td>
+                    {humanize(hold.length)} yard{hold.length === 1 ? "" : "s"}
+                    <span onClick={this.cutHold(hold)} style={scissorStyle}>✂</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Reason</td>
+                  <td>{getReasonName(hold.reason)}</td>
+                </tr>
+                {hold.notes && (
+                  <tr>
+                    <td>Notes</td>
+                    <td>{hold.notes}</td>
+                  </tr>
+                )}
+                {hold.orderId && (
+                  <tr>
+                    <td>Order Id</td>
+                    <td>{hold.orderId}</td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          ))}
           <AddCut
             rollId={match.params.id}
             remaining={remaining}
@@ -102,7 +176,8 @@ const Roll = ({ match }) => (
         </div>
       );
     }}
-  </Query>
-);
+  </Query>)
+  }
+}
 
 export default Roll;

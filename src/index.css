@@ -4,9 +4,9 @@ body {
   font-family: sans-serif;
 }
 
-#root > div > div > div:first-child {
+/* #root > div > div > div:first-child {
   display: none;
-}
+} */
 
 #basic-nav-dropdown:after {
   display: none;
