@@ -28,7 +28,7 @@ const labelStyle = {
   zIndex: 1
 };
 
-const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId }) => {
+const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId, weight }) => {
   const height = getHeight(remaining) + "vw";
   const endWidth = getHeight(remaining) / 2 + "vw";
 

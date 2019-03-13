@@ -110,7 +110,7 @@ class AddHold extends Component {
         refetchQueries={this.props.refetchQueries}
       >
         {(addHold, { loading, error }) => (
-          <div>
+          <div style={{color: 'red'}}>
             <h1>Add Hold</h1>
             {loading && <Loading />}
             {error && <p>Error :( Please try again</p>}

@@ -11,6 +11,8 @@ query($id: ID!) {
       }
       style {
         name
+        weight
+        thickness
       }
       swatchUrl
     }
