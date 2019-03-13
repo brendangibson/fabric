@@ -105,6 +105,70 @@ class Roll extends Component {
               )}
             </tbody>
           </Table>
+
+{roll.holds && roll.holds.length ? <h1>Holds</h1> : null}
+{roll.holds.map(hold => (
+  <Table key={hold.id}>
+    <tbody>
+      <tr>
+        <td>Length
+        <OverlayTrigger rootClose trigger="click" placement="bottom" overlay={<Dimensions weight={roll.styleColour.style.weight} thickness={roll.styleColour.style.thickness} length={hold.length} />}>
+            <span style={{position: 'relative'}}> ⓘ</span>
+          </OverlayTrigger>
+        </td>
+        <td>
+          {humanize(hold.length)} yard{hold.length === 1 ? "" : "s"}
+          <Mutation
+            mutation={MutationCutHold}
+            refetchQueries={[
+              { query: QueryGetRoll, variables: { id: match.params.id } }
+            ]}
+          >
+            {(cutHold, { loading, error }) => (
+              <span onClick={this.cutHold(cutHold, hold.id)} style={scissorStyle}>✂</span>
+            )}
+          </Mutation>
+          <Mutation
+            mutation={MutationDeleteHold}
+            refetchQueries={[
+              { query: QueryGetRoll, variables: { id: match.params.id } }
+            ]}
+          >
+          {(deleteHold, { loading, error }) => (
+            <span onClick={this.deleteHold(deleteHold, hold.id)} style={deleteStyle}>ⓧ</span>
+          )}
+          </Mutation>
+        </td>
+      </tr>
+      <tr>
+        <td>Reason</td>
+        <td>{getReasonName(hold.reason)}</td>
+      </tr>
+      {hold.notes && (
+        <tr>
+          <td>Notes</td>
+          <td>{hold.notes}</td>
+        </tr>
+      )}
+      {hold.orderId && (
+        <tr>
+          <td>Order Id</td>
+          <td>{hold.orderId}</td>
+        </tr>
+      )}
+    </tbody>
+  </Table>
+))}
+
+          <AddCut
+            rollId={match.params.id}
+            remaining={remaining}
+            refetchQueries={[
+              { query: QueryGetRoll, variables: { id: match.params.id } }
+            ]}
+          />
+          <div style={{height: '3vh'}} />
+
           <h1>Cuts</h1>
           {roll.cuts.map(cut => (
             <Table key={cut.id}>
@@ -138,66 +202,8 @@ class Roll extends Component {
               </tbody>
             </Table>
           ))}
-          {roll.holds && roll.holds.length ? <h1>Holds</h1> : null}
-          {roll.holds.map(hold => (
-            <Table key={hold.id} style={{color: 'red'}}>
-              <tbody>
-                <tr>
-                  <td>Length
-                  <OverlayTrigger rootClose trigger="click" placement="bottom" overlay={<Dimensions weight={roll.styleColour.style.weight} thickness={roll.styleColour.style.thickness} length={hold.length} />}>
-                      <span style={{position: 'relative'}}> ⓘ</span>
-                    </OverlayTrigger>
-                  </td>
-                  <td>
-                    {humanize(hold.length)} yard{hold.length === 1 ? "" : "s"}
-                    <Mutation
-                      mutation={MutationCutHold}
-                      refetchQueries={[
-                        { query: QueryGetRoll, variables: { id: match.params.id } }
-                      ]}
-                    >
-                      {(cutHold, { loading, error }) => (
-                        <span onClick={this.cutHold(cutHold, hold.id)} style={scissorStyle}>✂</span>
-                      )}
-                    </Mutation>
-                    <Mutation
-                      mutation={MutationDeleteHold}
-                      refetchQueries={[
-                        { query: QueryGetRoll, variables: { id: match.params.id } }
-                      ]}
-                    >
-                    {(deleteHold, { loading, error }) => (
-                      <span onClick={this.deleteHold(deleteHold, hold.id)} style={deleteStyle}>ⓧ</span>
-                    )}
-                    </Mutation>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Reason</td>
-                  <td>{getReasonName(hold.reason)}</td>
-                </tr>
-                {hold.notes && (
-                  <tr>
-                    <td>Notes</td>
-                    <td>{hold.notes}</td>
-                  </tr>
-                )}
-                {hold.orderId && (
-                  <tr>
-                    <td>Order Id</td>
-                    <td>{hold.orderId}</td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-          ))}
-          <AddCut
-            rollId={match.params.id}
-            remaining={remaining}
-            refetchQueries={[
-              { query: QueryGetRoll, variables: { id: match.params.id } }
-            ]}
-          />
+          
+
           <div style={{height: '3vh'}} />
           <AddHold
             rollId={match.params.id}
