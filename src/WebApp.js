@@ -15,6 +15,7 @@ import StylesColours from "./Components/StylesColours";
 import StyleColour from "./Components/StyleColour";
 import Roll from "./Components/Roll";
 import Shipments from './Components/Shipments';
+import Standings from './Components/Standings';
 import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -30,6 +31,8 @@ const WebApp = props => {
         <Route path="/stylecolour/:id" component={StyleColour} />
         <Route path="/roll/:id" component={Roll} />
         <Route path="/shipments" component={Shipments} />
+        <Route path="/report" component={Standings} />
+
       </App>
     </Router>
   );

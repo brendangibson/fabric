@@ -35,8 +35,8 @@ const titleStyle = {
 }
 
 const dropdownStyle = {
-    fontSize: "6vh",
-    lineHeight: "6vh"
+    fontSize: "5vh",
+    lineHeight: "5vh"
 }
 
 export default function Header() {
@@ -49,6 +49,7 @@ export default function Header() {
                 <div style={titleStyle}>Warehouse</div>
                 <NavDropdown title="☰" id="basic-nav-dropdown" style={dropdownStyle}>
                     <NavDropdown.Item href="/shipments">Shipments</NavDropdown.Item>
+                    <NavDropdown.Item href="/report">Report</NavDropdown.Item>
                 </NavDropdown>
             </div>
             <div style={wrapperStyle} />
