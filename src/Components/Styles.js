@@ -69,9 +69,7 @@ export default withApollo(compose(
     graphql(
         QueryGetStyles,
         {
-            options: {
-                fetchPolicy: 'cache-first',
-            },
+            fetchPolicy: 'network-only',
             props: ({ data: { getStyles = [] } }) => ({
                 styles: getStyles
             })

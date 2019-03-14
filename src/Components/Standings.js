@@ -65,7 +65,7 @@ const getTotalHolds = (styleColourPage) => {
 }
 
 const Standings = () => (
-  <Query query={QueryGetStyleColourPages}>
+  <Query query={QueryGetStyleColourPages} fetchPolicy='no-cache'>
     {({ loading, error, data }) => {
       if (loading) return <Loading />;
       if (error) return `Error! ${error.message}`;

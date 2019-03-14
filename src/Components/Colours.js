@@ -63,9 +63,7 @@ export default withApollo(compose(
     graphql(
         QueryGetColours,
         {
-            options: {
-                fetchPolicy: 'network-only',
-            },
+            fetchPolicy: 'network-only',
             props: ({ data: { getColours = [] } }) => ({
                 colours: getColours
             })

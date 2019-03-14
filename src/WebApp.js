@@ -40,6 +40,17 @@ const WebApp = props => {
 
 // const WebAppWithAuth = withAuthenticator(WebApp, false);
 
+const defaultOptions = {
+  watchQuery: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'ignore',
+  },
+  query: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+}
+
 const cfg = {
   url: awsconfig.aws_appsync_graphqlEndpoint,
   region: awsconfig.aws_appsync_region,
@@ -49,7 +60,7 @@ const cfg = {
     jwtToken: async () =>
       (await Auth.currentSession()).getAccessToken().getJwtToken()
   },
-  cache: new InMemoryCache()
+  defaultOptions: defaultOptions
 };
 
 const SienAndCoTheme = {
