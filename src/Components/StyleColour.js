@@ -23,9 +23,7 @@ const labelStyle = {
   verticalAlign: "top"
 };
 
-const rollStyle = {
-  display: "block"
-};
+
 
 const lengthStyle = {};
 
@@ -43,11 +41,11 @@ class StyleColour extends Component {
           const styleColour = styleColourPage.styleColour;
           const label = styleColour.style.name + " " + styleColour.colour.name;
           const remaining = styleColourPage.rolls.reduce(
-            (outerAccum, outerValue) => {
-              return (
+            (outerAccum, roll) => {
+              return roll.returned ? 0 :(
                 outerAccum +
-                outerValue.originalLength -
-                outerValue.cuts.reduce(
+                roll.originalLength -
+                roll.cuts.reduce(
                   (accumulator, currentValue) =>
                     accumulator + currentValue.length,
                   0
@@ -72,6 +70,11 @@ class StyleColour extends Component {
                 </div>
               </div>
               {styleColourPage.rolls.map(roll => {
+
+                const rollStyle = {
+                  display: "block",
+                  opacity: roll.returned ? 0.25 : 1
+                };
                 return (
                   <Link to={`/roll/${roll.id}`} key={roll.id} style={rollStyle}>
                     <RollIcon

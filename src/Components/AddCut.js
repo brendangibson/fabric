@@ -101,6 +101,11 @@ class AddCut extends Component {
     );
   };
 
+  selectAll = (e) => {
+    const el = e.target
+    el.select()
+  }
+
   render() {
     const { errors } = this.state;
 
@@ -119,6 +124,7 @@ class AddCut extends Component {
               <Form.Row>
                 <Col>
                   <Form.Control
+                    onClick={this.selectAll}
                     value={this.state.length}
                     type="number"
                     id="length"
@@ -130,6 +136,7 @@ class AddCut extends Component {
                 <Col style={{ lineHeight: "calc(2.25rem + 2px)" }}>yards</Col>
                 <Col>
                   <Form.Control
+                    onClick={this.selectAll}
                     value={this.state.inches}
                     type="number"
                     id="inches"

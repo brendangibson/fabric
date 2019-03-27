@@ -21,6 +21,7 @@ query($id: ID!) {
             cuts {
                 length
             }
+            returned
         }
         shipments {
             id

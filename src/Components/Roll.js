@@ -11,7 +11,9 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import { getReasonName, humanize } from "../DataFunctions/Cuts";
 import MutationDeleteHold from '../GraphQL/MutationDeleteHold';
 import MutationCutHold from '../GraphQL/MutationCutHold';
+import MutationReturnRoll from '../GraphQL/MutationReturnRoll';
 import Dimensions from './Dimensions';
+import Button from "react-bootstrap/Button";
 
 const scissorStyle = {
   display: 'inline-block', 
@@ -47,15 +49,24 @@ class Roll extends Component {
     };
   };
 
+  returnRoll = (mutator, id) => {
+    return () => {
+      mutator({
+        variables: { id }
+      });
+    };
+  };
+
   render () {
     const {match} = this.props
 
   return (
-  <Query query={QueryGetRoll} variables={{ id: match.params.id }}>
+  <Query query={QueryGetRoll} variables={{ id: match.params.id }} fetchPolicy='network-only'>
     {({ loading, error, data }) => {
       if (loading) return <Loading />;
       if (error) return `Error! ${error.message}`;
       const roll = data.roll;
+
       const label =
         roll.styleColour.style.name + " " + roll.styleColour.colour.name;
       const remaining =
@@ -212,6 +223,27 @@ class Roll extends Component {
               { query: QueryGetRoll, variables: { id: match.params.id } }
             ]}
           />
+
+          <div style={{height: '3vh'}} />
+
+          {roll.returned ? null :
+          <Mutation
+            mutation={MutationReturnRoll}
+            refetchQueries={[
+              { query: QueryGetRoll, variables: { id: match.params.id } }
+            ]}
+          >
+          {(returnRoll, { loading, error }) => (
+            <Button
+            disabled={loading}
+            variant="dark"
+            size="lg"
+            onClick={this.returnRoll(returnRoll, match.params.id)}
+          >
+            Return Roll
+          </Button>
+          )}
+          </Mutation>}
         </div>
       );
     }}

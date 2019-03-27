@@ -34,5 +34,6 @@ query($id: ID!) {
       orderId
       notes
     }
+    returned
   }
 }`);

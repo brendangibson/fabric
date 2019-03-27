@@ -6,7 +6,6 @@ import { Authenticator } from "aws-amplify-react";
 import awsconfig from "./aws-exports";
 import { ApolloProvider } from "react-apollo";
 import AWSAppSyncClient from "aws-appsync";
-import { InMemoryCache } from 'apollo-cache-inmemory';
 
 import { Rehydrated } from "aws-appsync-react";
 import "./App.css";
