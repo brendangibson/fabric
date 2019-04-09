@@ -1,14 +1,18 @@
 import React, { Component } from "react";
-import { Query } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import { Link } from "react-router-dom";
-
+import Table from "react-bootstrap/Table";
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import MutationDeleteHold from '../GraphQL/MutationDeleteHold';
+import { getReasonName, humanize } from "../DataFunctions/Cuts";
 import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
 import RollIcon from "./RollIcon";
 import AddRoll from "./AddRoll";
 import Loading from "./Loading";
 import Swatch from "./Swatch";
-
-import { humanize } from "../DataFunctions/Cuts";
+import AddHold from "./AddHold";
+import Dimensions from './Dimensions';
+import moment from 'moment'
 
 const topStyle = {
   padding: "5vw 0 5vw 0",
@@ -23,11 +27,25 @@ const labelStyle = {
   verticalAlign: "top"
 };
 
-
+const deleteStyle = {
+  display: 'inline-block', 
+  marginLeft: 16, 
+  verticalAlign:'middle',
+  cursor: 'pointer'
+}
 
 const lengthStyle = {};
+const holdStyle = {color: 'sienna'}
 
 class StyleColour extends Component {
+  deleteHold = (mutator, id) => {
+    return () => {
+      mutator({
+        variables: { id }
+      });
+    };
+  };
+
   render() {
     const { match } = this.props;
 
@@ -40,18 +58,19 @@ class StyleColour extends Component {
           if (!styleColourPage) return null;
           const styleColour = styleColourPage.styleColour;
           const label = styleColour.style.name + " " + styleColour.colour.name;
-          const remaining = styleColourPage.rolls.reduce(
-            (outerAccum, roll) => {
-              return roll.returned ? 0 :(
-                outerAccum +
-                roll.originalLength -
-                roll.cuts.reduce(
-                  (accumulator, currentValue) =>
-                    accumulator + currentValue.length,
-                  0
-                )
-              );
-            },
+          const remaining = styleColourPage.rolls.reduce((outerAccum, roll) => {
+            return roll.returned
+              ? 0
+              : outerAccum +
+                  roll.originalLength -
+                  roll.cuts.reduce(
+                    (accumulator, currentValue) =>
+                      accumulator + currentValue.length,
+                    0
+                  );
+          }, 0);
+          const holdLength = styleColourPage.holds.reduce((accumulator, hold) => 
+              accumulator + hold.length,
             0
           );
           return (
@@ -64,13 +83,16 @@ class StyleColour extends Component {
                     {humanize(remaining)} yard{remaining === 1 ? "" : "s"}{" "}
                     remaining
                   </div>
+                  <div style={holdStyle}>
+                    {humanize(holdLength)} yard{holdLength === 1 ? "" : "s"}{" "}
+                    on hold
+                  </div>
                   <i style={{ fontSize: "smaller" }}>
                     {styleColour.glenRavenName}
                   </i>
                 </div>
               </div>
               {styleColourPage.rolls.map(roll => {
-
                 const rollStyle = {
                   display: "block",
                   opacity: roll.returned ? 0.25 : 1
@@ -94,6 +116,85 @@ class StyleColour extends Component {
                 );
               })}
 
+              {styleColourPage.holds && styleColourPage.holds.length ? <h1>Holds</h1> : null}
+              {styleColourPage.holds.map(hold => (
+                <Table key={hold.id}>
+                  <tbody>
+                    <tr>
+                      <td>
+                        Length
+                        <OverlayTrigger
+                          rootClose
+                          trigger="click"
+                          placement="bottom"
+                          overlay={
+                            <Dimensions
+                              weight={styleColourPage.styleColour.style.weight}
+                              thickness={styleColourPage.styleColour.style.thickness}
+                              length={hold.length}
+                            />
+                          }
+                        >
+                          <span style={{ position: "relative" }}> ⓘ</span>
+                        </OverlayTrigger>
+                      </td>
+                      <td>
+                        {humanize(hold.length)} yard
+                        {hold.length === 1 ? "" : "s"}
+                        <Mutation
+                          mutation={MutationDeleteHold}
+                          refetchQueries={[
+                            {
+                              query: QueryGetStyleColour,
+                              variables: { id: match.params.id }
+                            }
+                          ]}
+                        >
+                          {(deleteHold, { loading, error }) => (
+                            <span
+                              onClick={this.deleteHold(deleteHold, hold.id)}
+                              style={deleteStyle}
+                            >
+                              ⓧ
+                            </span>
+                          )}
+                        </Mutation>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Reason</td>
+                      <td>{getReasonName(hold.reason)}</td>
+                    </tr>
+                    {hold.notes && (
+                      <tr>
+                        <td>Notes</td>
+                        <td>{hold.notes}</td>
+                      </tr>
+                    )}
+                    {hold.orderId && (
+                      <tr>
+                        <td>Order Id</td>
+                        <td>{hold.orderId}</td>
+                      </tr>
+                    )}
+                    {hold.timestamp && (
+                      <tr>
+                        <td>Date requested</td>
+                        <td>{moment(hold.timestamp).format('MMMM Do, YYYY')}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+              ))}
+
+              <div style={{ height: "3vh" }} />
+              <AddHold
+                colourStyleId={match.params.id}
+                refetchQueries={[
+                  { query: QueryGetStyleColour, variables: { id: match.params.id } }
+                ]}
+              />
+              <div style={{ height: "3vh" }} />
               <AddRoll
                 shipments={styleColourPage.shipments}
                 styleColourId={match.params.id}

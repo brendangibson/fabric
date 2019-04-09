@@ -10,6 +10,8 @@ query($id: ID!) {
             }
             style {
                 name
+                weight
+                thickness
             }
             swatchUrl
             glenRavenName
@@ -28,6 +30,14 @@ query($id: ID!) {
             name
             dateSent
             dateReceived
+        }
+        holds {
+            id
+            length
+            reason
+            orderId
+            notes
+            timestamp
         }
       }
 }`);

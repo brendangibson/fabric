@@ -17,9 +17,9 @@ query {
             cuts {
               length
             }
-            holds {
-              length
-            }
+          }
+          holds {
+            length
           }
       }
 }`);

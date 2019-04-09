@@ -11,6 +11,7 @@ import Loading from "./Loading";
 import MutationCreateHold from "../GraphQL/MutationCreateHold";
 import { reasons } from "../DataFunctions/Cuts";
 
+
 class AddHold extends Component {
   state = {
     length: 0,
@@ -31,21 +32,21 @@ class AddHold extends Component {
   addHold = mutator => {
     return () => {
       const { length, inches, reason, notes, orderId } = this.state;
-      const { rollId } = this.props;
+      const { colourStyleId } = this.props;
 
       const totalLength = parseInt(length, 10) + parseInt(inches, 10) / 36;
       mutator({
-        variables: { rollId, length: totalLength, reason, notes, orderId },
+        variables: { colourStyleId, length: totalLength, reason, notes, orderId },
         optimisticResponse: {
           __typename: "Mutation",
           createHold: {
-            __typename: "Roll",
+            __typename: "ColourStyle",
             id: "12345",
-            rollId: rollId,
+            colourStyleId,
             length: totalLength,
-            reason: reason,
-            notes: notes,
-            orderId: orderId
+            reason,
+            notes,
+            orderId
           }
         }
       });
@@ -68,7 +69,6 @@ class AddHold extends Component {
 
   setErrors = (index, value) => {
     let { errors } = this.state;
-    const { remaining } = this.props;
     switch (index) {
       case "length":
         if (isNaN(value)) {
@@ -77,11 +77,7 @@ class AddHold extends Component {
           if (value <= 0) {
             errors[index] = "Too short";
           } else {
-            if (value > 100 || value > remaining) {
-              errors[index] = "Too long";
-            } else {
-              errors[index] = null;
-            }
+            errors[index] = null;
           }
         }
         break;

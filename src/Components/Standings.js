@@ -49,20 +49,13 @@ const getTotalCuts = (styleColourPage) => {
 }
 
 const getTotalHolds = (styleColourPage) => {
-  return styleColourPage.rolls.reduce(
-    (outerAccum, outerValue) => {
-      return (
-        outerAccum +
-        outerValue.holds.reduce(
-          (accumulator, currentValue) =>
-            accumulator + currentValue.length,
-          0
-        )
-      );
-    },
+  return styleColourPage.holds && styleColourPage.holds.reduce(
+    (accumulator, hold) =>
+      accumulator + hold.length,
     0
   )
 }
+
 
 const Standings = () => (
   <Query query={QueryGetStyleColourPages} fetchPolicy='no-cache'>

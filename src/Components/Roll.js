@@ -3,51 +3,17 @@ import { Query, Mutation } from "react-apollo";
 
 import RollIcon from "./RollIcon";
 import AddCut from "./AddCut";
-import AddHold from "./AddHold";
 import Loading from "./Loading";
 import QueryGetRoll from "../GraphQL/QueryGetRoll";
 import Table from "react-bootstrap/Table";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import { getReasonName, humanize } from "../DataFunctions/Cuts";
-import MutationDeleteHold from '../GraphQL/MutationDeleteHold';
-import MutationCutHold from '../GraphQL/MutationCutHold';
 import MutationReturnRoll from '../GraphQL/MutationReturnRoll';
 import Dimensions from './Dimensions';
 import Button from "react-bootstrap/Button";
 
-const scissorStyle = {
-  display: 'inline-block', 
-  marginLeft: 16, 
-  transform: 'rotate(90deg)', 
-  verticalAlign:'middle',
-  cursor: 'pointer'
-}
-
-const deleteStyle = {
-  display: 'inline-block', 
-  marginLeft: 16, 
-  verticalAlign:'middle',
-  cursor: 'pointer'
-}
 
 class Roll extends Component {
-
-
-  cutHold = (mutator, id) => {
-    return () => {
-      mutator({
-        variables: { id }
-      });
-    };
-  };
-  
-  deleteHold = (mutator, id) => {
-    return () => {
-      mutator({
-        variables: { id }
-      });
-    };
-  };
 
   returnRoll = (mutator, id) => {
     return () => {
@@ -117,59 +83,7 @@ class Roll extends Component {
             </tbody>
           </Table>
 
-{roll.holds && roll.holds.length ? <h1>Holds</h1> : null}
-{roll.holds.map(hold => (
-  <Table key={hold.id}>
-    <tbody>
-      <tr>
-        <td>Length
-        <OverlayTrigger rootClose trigger="click" placement="bottom" overlay={<Dimensions weight={roll.styleColour.style.weight} thickness={roll.styleColour.style.thickness} length={hold.length} />}>
-            <span style={{position: 'relative'}}> ⓘ</span>
-          </OverlayTrigger>
-        </td>
-        <td>
-          {humanize(hold.length)} yard{hold.length === 1 ? "" : "s"}
-          <Mutation
-            mutation={MutationCutHold}
-            refetchQueries={[
-              { query: QueryGetRoll, variables: { id: match.params.id } }
-            ]}
-          >
-            {(cutHold, { loading, error }) => (
-              <span onClick={this.cutHold(cutHold, hold.id)} style={scissorStyle}>✂</span>
-            )}
-          </Mutation>
-          <Mutation
-            mutation={MutationDeleteHold}
-            refetchQueries={[
-              { query: QueryGetRoll, variables: { id: match.params.id } }
-            ]}
-          >
-          {(deleteHold, { loading, error }) => (
-            <span onClick={this.deleteHold(deleteHold, hold.id)} style={deleteStyle}>ⓧ</span>
-          )}
-          </Mutation>
-        </td>
-      </tr>
-      <tr>
-        <td>Reason</td>
-        <td>{getReasonName(hold.reason)}</td>
-      </tr>
-      {hold.notes && (
-        <tr>
-          <td>Notes</td>
-          <td>{hold.notes}</td>
-        </tr>
-      )}
-      {hold.orderId && (
-        <tr>
-          <td>Order Id</td>
-          <td>{hold.orderId}</td>
-        </tr>
-      )}
-    </tbody>
-  </Table>
-))}
+
 
           <AddCut
             rollId={match.params.id}
@@ -215,14 +129,7 @@ class Roll extends Component {
           ))}
           
 
-          <div style={{height: '3vh'}} />
-          <AddHold
-            rollId={match.params.id}
-            remaining={remaining}
-            refetchQueries={[
-              { query: QueryGetRoll, variables: { id: match.params.id } }
-            ]}
-          />
+          
 
           <div style={{height: '3vh'}} />
 
