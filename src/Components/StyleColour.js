@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Query, Mutation } from "react-apollo";
 import { Link } from "react-router-dom";
 import Table from "react-bootstrap/Table";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
-import MutationDeleteHold from '../GraphQL/MutationDeleteHold';
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import MutationDeleteHold from "../GraphQL/MutationDeleteHold";
 import { getReasonName, humanize } from "../DataFunctions/Cuts";
 import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
 import RollIcon from "./RollIcon";
@@ -11,8 +11,8 @@ import AddRoll from "./AddRoll";
 import Loading from "./Loading";
 import Swatch from "./Swatch";
 import AddHold from "./AddHold";
-import Dimensions from './Dimensions';
-import moment from 'moment'
+import Dimensions from "./Dimensions";
+import moment from "moment";
 
 const topStyle = {
   padding: "5vw 0 5vw 0",
@@ -28,14 +28,21 @@ const labelStyle = {
 };
 
 const deleteStyle = {
-  display: 'inline-block', 
-  marginLeft: 16, 
-  verticalAlign:'middle',
-  cursor: 'pointer'
-}
+  display: "inline-block",
+  marginLeft: 16,
+  verticalAlign: "middle",
+  cursor: "pointer"
+};
 
 const lengthStyle = {};
-const holdStyle = {color: 'sienna'}
+const holdStyle = { color: "sienna" };
+
+const calculateRemaining = roll =>
+  roll.originalLength -
+  roll.cuts.reduce(
+    (accumulator, currentValue) => accumulator + currentValue.length,
+    0
+  );
 
 class StyleColour extends Component {
   deleteHold = (mutator, id) => {
@@ -50,7 +57,11 @@ class StyleColour extends Component {
     const { match } = this.props;
 
     return (
-      <Query query={QueryGetStyleColour} variables={{ id: match.params.id }}>
+      <Query
+        query={QueryGetStyleColour}
+        variables={{ id: match.params.id }}
+        fetchPolicy="network-only"
+      >
         {({ loading, error, data }) => {
           if (loading) return <Loading />;
           if (error) return `Error! ${error.message}`;
@@ -60,19 +71,21 @@ class StyleColour extends Component {
           const label = styleColour.style.name + " " + styleColour.colour.name;
           const remaining = styleColourPage.rolls.reduce((outerAccum, roll) => {
             return roll.returned
-              ? 0
-              : outerAccum +
-                  roll.originalLength -
-                  roll.cuts.reduce(
-                    (accumulator, currentValue) =>
-                      accumulator + currentValue.length,
-                    0
-                  );
+              ? outerAccum
+              : outerAccum + calculateRemaining(roll);
           }, 0);
-          const holdLength = styleColourPage.holds.reduce((accumulator, hold) => 
-              accumulator + hold.length,
+          const holdLength = styleColourPage.holds.reduce(
+            (accumulator, hold) => accumulator + hold.length,
             0
           );
+
+          const bigRolls = styleColourPage.rolls.filter(
+            roll => !roll.returned && calculateRemaining(roll) > 0.5
+          );
+          const smallRolls = styleColourPage.rolls.filter(
+            roll => roll.returned || calculateRemaining(roll) <= 0.5
+          );
+
           return (
             <div>
               <div style={topStyle}>
@@ -84,15 +97,15 @@ class StyleColour extends Component {
                     remaining
                   </div>
                   <div style={holdStyle}>
-                    {humanize(holdLength)} yard{holdLength === 1 ? "" : "s"}{" "}
-                    on hold
+                    {humanize(holdLength)} yard{holdLength === 1 ? "" : "s"} on
+                    hold
                   </div>
                   <i style={{ fontSize: "smaller" }}>
                     {styleColour.glenRavenName}
                   </i>
                 </div>
               </div>
-              {styleColourPage.rolls.map(roll => {
+              {bigRolls.map(roll => {
                 const rollStyle = {
                   display: "block",
                   opacity: roll.returned ? 0.25 : 1
@@ -103,20 +116,15 @@ class StyleColour extends Component {
                       originalLength={roll.originalLength}
                       swatchUrl={styleColour.swatchUrl}
                       glenRavenId={roll.glenRavenId}
-                      remaining={
-                        roll.originalLength -
-                        roll.cuts.reduce(
-                          (accumulator, currentValue) =>
-                            accumulator + currentValue.length,
-                          0
-                        )
-                      }
+                      remaining={calculateRemaining(roll)}
                     />
                   </Link>
                 );
               })}
 
-              {styleColourPage.holds && styleColourPage.holds.length ? <h1>Holds</h1> : null}
+              {styleColourPage.holds && styleColourPage.holds.length ? (
+                <h1>Holds</h1>
+              ) : null}
               {styleColourPage.holds.map(hold => (
                 <Table key={hold.id}>
                   <tbody>
@@ -130,7 +138,9 @@ class StyleColour extends Component {
                           overlay={
                             <Dimensions
                               weight={styleColourPage.styleColour.style.weight}
-                              thickness={styleColourPage.styleColour.style.thickness}
+                              thickness={
+                                styleColourPage.styleColour.style.thickness
+                              }
                               length={hold.length}
                             />
                           }
@@ -180,7 +190,9 @@ class StyleColour extends Component {
                     {hold.timestamp && (
                       <tr>
                         <td>Date requested</td>
-                        <td>{moment(hold.timestamp).format('MMMM Do, YYYY')}</td>
+                        <td>
+                          {moment(hold.timestamp).format("MMMM Do, YYYY")}
+                        </td>
                       </tr>
                     )}
                   </tbody>
@@ -191,7 +203,10 @@ class StyleColour extends Component {
               <AddHold
                 colourStyleId={match.params.id}
                 refetchQueries={[
-                  { query: QueryGetStyleColour, variables: { id: match.params.id } }
+                  {
+                    query: QueryGetStyleColour,
+                    variables: { id: match.params.id }
+                  }
                 ]}
               />
               <div style={{ height: "3vh" }} />
@@ -205,6 +220,26 @@ class StyleColour extends Component {
                   }
                 ]}
               />
+              <div style={{ height: "3vh" }} />
+
+              {smallRolls.length ? <h1>Old Rolls</h1> : null}
+
+              {smallRolls.map(roll => {
+                const rollStyle = {
+                  display: "block",
+                  opacity: roll.returned ? 0.25 : 1
+                };
+                return (
+                  <Link to={`/roll/${roll.id}`} key={roll.id} style={rollStyle}>
+                    <RollIcon
+                      originalLength={roll.originalLength}
+                      swatchUrl={styleColour.swatchUrl}
+                      glenRavenId={roll.glenRavenId}
+                      remaining={calculateRemaining(roll)}
+                    />
+                  </Link>
+                );
+              })}
             </div>
           );
         }}
