@@ -16,6 +16,7 @@ query {
           rolls {
             cuts {
               length
+              reason
             }
           }
           holds {

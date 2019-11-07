@@ -15,6 +15,7 @@ const renderStyleColour = styleColourPage => {
 
   const name = styleColourPage.styleColour.style.name + ' ' + styleColourPage.styleColour.colour.name
   const cutLength = getTotalCuts(styleColourPage)
+  const nonSampleCutLength = getNonSampleCuts(styleColourPage)
   const holdLength = getTotalHolds(styleColourPage)
   return (
         <tr key={styleColourPage.styleColour.id}>
@@ -25,11 +26,28 @@ const renderStyleColour = styleColourPage => {
           </td>
           <td>{name}</td>
           <td>{cutLength && (cutLength.toFixed(1) + 'yds')}</td>
+          <td>{nonSampleCutLength && (nonSampleCutLength.toFixed(1) + 'yds')}</td>
           <td>{holdLength && (holdLength.toFixed(1) + 'yds')}</td>
         </tr>
       
   );
 };
+
+const getNonSampleCuts = (styleColourPage) => {
+  return styleColourPage.rolls.reduce(
+    (outerAccum, outerValue) => {
+      return (
+        outerAccum +
+        outerValue.cuts.reduce(
+          (accumulator, currentValue) =>{
+            return accumulator + (currentValue.reason !== 'samples' ? currentValue.length: 0)},
+          0
+        )
+      );
+    },
+    0
+  )
+}
 
 const getTotalCuts = (styleColourPage) => {
   return styleColourPage.rolls.reduce(
@@ -80,6 +98,7 @@ const Standings = () => (
             <tr>
               <th colSpan={2}>Style Colour</th>
               <th>Cuts</th>
+              <th>Non-sample Cuts</th>
               <th>Holds</th>
             </tr>
           </thead>
