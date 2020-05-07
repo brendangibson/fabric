@@ -22,6 +22,8 @@ query($id: ID!) {
             originalLength
             cuts {
                 length
+                reason
+                timestamp
             }
             returned
         }

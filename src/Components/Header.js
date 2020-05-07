@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import NavDropdown from 'react-bootstrap/NavDropdown'
+import { Auth } from "aws-amplify";
 
 const HEIGHT = "8vh"
 
@@ -40,6 +41,13 @@ const dropdownStyle = {
 }
 
 export default function Header() {
+
+    const onLogout = () => {
+        Auth.signOut()
+        .then(data => console.log('data: ', data))
+        .catch(err => console.log('err:', err));
+    }
+
     return (
         <div>
             <div style={headerStyle}>
@@ -50,6 +58,7 @@ export default function Header() {
                 <NavDropdown title="☰" id="basic-nav-dropdown" style={dropdownStyle}>
                     <NavDropdown.Item href="/shipments">Shipments</NavDropdown.Item>
                     <NavDropdown.Item href="/report">Report</NavDropdown.Item>
+                    <NavDropdown.Item onClick={onLogout}>Log out</NavDropdown.Item>
                 </NavDropdown>
             </div>
             <div style={wrapperStyle} />

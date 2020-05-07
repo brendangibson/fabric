@@ -8,6 +8,7 @@ export default class Dimensions extends React.Component {
   render () {
     const {weight, length, thickness} = this.props
     const diameter = 2 * Math.sqrt(((length * 36 * thickness) / Math.PI) + (coreRadius*coreRadius))
+    console.log('diameter: ', diameter, 'length: ', length, ' thickness: ', thickness, ' coreRadius: ', coreRadius)
     return (<Popover id="popover-basic" title="Dimensions"  {...this.props}>
       <div style={wrapperStyle}>
         <DimensionIcon length={54} diameter={diameter} weight={length * weight} />
