@@ -33,7 +33,7 @@ class AddCut extends Component {
       const { length, inches, reason, notes, orderId } = this.state;
       const { rollId } = this.props;
 
-      const totalLength = parseInt(length, 10) + parseInt(inches, 10) / 36;
+      const totalLength = parseFloat(length) + parseInt(inches, 10) / 36;
       mutator({
         variables: { rollId, length: totalLength, reason, notes, orderId },
         optimisticResponse: {
