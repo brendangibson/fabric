@@ -1,7 +1,10 @@
 {
-  "main.css": "static/css/main.c09acea4.css",
-  "main.css.map": "static/css/main.c09acea4.css.map",
-  "main.js": "static/js/main.d0a4b9fb.js",
-  "main.js.map": "static/js/main.d0a4b9fb.js.map",
-  "static/media/tuple.mjs": "static/media/tuple.e6b50867.mjs"
+  "main.css": "static/css/main.fed57a7c.css",
+  "main.css.map": "static/css/main.fed57a7c.css.map",
+  "main.js": "static/js/main.b1666235.js",
+  "main.js.map": "static/js/main.b1666235.js.map",
+  "static\\media\\index.mjs": "static/media/index.53a6be58.mjs",
+  "static\\media\\parser.mjs": "static/media/parser.c657c41e.mjs",
+  "static\\media\\printer.mjs": "static/media/printer.c702db27.mjs",
+  "static\\media\\tuple.mjs": "static/media/tuple.e6b50867.mjs"
 }
