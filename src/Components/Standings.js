@@ -98,7 +98,7 @@ const Standings = () => (
             <tr>
               <th colSpan={2}>Style Colour</th>
               <th>Cuts</th>
-              <th>Non-sample Cuts</th>
+              <th>Non sample Cuts</th>
               <th>Holds</th>
             </tr>
           </thead>
