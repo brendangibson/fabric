@@ -1,0 +1,20 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-fabric-dev-211000-authRole",
+            "UnauthRoleArn": "arn:aws:iam::621161211424:role/amplify-fabric-dev-211000-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::621161211424:role/amplify-fabric-dev-211000-authRole",
+            "Region": "us-east-2",
+            "DeploymentBucketName": "amplify-fabric-dev-211000-deployment",
+            "UnauthRoleName": "amplify-fabric-dev-211000-unauthRole",
+            "StackName": "amplify-fabric-dev-211000",
+            "StackId": "arn:aws:cloudformation:us-east-2:621161211424:stack/amplify-fabric-dev-211000/b46943c0-a547-11ea-a9cf-066dd16eed5a",
+            "AmplifyAppId": "d1e2o0q2jg0x5a"
+        },
+        "categories": {
+            "auth": {
+                "fabric5c3a2ff2": {}
+            }
+        }
+    }
+}

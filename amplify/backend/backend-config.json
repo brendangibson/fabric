@@ -1,0 +1,10 @@
+{
+	"auth": {
+		"fabric5c3a2ff2": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [],
+			"customAuth": false
+		}
+	}
+}
