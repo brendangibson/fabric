@@ -46,6 +46,7 @@ export default function Header() {
         Auth.signOut()
         .then(data => console.log('data: ', data))
         .catch(err => console.log('err:', err));
+        localStorage.clear();
     }
 
     return (
