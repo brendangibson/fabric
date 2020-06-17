@@ -18,26 +18,26 @@ const topStyle = {
   padding: "5vw 0 5vw 0",
   display: "grid",
   gridTemplateColumns: "50% auto",
-  gridGap: "5vw"
+  gridGap: "5vw",
 };
 
 const labelStyle = {
   fontSize: "6vw",
   display: "inline-block",
-  verticalAlign: "top"
+  verticalAlign: "top",
 };
 
 const deleteStyle = {
   display: "inline-block",
   marginLeft: 16,
   verticalAlign: "middle",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 const lengthStyle = {};
 const holdStyle = { color: "sienna" };
 
-const calculateRemaining = roll =>
+const calculateRemaining = (roll) =>
   roll.originalLength -
   roll.cuts.reduce(
     (accumulator, currentValue) => accumulator + currentValue.length,
@@ -48,7 +48,7 @@ class StyleColour extends Component {
   deleteHold = (mutator, id) => {
     return () => {
       mutator({
-        variables: { id }
+        variables: { id },
       });
     };
   };
@@ -80,10 +80,10 @@ class StyleColour extends Component {
           );
 
           const bigRolls = styleColourPage.rolls.filter(
-            roll => !roll.returned && calculateRemaining(roll) > 0.5
+            (roll) => !roll.returned && calculateRemaining(roll) > 0.5
           );
           const smallRolls = styleColourPage.rolls.filter(
-            roll => roll.returned || calculateRemaining(roll) <= 0.5
+            (roll) => roll.returned || calculateRemaining(roll) <= 0.5
           );
 
           return (
@@ -105,10 +105,10 @@ class StyleColour extends Component {
                   </i>
                 </div>
               </div>
-              {bigRolls.map(roll => {
+              {bigRolls.map((roll) => {
                 const rollStyle = {
                   display: "block",
-                  opacity: roll.returned ? 0.25 : 1
+                  opacity: roll.returned ? 0.25 : 1,
                 };
                 return (
                   <Link to={`/roll/${roll.id}`} key={roll.id} style={rollStyle}>
@@ -125,7 +125,7 @@ class StyleColour extends Component {
               {styleColourPage.holds && styleColourPage.holds.length ? (
                 <h1>Holds</h1>
               ) : null}
-              {styleColourPage.holds.map(hold => (
+              {styleColourPage.holds.map((hold) => (
                 <Table key={hold.id}>
                   <tbody>
                     <tr>
@@ -156,8 +156,8 @@ class StyleColour extends Component {
                           refetchQueries={[
                             {
                               query: QueryGetStyleColour,
-                              variables: { id: match.params.id }
-                            }
+                              variables: { id: match.params.id },
+                            },
                           ]}
                         >
                           {(deleteHold, { loading, error }) => (
@@ -205,8 +205,8 @@ class StyleColour extends Component {
                 refetchQueries={[
                   {
                     query: QueryGetStyleColour,
-                    variables: { id: match.params.id }
-                  }
+                    variables: { id: match.params.id },
+                  },
                 ]}
               />
               <div style={{ height: "3vh" }} />
@@ -216,18 +216,18 @@ class StyleColour extends Component {
                 refetchQueries={[
                   {
                     query: QueryGetStyleColour,
-                    variables: { id: match.params.id }
-                  }
+                    variables: { id: match.params.id },
+                  },
                 ]}
               />
               <div style={{ height: "3vh" }} />
 
               {smallRolls.length ? <h1>Old Rolls</h1> : null}
 
-              {smallRolls.map(roll => {
+              {smallRolls.map((roll) => {
                 const rollStyle = {
                   display: "block",
-                  opacity: roll.returned ? 0.25 : 1
+                  opacity: roll.returned ? 0.25 : 1,
                 };
                 return (
                   <Link to={`/roll/${roll.id}`} key={roll.id} style={rollStyle}>

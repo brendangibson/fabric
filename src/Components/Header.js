@@ -53,7 +53,7 @@ export default function Header() {
 
   return (
     <ApolloConsumer>
-      {(apolloClient) => 
+      {(apolloClient) => (
         <div>
           <div style={headerStyle}>
             <Link to="/">
@@ -74,7 +74,7 @@ export default function Header() {
           </div>
           <div style={wrapperStyle} />
         </div>
-      }
+      )}
     </ApolloConsumer>
   );
 }

@@ -11,11 +11,11 @@ class AddShipment extends Component {
     name: new Date(),
     dateSent: new Date(),
     dateReceived: new Date(),
-    glenRavenId: '',
-    errors: {}
+    glenRavenId: "",
+    errors: {},
   };
 
-  onChange = index => {
+  onChange = (index) => {
     return ({ target: { value } }) => {
       this.setState({ [index]: value });
       this.setErrors(index, value);
@@ -26,7 +26,7 @@ class AddShipment extends Component {
     let { errors } = this.state;
     switch (index) {
       case "name":
-        if (value === '') {
+        if (value === "") {
           errors[index] = "Enter a memorable name";
         } else {
           errors[index] = null;
@@ -37,7 +37,7 @@ class AddShipment extends Component {
     this.setState({ errors });
   };
 
-  addShipment = mutator => {
+  addShipment = (mutator) => {
     return () => {
       const { name, dateSent, dateReceived, glenRavenId } = this.state;
       mutator({
@@ -45,7 +45,7 @@ class AddShipment extends Component {
           name: name,
           dateSent: dateSent,
           dateReceived: dateReceived,
-          glenRavenId: glenRavenId
+          glenRavenId: glenRavenId,
         },
         optimisticResponse: {
           __typename: "Mutation",
@@ -55,21 +55,21 @@ class AddShipment extends Component {
             name: name,
             dateSent: dateSent,
             dateReceived: dateReceived,
-            glenRavenId: glenRavenId
-          }
-        }
+            glenRavenId: glenRavenId,
+          },
+        },
       });
       this.setState({
         name: new Date(),
         dateSent: new Date(),
         dateReceived: new Date(),
-        glenRavenId: glenRavenId
+        glenRavenId: glenRavenId,
       });
     };
   };
 
   hasErrors = () => {
-    return Object.keys(this.state.errors).some(error => {
+    return Object.keys(this.state.errors).some((error) => {
       return this.state.errors[error] !== null;
     });
   };
@@ -79,7 +79,10 @@ class AddShipment extends Component {
     const { errors } = this.state;
 
     return (
-      <Mutation mutation={MutationCreateShipment} refetchQueries={refetchQueries}>
+      <Mutation
+        mutation={MutationCreateShipment}
+        refetchQueries={refetchQueries}
+      >
         {(addShipment, { loading, error }) => {
           return (
             <div>

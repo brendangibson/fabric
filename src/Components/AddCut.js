@@ -18,17 +18,17 @@ class AddCut extends Component {
     reason: reasons[0][0],
     notes: null,
     orderId: null,
-    errors: {}
+    errors: {},
   };
 
-  onChange = index => {
+  onChange = (index) => {
     return ({ target: { value } }) => {
       this.setState({ [index]: value });
       this.setErrors(index, value);
     };
   };
 
-  addCut = mutator => {
+  addCut = (mutator) => {
     return () => {
       const { length, inches, reason, notes, orderId } = this.state;
       const { rollId } = this.props;
@@ -45,9 +45,9 @@ class AddCut extends Component {
             length: totalLength,
             reason: reason,
             notes: notes,
-            orderId: orderId
-          }
-        }
+            orderId: orderId,
+          },
+        },
       });
       this.setState({
         length: 0,
@@ -55,13 +55,13 @@ class AddCut extends Component {
         reason: reasons[0][0],
         notes: null,
         orderId: null,
-        errors: {}
+        errors: {},
       });
     };
   };
 
   getCurrentReasonName = () => {
-    return reasons.find(reason => {
+    return reasons.find((reason) => {
       return this.state.reason === reason[0];
     })[1];
   };
@@ -95,13 +95,13 @@ class AddCut extends Component {
 
     return (
       !(length + inches) ||
-      Object.keys(errors).some(error => {
+      Object.keys(errors).some((error) => {
         return errors[error] !== null;
       })
     );
   };
 
-  selectAll = e => {
+  selectAll = (e) => {
     const el = e.target;
     el.select();
   };
@@ -157,7 +157,7 @@ class AddCut extends Component {
                 id="dropdown-basic-button"
                 title={this.getCurrentReasonName()}
               >
-                {reasons.map(reason => (
+                {reasons.map((reason) => (
                   <Dropdown.Item
                     as="button"
                     onClick={this.onChange("reason")}

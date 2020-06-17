@@ -3,16 +3,16 @@ import React from "react";
 import { humanize } from "../DataFunctions/Cuts";
 const coreHeight = 3;
 
-const getHeight = length => {
+const getHeight = (length) => {
   return 20 * (length / 30) + coreHeight;
 };
 
 const wrapperStyle = {
-  padding: "5vw 10vw"
+  padding: "5vw 10vw",
 };
 
 const dataStyle = {
-  display: "inline-block"
+  display: "inline-block",
 };
 
 const labelStyle = {
@@ -25,10 +25,16 @@ const labelStyle = {
   transform: "translate(-50%, -50%)",
   top: "50%",
   left: "50%",
-  zIndex: 1
+  zIndex: 1,
 };
 
-const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId, weight }) => {
+const RollIcon = ({
+  originalLength,
+  swatchUrl,
+  remaining,
+  glenRavenId,
+  weight,
+}) => {
   const height = getHeight(remaining) + "vw";
   const endWidth = getHeight(remaining) / 2 + "vw";
 
@@ -46,7 +52,7 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId, weight })
           backgroundSize: "cover",
           width: "calc(70% + " + getHeight(remaining) / 2 + "vw)",
           height: height,
-          position: "relative"
+          position: "relative",
         }}
       >
         <div
@@ -63,7 +69,7 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId, weight })
             position: "absolute",
             height: height,
             left: 0,
-            zIndex: 1
+            zIndex: 1,
           }}
         >
           <div
@@ -75,7 +81,7 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId, weight })
               left: "50%",
               borderRadius: "50%",
               height: coreHeight + "vw",
-              width: coreHeight / 2 + "vw"
+              width: coreHeight / 2 + "vw",
             }}
           />
         </div>
@@ -88,7 +94,7 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId, weight })
             bottom: "-1px",
             position: "absolute",
             width: endWidth,
-            padding: "1px 1px 1px 0"
+            padding: "1px 1px 1px 0",
           }}
         >
           <div
@@ -99,7 +105,7 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId, weight })
               width: endWidth,
               position: "absolute",
               height: height,
-              boxShadow: "0 0 0 20vw white"
+              boxShadow: "0 0 0 20vw white",
             }}
           />
         </div>
@@ -109,7 +115,7 @@ const RollIcon = ({ originalLength, swatchUrl, remaining, glenRavenId, weight })
             bottom: 0,
             height: 0,
             width: "90%",
-            boxShadow: "rgba(0, 0, 0, 1) 0px 0px 20px 5px"
+            boxShadow: "rgba(0, 0, 0, 1) 0px 0px 20px 5px",
           }}
         />
       </div>

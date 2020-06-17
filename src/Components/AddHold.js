@@ -11,7 +11,6 @@ import Loading from "./Loading";
 import MutationCreateHold from "../GraphQL/MutationCreateHold";
 import { reasons } from "../DataFunctions/Cuts";
 
-
 class AddHold extends Component {
   state = {
     length: 0,
@@ -19,24 +18,30 @@ class AddHold extends Component {
     reason: reasons[0][0],
     notes: null,
     orderId: null,
-    errors: {}
+    errors: {},
   };
 
-  onChange = index => {
+  onChange = (index) => {
     return ({ target: { value } }) => {
       this.setState({ [index]: value });
       this.setErrors(index, value);
     };
   };
 
-  addHold = mutator => {
+  addHold = (mutator) => {
     return () => {
       const { length, inches, reason, notes, orderId } = this.state;
       const { colourStyleId } = this.props;
 
       const totalLength = parseInt(length, 10) + parseInt(inches, 10) / 36;
       mutator({
-        variables: { colourStyleId, length: totalLength, reason, notes, orderId },
+        variables: {
+          colourStyleId,
+          length: totalLength,
+          reason,
+          notes,
+          orderId,
+        },
         optimisticResponse: {
           __typename: "Mutation",
           createHold: {
@@ -46,9 +51,9 @@ class AddHold extends Component {
             length: totalLength,
             reason,
             notes,
-            orderId
-          }
-        }
+            orderId,
+          },
+        },
       });
       this.setState({
         length: 0,
@@ -56,13 +61,13 @@ class AddHold extends Component {
         reason: reasons[0][0],
         notes: null,
         orderId: null,
-        errors: {}
+        errors: {},
       });
     };
   };
 
   getCurrentReasonName = () => {
-    return reasons.find(reason => {
+    return reasons.find((reason) => {
       return this.state.reason === reason[0];
     })[1];
   };
@@ -91,16 +96,16 @@ class AddHold extends Component {
 
     return (
       !(length + inches) ||
-      Object.keys(errors).some(error => {
+      Object.keys(errors).some((error) => {
         return errors[error] !== null;
       })
     );
-  }
+  };
 
   selectAll = (e) => {
-    const el = e.target
-    el.select()
-  }
+    const el = e.target;
+    el.select();
+  };
 
   render() {
     const { errors } = this.state;
@@ -153,7 +158,7 @@ class AddHold extends Component {
                 id="dropdown-basic-button"
                 title={this.getCurrentReasonName()}
               >
-                {reasons.map(reason => (
+                {reasons.map((reason) => (
                   <Dropdown.Item
                     as="button"
                     onClick={this.onChange("reason")}

@@ -8,7 +8,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Loading from "./Loading";
 import MutationCreateRoll from "../GraphQL/MutationCreateRoll";
 
-const getShipmentName = shipment =>
+const getShipmentName = (shipment) =>
   shipment.name || shipment.dateReceived || shipment.dateSent;
 
 class AddRoll extends Component {
@@ -17,10 +17,10 @@ class AddRoll extends Component {
     glenRavenId: null,
     notes: null,
     shipmentId: this.props.shipments[0].id,
-    errors: {}
+    errors: {},
   };
 
-  onChange = index => {
+  onChange = (index) => {
     return ({ target: { value } }) => {
       this.setState({ [index]: value });
       this.setErrors(index, value);
@@ -50,7 +50,7 @@ class AddRoll extends Component {
     this.setState({ errors });
   };
 
-  addRoll = mutator => {
+  addRoll = (mutator) => {
     return () => {
       const { glenRavenId, originalLength, notes, shipmentId } = this.state;
       const { styleColourId } = this.props;
@@ -60,7 +60,7 @@ class AddRoll extends Component {
           glenRavenId: glenRavenId,
           originalLength: originalLength,
           notes: notes,
-          shipmentId: shipmentId
+          shipmentId: shipmentId,
         },
         optimisticResponse: {
           __typename: "Mutation",
@@ -71,9 +71,9 @@ class AddRoll extends Component {
             glenRavenId: glenRavenId,
             originalLength: originalLength,
             notes: notes,
-            shipmentId: shipmentId
-          }
-        }
+            shipmentId: shipmentId,
+          },
+        },
       });
       this.setState({
         originalLength: 0,
@@ -81,18 +81,18 @@ class AddRoll extends Component {
         notes: null,
         shipmentId: this.props.shipments[0].id,
         errors: {},
-        realMutationLoading: false
+        realMutationLoading: false,
       });
     };
   };
 
   getCurrentShipment = () =>
-    this.props.shipments.find(shipment => {
+    this.props.shipments.find((shipment) => {
       return shipment.id === this.state.shipmentId;
     });
 
   hasErrors = () => {
-    return Object.keys(this.state.errors).some(error => {
+    return Object.keys(this.state.errors).some((error) => {
       return this.state.errors[error] !== null;
     });
   };
@@ -142,7 +142,7 @@ class AddRoll extends Component {
                       id="dropdown-basic-button"
                       title={getShipmentName(this.getCurrentShipment())}
                     >
-                      {shipments.map(shipment => (
+                      {shipments.map((shipment) => (
                         <Dropdown.Item
                           as="button"
                           href="#"

@@ -12,15 +12,15 @@ const wrapperStyle = {
   gridColumnGap: "6vw",
   gridRowGap: "6vw",
   justifyItems: "center",
-  padding: "5vw 0"
+  padding: "5vw 0",
 };
 
 const cardStyle = {
   textAlign: "center",
-  width: "100%"
+  width: "100%",
 };
 
-const renderStyleColour = stylecolour => {
+const renderStyleColour = (stylecolour) => {
   const label = stylecolour.style.name + " " + stylecolour.colour.name;
 
   return (

@@ -6,15 +6,15 @@ const reasons = [
   ["personal", "Personal"],
   ["product", "Product"],
   ["reconciliation", "Reconciliation"],
-  ["samples", "Samples"]
+  ["samples", "Samples"],
 ];
 
-const getReasonName = reasonId => {
-  return reasons.find(reason => {
+const getReasonName = (reasonId) => {
+  return reasons.find((reason) => {
     return reasonId === reason[0];
   })[1];
 };
 
-const humanize = x => x.toFixed(2).replace(/\.?0*$/, "");
+const humanize = (x) => x.toFixed(2).replace(/\.?0*$/, "");
 
 export { reasons, getReasonName, humanize };
