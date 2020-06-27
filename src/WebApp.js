@@ -15,7 +15,7 @@ import StyleColour from "./Components/StyleColour";
 import Roll from "./Components/Roll";
 import Shipments from "./Components/Shipments";
 import Standings from "./Components/Standings";
-
+import Timeline from "./Components/Timeline";
 import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -50,6 +50,7 @@ const WebApp = ({ authState, ...other }) => {
             <Route path="/shipments" component={Shipments} />
 
             <Route path="/report" component={Standings} exact />
+            <Route path="/report/timeline" component={Timeline} exact />
           </Fragment>
         )}
       </App>

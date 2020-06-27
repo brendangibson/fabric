@@ -14,9 +14,14 @@ query {
             }
           }
           rolls {
+            originalLength
             cuts {
               length
               reason
+              timestamp
+            }
+            shipment {
+              dateReceived
             }
           }
           holds {
