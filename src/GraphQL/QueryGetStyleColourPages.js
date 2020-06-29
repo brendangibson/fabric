@@ -14,8 +14,10 @@ query {
             }
           }
           rolls {
+            id
             originalLength
             cuts {
+              id
               length
               reason
               timestamp

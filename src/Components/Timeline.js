@@ -9,8 +9,18 @@ import { CSVLink } from "react-csv";
 import moment from "moment";
 
 const swatchStyle = {
-  height: "20vw",
-  width: "20vw",
+  height: "10vw",
+  width: "10vw",
+};
+
+const reasonMap = {
+  samples: "Samples",
+  otherOrder: "Yardage",
+  product: "Product",
+  shipment: "Shipment",
+  defect: "Defect",
+  personal: "Personal",
+  shopifyOrder: "Yardage",
 };
 
 const getStyleColourName = (styleColourPage) =>
@@ -23,18 +33,21 @@ const getCSVData = (data) => {
 
   data.styleColourPages.forEach((styleColourPage) => {
     const name = getStyleColourName(styleColourPage);
+    const scEvents = [];
 
     styleColourPage.rolls.forEach((roll) => {
-      events.push([
+      scEvents.push([
         name,
         roll.shipment.dateReceived,
         roll.originalLength,
         "shipment",
       ]);
       roll.cuts.forEach((cut) => {
-        events.push([name, cut.timestamp, -1 * cut.length, cut.reason]);
+        scEvents.push([name, cut.timestamp, -1 * cut.length, cut.reason]);
       });
     });
+    scEvents.sort((a, b) => a[1] > b[1]);
+    events.push(...scEvents);
   });
   return events;
 };
@@ -44,13 +57,18 @@ const renderStyleColour = (styleColourPage) => {
 
   const events = [];
   styleColourPage.rolls.forEach((roll) => {
-    events.push([roll.shipment.dateReceived, roll.originalLength, "shipment"]);
+    events.push([
+      roll.id,
+      roll.shipment.dateReceived,
+      roll.originalLength,
+      "shipment",
+    ]);
     roll.cuts.forEach((cut) => {
-      events.push([cut.timestamp, cut.length, cut.reason]);
+      events.push([cut.id, cut.timestamp, -1 * cut.length, cut.reason]);
     });
   });
 
-  events.sort((a, b) => a[0] - b[0]);
+  events.sort((a, b) => a[1] > b[1]);
 
   return (
     <div key={styleColourPage.styleColour.id}>
@@ -63,7 +81,9 @@ const renderStyleColour = (styleColourPage) => {
           />
         </Link>
 
-        <span>{name}</span>
+        <span style={{ verticalAlign: "bottom", marginLeft: "2vw" }}>
+          {name}
+        </span>
       </div>
 
       <Table>
@@ -77,10 +97,10 @@ const renderStyleColour = (styleColourPage) => {
         <tbody>
           {events.map((event) => {
             return (
-              <tr key={JSON.stringify(event)}>
-                <td>{moment(event[0]).format("MMMM Do YYYY")}</td>
-                <td>{event[1].toFixed(2)}</td>
-                <td>{event[2]}</td>
+              <tr key={event[0]}>
+                <td>{moment(event[1]).format("MMMM Do YYYY")}</td>
+                <td>{event[2].toFixed(2)}</td>
+                <td>{reasonMap[event[3]]}</td>
               </tr>
             );
           })}
@@ -102,8 +122,14 @@ const Timeline = () => (
             filename="SienCo.csv"
             data={getCSVData(data)}
             headers={["Style Colour", "Date", "Change", "Reason"]}
+            style={{
+              width: "100%",
+              display: "block",
+              textAlign: "right",
+              color: "#5a8eaf",
+            }}
           >
-            Download
+            Download ↓
           </CSVLink>
           {data && data.styleColourPages.map(renderStyleColour)}
         </div>

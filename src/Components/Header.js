@@ -59,14 +59,17 @@ export default function Header() {
             <Link to="/">
               <img src="/bigLogo.png" alt="*" style={logoStyle} />
             </Link>
-            <div style={titleStyle}>Warehouse</div>
+            <div style={titleStyle}>Sien + Co</div>
             <NavDropdown
               title="☰"
               id="basic-nav-dropdown"
               style={dropdownStyle}
             >
               <NavDropdown.Item href="/shipments">Shipments</NavDropdown.Item>
-              <NavDropdown.Item href="/report">Report</NavDropdown.Item>
+              <NavDropdown.Item href="/report">Status</NavDropdown.Item>
+              <NavDropdown.Item href="/report/timeline">
+                Timeline
+              </NavDropdown.Item>
               <NavDropdown.Item onClick={onLogout(apolloClient)}>
                 Log out
               </NavDropdown.Item>
