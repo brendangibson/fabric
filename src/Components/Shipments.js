@@ -5,6 +5,7 @@ import QueryGetShipments from "../GraphQL/QueryGetShipments";
 import Loading from "./Loading";
 import AddShipment from "./AddShipment";
 import Table from "react-bootstrap/Table";
+import AccessControl from "./AccessControl";
 
 const wrapperStyle = {
   display: "flex",
@@ -51,8 +52,10 @@ const Shipments = () => (
       return (
         <div style={wrapperStyle}>
           {data.getShipments.map(renderShipment)}
-
-          <AddShipment refetchQueries={[{ query: QueryGetShipments }]} />
+          <AccessControl>
+            {" "}
+            <AddShipment refetchQueries={[{ query: QueryGetShipments }]} />
+          </AccessControl>
         </div>
       );
     }}

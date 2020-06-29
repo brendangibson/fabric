@@ -11,6 +11,7 @@ import { getReasonName, humanize } from "../DataFunctions/Cuts";
 import MutationReturnRoll from "../GraphQL/MutationReturnRoll";
 import Dimensions from "./Dimensions";
 import Button from "react-bootstrap/Button";
+import AccessControl from "./AccessControl";
 
 class Roll extends Component {
   returnRoll = (mutator, id) => {
@@ -84,14 +85,15 @@ class Roll extends Component {
                   )}
                 </tbody>
               </Table>
-
-              <AddCut
-                rollId={match.params.id}
-                remaining={remaining}
-                refetchQueries={[
-                  { query: QueryGetRoll, variables: { id: match.params.id } },
-                ]}
-              />
+              <AccessControl>
+                <AddCut
+                  rollId={match.params.id}
+                  remaining={remaining}
+                  refetchQueries={[
+                    { query: QueryGetRoll, variables: { id: match.params.id } },
+                  ]}
+                />
+              </AccessControl>
               <div style={{ height: "3vh" }} />
 
               <h1>Cuts</h1>
@@ -141,26 +143,30 @@ class Roll extends Component {
               ))}
 
               <div style={{ height: "3vh" }} />
-
-              {roll.returned ? null : (
-                <Mutation
-                  mutation={MutationReturnRoll}
-                  refetchQueries={[
-                    { query: QueryGetRoll, variables: { id: match.params.id } },
-                  ]}
-                >
-                  {(returnRoll, { loading, error }) => (
-                    <Button
-                      disabled={loading}
-                      variant="dark"
-                      size="lg"
-                      onClick={this.returnRoll(returnRoll, match.params.id)}
-                    >
-                      Return Roll
-                    </Button>
-                  )}
-                </Mutation>
-              )}
+              <AccessControl>
+                {roll.returned ? null : (
+                  <Mutation
+                    mutation={MutationReturnRoll}
+                    refetchQueries={[
+                      {
+                        query: QueryGetRoll,
+                        variables: { id: match.params.id },
+                      },
+                    ]}
+                  >
+                    {(returnRoll, { loading, error }) => (
+                      <Button
+                        disabled={loading}
+                        variant="dark"
+                        size="lg"
+                        onClick={this.returnRoll(returnRoll, match.params.id)}
+                      >
+                        Return Roll
+                      </Button>
+                    )}
+                  </Mutation>
+                )}
+              </AccessControl>
             </div>
           );
         }}

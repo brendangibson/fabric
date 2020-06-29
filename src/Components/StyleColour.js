@@ -13,6 +13,7 @@ import Swatch from "./Swatch";
 import AddHold from "./AddHold";
 import Dimensions from "./Dimensions";
 import moment from "moment";
+import AccessControl from "./AccessControl";
 
 const topStyle = {
   padding: "5vw 0 5vw 0",
@@ -200,28 +201,31 @@ class StyleColour extends Component {
               ))}
 
               <div style={{ height: "3vh" }} />
-              <AddHold
-                colourStyleId={match.params.id}
-                refetchQueries={[
-                  {
-                    query: QueryGetStyleColour,
-                    variables: { id: match.params.id },
-                  },
-                ]}
-              />
-              <div style={{ height: "3vh" }} />
-              <AddRoll
-                shipments={styleColourPage.shipments}
-                styleColourId={match.params.id}
-                refetchQueries={[
-                  {
-                    query: QueryGetStyleColour,
-                    variables: { id: match.params.id },
-                  },
-                ]}
-              />
-              <div style={{ height: "3vh" }} />
-
+              <AccessControl>
+                <AddHold
+                  colourStyleId={match.params.id}
+                  refetchQueries={[
+                    {
+                      query: QueryGetStyleColour,
+                      variables: { id: match.params.id },
+                    },
+                  ]}
+                />
+                <div style={{ height: "3vh" }} />
+              </AccessControl>
+              <AccessControl>
+                <AddRoll
+                  shipments={styleColourPage.shipments}
+                  styleColourId={match.params.id}
+                  refetchQueries={[
+                    {
+                      query: QueryGetStyleColour,
+                      variables: { id: match.params.id },
+                    },
+                  ]}
+                />
+                <div style={{ height: "3vh" }} />
+              </AccessControl>
               {smallRolls.length ? <h1>Old Rolls</h1> : null}
 
               {smallRolls.map((roll) => {

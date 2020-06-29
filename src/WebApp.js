@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Amplify, { Auth } from "aws-amplify";
 import { Authenticator } from "aws-amplify-react";
@@ -21,6 +21,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 Amplify.configure(awsconfig);
 
+export const TradeContext = React.createContext(true);
+
 const WebApp = ({ authState, ...other }) => {
   const [isTrade, setIsTrade] = useState(false);
 
@@ -37,23 +39,19 @@ const WebApp = ({ authState, ...other }) => {
 
   return authState !== "signedIn" ? null : (
     <Router>
-      <App>
-        {isTrade ? (
-          <p>Hello Trader</p>
-        ) : (
-          <Fragment>
-            <Route exact={true} path="/" component={StylesColours} />
-            <Route path="/styles" component={Styles} />
-            <Route path="/stylescolours" component={StylesColours} />
-            <Route path="/stylecolour/:id" component={StyleColour} exact />
-            <Route path="/roll/:id" component={Roll} />
-            <Route path="/shipments" component={Shipments} />
+      <TradeContext.Provider value={isTrade}>
+        <App>
+          <Route exact={true} path="/" component={StylesColours} />
+          <Route path="/styles" component={Styles} />
+          <Route path="/stylescolours" component={StylesColours} />
+          <Route path="/stylecolour/:id" component={StyleColour} exact />
+          <Route path="/roll/:id" component={Roll} />
+          <Route path="/shipments" component={Shipments} />
 
-            <Route path="/report" component={Standings} exact />
-            <Route path="/report/timeline" component={Timeline} exact />
-          </Fragment>
-        )}
-      </App>
+          <Route path="/report" component={Standings} exact />
+          <Route path="/report/timeline" component={Timeline} exact />
+        </App>
+      </TradeContext.Provider>
     </Router>
   );
 };
