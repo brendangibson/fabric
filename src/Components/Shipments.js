@@ -6,6 +6,7 @@ import Loading from "./Loading";
 import AddShipment from "./AddShipment";
 import Table from "react-bootstrap/Table";
 import AccessControl from "./AccessControl";
+import moment from "moment";
 
 const wrapperStyle = {
   display: "flex",
@@ -14,28 +15,24 @@ const wrapperStyle = {
 
 const renderShipment = (shipment) => {
   return (
-    <Table key={shipment.id}>
+    <Table key={shipment.id} style={{ marginTop: "1vh", tableLayout: "fixed" }}>
       <tbody>
         <tr>
-          <td>id</td>
-          <td>{shipment.id}</td>
-        </tr>
-        <tr>
-          <td>name</td>
+          <td>Name</td>
           <td>
             <strong>{shipment.name}</strong>
           </td>
         </tr>
         <tr>
-          <td>dateSent</td>
-          <td>{shipment.dateSent}</td>
+          <td>Date Sent</td>
+          <td>{moment(shipment.dateSent).format("MMMM Do, YYYY")}</td>
         </tr>
         <tr>
-          <td>dateReceived</td>
-          <td>{shipment.dateReceived}</td>
+          <td>Date Received</td>
+          <td>{moment(shipment.dateReceived).format("MMMM Do, YYYY")}</td>
         </tr>
         <tr>
-          <td>glenRavenId</td>
+          <td>Glenraven Id</td>
           <td>{shipment.glenRavenId}</td>
         </tr>
       </tbody>
@@ -51,11 +48,15 @@ const Shipments = () => (
 
       return (
         <div style={wrapperStyle}>
-          {data.getShipments.map(renderShipment)}
           <AccessControl>
-            {" "}
             <AddShipment refetchQueries={[{ query: QueryGetShipments }]} />
           </AccessControl>
+          <div style={{ height: "3vh" }} />
+
+          <h3>Shipments</h3>
+          {data.getShipments
+            .sort((a, b) => a.dateReceived < b.dateReceived)
+            .map(renderShipment)}
         </div>
       );
     }}
