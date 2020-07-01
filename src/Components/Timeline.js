@@ -21,6 +21,7 @@ const reasonMap = {
   defect: "Defect",
   personal: "Personal",
   shopifyOrder: "Yardage",
+  returned: "Returned",
 };
 
 const getStyleColourName = (styleColourPage) =>
@@ -38,12 +39,17 @@ const getCSVData = (data) => {
     styleColourPage.rolls.forEach((roll) => {
       scEvents.push([
         name,
-        roll.shipment.dateReceived,
-        roll.originalLength,
-        "shipment",
+        moment(roll.shipment.dateReceived).format("YYYY-MM-DD hh:mm:ss"),
+        roll.returned ? 0 : roll.originalLength,
+        roll.returned ? "returned" : "shipment",
       ]);
       roll.cuts.forEach((cut) => {
-        scEvents.push([name, cut.timestamp, -1 * cut.length, cut.reason]);
+        scEvents.push([
+          name,
+          moment(cut.timestamp).format("YYYY-MM-DD hh:mm:ss"),
+          -1 * cut.length,
+          cut.reason,
+        ]);
       });
     });
     scEvents.sort((a, b) => a[1] > b[1]);
@@ -60,9 +66,10 @@ const renderStyleColour = (styleColourPage) => {
     events.push([
       roll.id,
       roll.shipment.dateReceived,
-      roll.originalLength,
-      "shipment",
+      roll.returned ? 0 : roll.originalLength,
+      roll.returned ? "returned" : "shipment",
     ]);
+
     roll.cuts.forEach((cut) => {
       events.push([cut.id, cut.timestamp, -1 * cut.length, cut.reason]);
     });

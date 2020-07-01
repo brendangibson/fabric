@@ -16,6 +16,7 @@ query {
           rolls {
             id
             originalLength
+            returned
             cuts {
               id
               length
