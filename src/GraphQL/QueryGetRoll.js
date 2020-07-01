@@ -25,6 +25,7 @@ query($id: ID!) {
       reason
       orderId
       notes
+      timestamp
     }
     returned
   }

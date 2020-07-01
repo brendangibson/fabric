@@ -12,6 +12,7 @@ import MutationReturnRoll from "../GraphQL/MutationReturnRoll";
 import Dimensions from "./Dimensions";
 import Button from "react-bootstrap/Button";
 import AccessControl from "./AccessControl";
+import moment from "moment";
 
 class Roll extends Component {
   returnRoll = (mutator, id) => {
@@ -97,50 +98,59 @@ class Roll extends Component {
               <div style={{ height: "3vh" }} />
 
               <h1>Cuts</h1>
-              {roll.cuts.map((cut) => (
-                <Table key={cut.id}>
-                  <tbody>
-                    <tr>
-                      <td>
-                        Length
-                        <OverlayTrigger
-                          rootClose
-                          trigger="click"
-                          placement="bottom"
-                          overlay={
-                            <Dimensions
-                              weight={roll.styleColour.style.weight}
-                              thickness={roll.styleColour.style.thickness}
-                              length={cut.length}
-                            />
-                          }
-                        >
-                          <span style={{ position: "relative" }}> ⓘ</span>
-                        </OverlayTrigger>
-                      </td>
-                      <td>
-                        {humanize(cut.length)} yard{cut.length === 1 ? "" : "s"}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Reason</td>
-                      <td>{getReasonName(cut.reason)}</td>
-                    </tr>
-                    {cut.notes && (
+              {roll.cuts
+                .sort((a, b) => a.timestamp < b.timestamp)
+                .map((cut) => (
+                  <Table key={cut.id} style={{ tableLayout: "fixed" }}>
+                    <tbody>
                       <tr>
-                        <td>Notes</td>
-                        <td>{cut.notes}</td>
+                        <td>Time</td>
+                        <td>
+                          {moment(cut.timestamp).format("MMMM Do YYYY, hh:mm")}
+                        </td>
                       </tr>
-                    )}
-                    {cut.orderId && (
                       <tr>
-                        <td>Order Id</td>
-                        <td>{cut.orderId}</td>
+                        <td>
+                          Length
+                          <OverlayTrigger
+                            rootClose
+                            trigger="click"
+                            placement="bottom"
+                            overlay={
+                              <Dimensions
+                                weight={roll.styleColour.style.weight}
+                                thickness={roll.styleColour.style.thickness}
+                                length={cut.length}
+                              />
+                            }
+                          >
+                            <span style={{ position: "relative" }}> ⓘ</span>
+                          </OverlayTrigger>
+                        </td>
+                        <td>
+                          {humanize(cut.length)} yard
+                          {cut.length === 1 ? "" : "s"}
+                        </td>
                       </tr>
-                    )}
-                  </tbody>
-                </Table>
-              ))}
+                      <tr>
+                        <td>Reason</td>
+                        <td>{getReasonName(cut.reason)}</td>
+                      </tr>
+                      {cut.notes && (
+                        <tr>
+                          <td>Notes</td>
+                          <td>{cut.notes}</td>
+                        </tr>
+                      )}
+                      {cut.orderId && (
+                        <tr>
+                          <td>Order Id</td>
+                          <td>{cut.orderId}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+                ))}
 
               <div style={{ height: "3vh" }} />
               <AccessControl>
