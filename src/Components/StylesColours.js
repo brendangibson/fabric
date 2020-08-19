@@ -36,7 +36,7 @@ const renderStyleColour = (stylecolour) => {
 };
 
 const StylesColours = () => (
-  <Query query={QueryGetStylesColours}>
+  <Query query={QueryGetStylesColours} fetchPolicy="network-only">
     {({ loading, error, data }) => {
       if (loading) return <Loading />;
       if (error) return `Error! ${error.message}`;
