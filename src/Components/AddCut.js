@@ -77,7 +77,7 @@ class AddCut extends Component {
           if (value <= 0) {
             errors[index] = "Too short";
           } else {
-            if (value > 100 || value >= remaining) {
+            if (value > 100 || value > remaining) {
               errors[index] = "Too long";
             } else {
               errors[index] = null;

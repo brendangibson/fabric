@@ -71,9 +71,15 @@ class StyleColour extends Component {
           const styleColour = styleColourPage.styleColour;
           const label = styleColour.style.name + " " + styleColour.colour.name;
           const remaining = styleColourPage.rolls.reduce((outerAccum, roll) => {
-            return roll.returned
-              ? outerAccum
-              : outerAccum + calculateRemaining(roll);
+            if (roll.returned) {
+              return outerAccum;
+            }
+            const remaining = calculateRemaining(roll);
+            if (remaining < 1) {
+              return outerAccum;
+            }
+
+            return outerAccum + calculateRemaining(roll);
           }, 0);
           const holdLength = styleColourPage.holds.reduce(
             (accumulator, hold) => accumulator + hold.length,
