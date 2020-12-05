@@ -41,5 +41,12 @@ query($id: ID!) {
             notes
             timestamp
         }
+        incoming {
+            id
+            length
+            orderId
+            notes
+            timestamp
+        }
       }
 }`);

@@ -41,7 +41,7 @@ const renderShipment = (shipment) => {
 };
 
 const Shipments = () => (
-  <Query query={QueryGetShipments}>
+  <Query query={QueryGetShipments} fetchPolicy="network-only">
     {({ loading, error, data }) => {
       if (loading) return <Loading />;
       if (error) return `Error! ${error.message}`;

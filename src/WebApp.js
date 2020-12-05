@@ -47,7 +47,6 @@ const WebApp = ({ authState, ...other }) => {
           <Route path="/stylecolour/:id" component={StyleColour} exact />
           <Route path="/roll/:id" component={Roll} />
           <Route path="/shipments" component={Shipments} />
-
           <Route path="/report" component={Standings} exact />
           <Route path="/report/timeline" component={Timeline} exact />
         </App>

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import MutationDeleteHold from "../GraphQL/MutationDeleteHold";
+import MutationDeleteIncoming from "../GraphQL/MutationDeleteIncoming";
 import { getReasonName, humanize } from "../DataFunctions/Cuts";
 import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
 import RollIcon from "./RollIcon";
@@ -11,6 +12,7 @@ import AddRoll from "./AddRoll";
 import Loading from "./Loading";
 import Swatch from "./Swatch";
 import AddHold from "./AddHold";
+import AddIncoming from "./AddIncoming";
 import Dimensions from "./Dimensions";
 import moment from "moment";
 import AccessControl from "./AccessControl";
@@ -47,6 +49,13 @@ const calculateRemaining = (roll) =>
 
 class StyleColour extends Component {
   deleteHold = (mutator, id) => {
+    return () => {
+      mutator({
+        variables: { id },
+      });
+    };
+  };
+  deleteIncoming = (mutator, id) => {
     return () => {
       mutator({
         variables: { id },
@@ -129,6 +138,65 @@ class StyleColour extends Component {
                 );
               })}
 
+              {styleColourPage.incoming && styleColourPage.incoming.length ? (
+                <h1>Incoming Fabric</h1>
+              ) : null}
+              {styleColourPage.incoming &&
+                styleColourPage.incoming.map((incoming) => (
+                  <Table key={incoming.id}>
+                    <tbody>
+                      <tr>
+                        <td>Length</td>
+                        <td>
+                          {humanize(incoming.length)} yard
+                          {incoming.length === 1 ? "" : "s"}
+                          <Mutation
+                            mutation={MutationDeleteIncoming}
+                            refetchQueries={[
+                              {
+                                query: QueryGetStyleColour,
+                                variables: { id: match.params.id },
+                              },
+                            ]}
+                          >
+                            {(deleteIncoming, { loading, error }) => (
+                              <span
+                                onClick={this.deleteIncoming(
+                                  deleteIncoming,
+                                  incoming.id
+                                )}
+                                style={deleteStyle}
+                              >
+                                ⓧ
+                              </span>
+                            )}
+                          </Mutation>
+                        </td>
+                      </tr>
+                      {incoming.notes && (
+                        <tr>
+                          <td>Notes</td>
+                          <td>{incoming.notes}</td>
+                        </tr>
+                      )}
+                      {incoming.orderId && (
+                        <tr>
+                          <td>Order Id</td>
+                          <td>{incoming.orderId}</td>
+                        </tr>
+                      )}
+                      {incoming.timestamp && (
+                        <tr>
+                          <td>Date requested</td>
+                          <td>
+                            {moment(incoming.timestamp).format("MMMM Do, YYYY")}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+                ))}
+
               {styleColourPage.holds && styleColourPage.holds.length ? (
                 <h1>Holds</h1>
               ) : null}
@@ -207,6 +275,18 @@ class StyleColour extends Component {
               ))}
 
               <div style={{ height: "3vh" }} />
+              <AccessControl>
+                <AddIncoming
+                  colourStyleId={match.params.id}
+                  refetchQueries={[
+                    {
+                      query: QueryGetStyleColour,
+                      variables: { id: match.params.id },
+                    },
+                  ]}
+                />
+                <div style={{ height: "3vh" }} />
+              </AccessControl>
               <AccessControl>
                 <AddHold
                   colourStyleId={match.params.id}
