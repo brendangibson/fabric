@@ -1,6 +1,8 @@
 const reasons = [
   ["shopifyOrder", "Shopify Order"],
   ["otherOrder", "Other Order"],
+  ["showroom", "Showroom"],
+  ["interior", "Interior Designer"],
   ["defect", "Defect"],
   ["waste", "Waste"],
   ["personal", "Personal"],
@@ -10,9 +12,11 @@ const reasons = [
 ];
 
 const getReasonName = (reasonId) => {
-  return reasons.find((reason) => {
+  const found = reasons.find((reason) => {
     return reasonId === reason[0];
-  })[1];
+  });
+
+  return found && found[1];
 };
 
 const humanize = (x) => x.toFixed(2).replace(/\.?0*$/, "");
