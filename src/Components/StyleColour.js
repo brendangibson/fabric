@@ -39,6 +39,7 @@ const deleteStyle = {
 
 const lengthStyle = {};
 const holdStyle = { color: "sienna" };
+const incomingStyle = { color: "olive" };
 
 const calculateRemaining = (roll) =>
   roll.originalLength -
@@ -94,6 +95,10 @@ class StyleColour extends Component {
             (accumulator, hold) => accumulator + hold.length,
             0
           );
+          const incomingLength = styleColourPage.incoming.reduce(
+            (accumulator, incoming) => accumulator + incoming.length,
+            0
+          );
 
           const bigRolls = styleColourPage.rolls.filter(
             (roll) => !roll.returned && calculateRemaining(roll) > 0.5
@@ -116,6 +121,12 @@ class StyleColour extends Component {
                     {humanize(holdLength)} yard{holdLength === 1 ? "" : "s"} on
                     hold
                   </div>
+                  {incomingLength ? (
+                    <div style={incomingStyle}>
+                      {humanize(incomingLength)} yard
+                      {incomingLength === 1 ? " on its way" : "s on their way"}
+                    </div>
+                  ) : null}
                   <i style={{ fontSize: "smaller" }}>
                     {styleColour.glenRavenName}
                   </i>
