@@ -15,6 +15,8 @@ import StyleColour from "./Components/StyleColour";
 import Roll from "./Components/Roll";
 import Shipments from "./Components/Shipments";
 import Standings from "./Components/Standings";
+import Stock from "./Components/Stock";
+
 import Timeline from "./Components/Timeline";
 import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -47,6 +49,7 @@ const WebApp = ({ authState, ...other }) => {
           <Route path="/stylecolour/:id" component={StyleColour} exact />
           <Route path="/roll/:id" component={Roll} />
           <Route path="/shipments" component={Shipments} />
+          <Route path="/stock" component={Stock} />
           <Route path="/report" component={Standings} exact />
           <Route path="/report/timeline" component={Timeline} exact />
         </App>

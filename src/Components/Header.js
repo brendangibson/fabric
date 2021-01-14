@@ -67,6 +67,7 @@ export default function Header() {
             >
               <NavDropdown.Item href="/shipments">Shipments</NavDropdown.Item>
               <NavDropdown.Item href="/report">Status</NavDropdown.Item>
+              <NavDropdown.Item href="/stock">Stock</NavDropdown.Item>
               <NavDropdown.Item href="/report/timeline">
                 Timeline
               </NavDropdown.Item>

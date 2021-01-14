@@ -16,18 +16,15 @@ query {
           rolls {
             id
             originalLength
-            returned
             cuts {
-              id
               length
-              reason
-              timestamp
             }
-            shipment {
-              dateReceived
-            }
+
           }
           holds {
+            length
+          }
+          incoming {
             length
           }
       }
