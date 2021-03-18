@@ -5,7 +5,6 @@ import QueryGetStylesColours from "../GraphQL/QueryGetStylesColours";
 import { humanize } from "../DataFunctions/Cuts";
 import Loading from "./Loading";
 import Swatch from "./Swatch";
-import { Link } from "react-router-dom";
 
 const wrapperStyle = {
   display: "flex",
@@ -30,15 +29,16 @@ const StyleColour = ({ styleColour }) => {
   return (
     <div style={rowStyle}>
       <div style={leftColumnStyle}>
-        <Link
-          to={
+        <a
+          href={
             "https://www.sienandco.com/products/" +
             styleColour.name.toLowerCase().replace(" ", "-") +
             "-fabric"
           }
+          target="_blank"
         >
           <Swatch src={styleColour.swatchUrl} />
-        </Link>
+        </a>
       </div>
       <div style={rightColumnStyle}>
         <strong>{styleColour.name}</strong>
