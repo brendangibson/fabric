@@ -15,6 +15,7 @@ query($id: ID!) {
             }
             swatchUrl
             glenRavenName
+            remaining
         }
         rolls{
             id
@@ -47,6 +48,7 @@ query($id: ID!) {
             orderId
             notes
             timestamp
+            expected
         }
       }
 }`);

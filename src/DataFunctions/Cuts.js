@@ -19,6 +19,6 @@ const getReasonName = (reasonId) => {
   return found && found[1];
 };
 
-const humanize = (x) => x.toFixed(2).replace(/\.?0*$/, "");
+const humanize = (x) => x.toFixed(1).replace(/\.?0*$/, "");
 
 export { reasons, getReasonName, humanize };

@@ -4,12 +4,10 @@ export default gql(`
 query {
     stylesColours{
         id
-        colour {
-            name
-        }
-        style {
-            name
-        }
+        name
         swatchUrl
+        remaining
+        holdsLength
+        incomingLength
       }
 }`);

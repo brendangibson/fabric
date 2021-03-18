@@ -21,3 +21,15 @@ on AWS AppSync
 10. Run `GetStyles` query. Store the style id
 11. `swatchUrl` should be set to `https://sienandco.space/assets/` + your new file from above
 12. Run `CreateStyleColour` mutation with the `colourId`, `styleId`, `glenRavenName`, and `swatchUrl`
+
+### Run code locally
+
+1. `npm run start`
+
+### Connect to the database
+
+1. Get the URL of the Writer
+2. `mysql -h appsyncrdsinstance-rcy4ohoyyzhlvahtxrucs5oix4.clghn7faucwg.us-east-2.rds.amazonaws.com -u master -p`
+3. If that fails, you may have to update your IP for the security group for the Writer
+4. `use myrds`
+5. `show tables`

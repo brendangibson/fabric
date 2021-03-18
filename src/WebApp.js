@@ -12,6 +12,7 @@ import "./App.css";
 import Styles from "./Components/Styles";
 import StylesColours from "./Components/StylesColours";
 import StyleColour from "./Components/StyleColour";
+import Summary from "./Components/Summary";
 import Roll from "./Components/Roll";
 import Shipments from "./Components/Shipments";
 import Standings from "./Components/Standings";
@@ -47,6 +48,7 @@ const WebApp = ({ authState, ...other }) => {
           <Route path="/styles" component={Styles} />
           <Route path="/stylescolours" component={StylesColours} />
           <Route path="/stylecolour/:id" component={StyleColour} exact />
+          <Route path="/summary" component={Summary} />
           <Route path="/roll/:id" component={Roll} />
           <Route path="/shipments" component={Shipments} />
           <Route path="/stock" component={Stock} />

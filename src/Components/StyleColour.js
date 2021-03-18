@@ -6,6 +6,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import MutationDeleteHold from "../GraphQL/MutationDeleteHold";
 import MutationDeleteIncoming from "../GraphQL/MutationDeleteIncoming";
 import { getReasonName, humanize } from "../DataFunctions/Cuts";
+import { calculateRemaining } from "../DataFunctions/Roll";
 import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
 import RollIcon from "./RollIcon";
 import AddRoll from "./AddRoll";
@@ -41,13 +42,6 @@ const lengthStyle = {};
 const holdStyle = { color: "sienna" };
 const incomingStyle = { color: "olive" };
 
-const calculateRemaining = (roll) =>
-  roll.originalLength -
-  roll.cuts.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.length,
-    0
-  );
-
 class StyleColour extends Component {
   deleteHold = (mutator, id) => {
     return () => {
@@ -80,17 +74,6 @@ class StyleColour extends Component {
           if (!styleColourPage) return null;
           const styleColour = styleColourPage.styleColour;
           const label = styleColour.style.name + " " + styleColour.colour.name;
-          const remaining = styleColourPage.rolls.reduce((outerAccum, roll) => {
-            if (roll.returned) {
-              return outerAccum;
-            }
-            const remaining = calculateRemaining(roll);
-            if (remaining < 1) {
-              return outerAccum;
-            }
-
-            return outerAccum + calculateRemaining(roll);
-          }, 0);
           const holdLength = styleColourPage.holds.reduce(
             (accumulator, hold) => accumulator + hold.length,
             0
@@ -114,8 +97,8 @@ class StyleColour extends Component {
                 <div style={{ display: "inline-block" }}>
                   <div style={labelStyle}>{label}</div>
                   <div style={lengthStyle}>
-                    {humanize(remaining)} yard{remaining === 1 ? "" : "s"}{" "}
-                    remaining
+                    {humanize(styleColour.remaining)} yard
+                    {styleColour.remaining === 1 ? "" : "s"}
                   </div>
                   <div style={holdStyle}>
                     {humanize(holdLength)} yard{holdLength === 1 ? "" : "s"} on

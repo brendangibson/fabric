@@ -21,7 +21,7 @@ const cardStyle = {
 };
 
 const renderStyleColour = (stylecolour) => {
-  const label = stylecolour.style.name + " " + stylecolour.colour.name;
+  const label = stylecolour.name;
 
   return (
     <Link

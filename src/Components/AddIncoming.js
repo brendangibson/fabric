@@ -14,6 +14,7 @@ class AddIncoming extends Component {
     notes: null,
     orderId: null,
     errors: {},
+    expected: "",
   };
 
   onChange = (index) => {
@@ -25,7 +26,7 @@ class AddIncoming extends Component {
 
   addIncoming = (mutator) => {
     return () => {
-      const { length, inches, notes, orderId } = this.state;
+      const { length, inches, notes, orderId, expected } = this.state;
       const { colourStyleId } = this.props;
 
       const totalLength = parseInt(length, 10) + parseInt(inches, 10) / 36;
@@ -35,6 +36,7 @@ class AddIncoming extends Component {
           length: totalLength,
           notes,
           orderId,
+          expected,
         },
         optimisticResponse: {
           __typename: "Mutation",
@@ -45,6 +47,7 @@ class AddIncoming extends Component {
             length: totalLength,
             notes,
             orderId,
+            expected,
           },
         },
       });
@@ -158,6 +161,17 @@ class AddIncoming extends Component {
                 onChange={this.onChange("notes")}
                 placeholder="Notes"
               />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Expected</Form.Label>
+              <Form.Control
+                type="date"
+                id="expected"
+                name="expected"
+                onChange={this.onChange("expected")}
+                value={this.state.expected || ""}
+              />
+              <FormError errorMsg={errors.expected} />
             </Form.Group>
             <Button
               disabled={loading || this.isDisabled()}
