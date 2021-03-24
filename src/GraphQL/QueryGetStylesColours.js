@@ -9,5 +9,10 @@ query {
         remaining
         holdsLength
         incomingLength
+        incoming {
+          id
+          length
+          expected
+        }
       }
 }`);

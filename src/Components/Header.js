@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { Auth } from "aws-amplify";
 import { ApolloConsumer } from "react-apollo";
+import { TradeContext } from "../WebApp";
 
 const HEIGHT = "8vh";
 
@@ -42,6 +43,7 @@ const dropdownStyle = {
 };
 
 export default function Header() {
+  const isTrade = useContext(TradeContext);
   const onLogout = (apolloClient) => () => {
     Auth.signOut()
       .then((data) => console.log("data: ", data))
@@ -65,13 +67,21 @@ export default function Header() {
               id="basic-nav-dropdown"
               style={dropdownStyle}
             >
-              <NavDropdown.Item href="/shipments">Shipments</NavDropdown.Item>
-              <NavDropdown.Item href="/report">Status</NavDropdown.Item>
+              {!isTrade && (
+                <NavDropdown.Item href="/shipments">Shipments</NavDropdown.Item>
+              )}
+              {!isTrade && (
+                <NavDropdown.Item href="/report">Status</NavDropdown.Item>
+              )}
               <NavDropdown.Item href="/summary">Summary</NavDropdown.Item>
-              <NavDropdown.Item href="/stock">Stock</NavDropdown.Item>
-              <NavDropdown.Item href="/report/timeline">
-                Timeline
-              </NavDropdown.Item>
+              {!isTrade && (
+                <NavDropdown.Item href="/stock">Stock</NavDropdown.Item>
+              )}
+              {!isTrade && (
+                <NavDropdown.Item href="/report/timeline">
+                  Timeline
+                </NavDropdown.Item>
+              )}
               <NavDropdown.Item onClick={onLogout(apolloClient)}>
                 Log out
               </NavDropdown.Item>

@@ -44,16 +44,26 @@ const WebApp = ({ authState, ...other }) => {
     <Router>
       <TradeContext.Provider value={isTrade}>
         <App>
-          <Route exact={true} path="/" component={StylesColours} />
-          <Route path="/styles" component={Styles} />
-          <Route path="/stylescolours" component={StylesColours} />
-          <Route path="/stylecolour/:id" component={StyleColour} exact />
+          <Route
+            exact={true}
+            path="/"
+            component={isTrade ? Summary : StylesColours}
+          />
+          {!isTrade && <Route path="/styles" component={Styles} />}
+          {!isTrade && (
+            <Route path="/stylescolours" component={StylesColours} />
+          )}
+          {!isTrade && (
+            <Route path="/stylecolour/:id" component={StyleColour} exact />
+          )}
           <Route path="/summary" component={Summary} />
-          <Route path="/roll/:id" component={Roll} />
-          <Route path="/shipments" component={Shipments} />
-          <Route path="/stock" component={Stock} />
-          <Route path="/report" component={Standings} exact />
-          <Route path="/report/timeline" component={Timeline} exact />
+          {!isTrade && <Route path="/roll/:id" component={Roll} />}
+          {!isTrade && <Route path="/shipments" component={Shipments} />}
+          {!isTrade && <Route path="/stock" component={Stock} />}
+          {!isTrade && <Route path="/report" component={Standings} exact />}
+          {!isTrade && (
+            <Route path="/report/timeline" component={Timeline} exact />
+          )}
         </App>
       </TradeContext.Provider>
     </Router>

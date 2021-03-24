@@ -5,6 +5,7 @@ import QueryGetStylesColours from "../GraphQL/QueryGetStylesColours";
 import { humanize } from "../DataFunctions/Cuts";
 import Loading from "./Loading";
 import Swatch from "./Swatch";
+import moment from "moment";
 
 const wrapperStyle = {
   display: "flex",
@@ -14,15 +15,17 @@ const wrapperStyle = {
 
 const rowStyle = {
   display: "flex",
+  height: "50vw",
 };
 
 const leftColumnStyle = {
-  width: "25vw",
-  padding: "2vw 5vw",
+  width: "33vw",
+  padding: "1vw",
 };
 
 const rightColumnStyle = {
-  padding: "2vw 5vw",
+  padding: "1vw 5vw",
+  width: "67vw",
 };
 
 const StyleColour = ({ styleColour }) => {
@@ -59,7 +62,10 @@ const StyleColour = ({ styleColour }) => {
         {styleColour.incoming &&
           styleColour.incoming.map((i) => (
             <div key={i.id} style={{ color: "olive" }}>
-              {i.length} yards expected {i.expected ? "on" + i.expected : ""}
+              {i.length} yards expected{" "}
+              {i.expected
+                ? "on " + moment(i.expected).format("MMMM Do YYYY")
+                : ""}
             </div>
           ))}
         {styleColour.incomingLength && !styleColour.incoming ? (
