@@ -15,7 +15,7 @@ const wrapperStyle = {
 
 const rowStyle = {
   display: "flex",
-  height: "50vw",
+  height: "35vw",
 };
 
 const leftColumnStyle = {
@@ -55,17 +55,14 @@ const StyleColour = ({ styleColour }) => {
         </div>
         {styleColour.holdsLength ? (
           <div style={{ color: "sienna" }}>
-            {humanize(styleColour.holdsLength)} yard
-            {styleColour.holdsLength === 1 ? "" : "s"} on hold
+            {humanize(styleColour.holdsLength)} yards on hold
           </div>
         ) : null}
         {styleColour.incoming &&
           styleColour.incoming.map((i) => (
             <div key={i.id} style={{ color: "olive" }}>
               {i.length} yards expected{" "}
-              {i.expected
-                ? "on " + moment(i.expected).format("MMMM Do YYYY")
-                : ""}
+              {i.expected ? moment(i.expected).format("MMM D") : ""}
             </div>
           ))}
         {styleColour.incomingLength && !styleColour.incoming ? (
