@@ -2,10 +2,9 @@ import React, { Component } from "react";
 import { Query, Mutation } from "react-apollo";
 import { Link } from "react-router-dom";
 import Table from "react-bootstrap/Table";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import MutationDeleteHold from "../GraphQL/MutationDeleteHold";
+import Hold from "./Hold";
 import MutationDeleteIncoming from "../GraphQL/MutationDeleteIncoming";
-import { getReasonName, humanize } from "../DataFunctions/Cuts";
+import { humanize } from "../DataFunctions/Cuts";
 import { calculateRemaining } from "../DataFunctions/Roll";
 import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
 import RollIcon from "./RollIcon";
@@ -14,7 +13,6 @@ import Loading from "./Loading";
 import Swatch from "./Swatch";
 import AddHold from "./AddHold";
 import AddIncoming from "./AddIncoming";
-import Dimensions from "./Dimensions";
 import moment from "moment";
 import AccessControl from "./AccessControl";
 
@@ -34,22 +32,21 @@ const labelStyle = {
 const deleteStyle = {
   display: "inline-block",
   marginLeft: 16,
-  verticalAlign: "middle",
+  verticalAlign: "top",
   cursor: "pointer",
+  color: "sienna",
 };
 
 const lengthStyle = {};
 const holdStyle = { color: "sienna" };
 const incomingStyle = { color: "olive" };
+const cellStyle = { width: "50vw" };
 
 class StyleColour extends Component {
-  deleteHold = (mutator, id) => {
-    return () => {
-      mutator({
-        variables: { id },
-      });
-    };
-  };
+  constructor(props) {
+    super(props);
+    this.holdsRef = React.createRef();
+  }
   deleteIncoming = (mutator, id) => {
     return () => {
       mutator({
@@ -58,13 +55,19 @@ class StyleColour extends Component {
     };
   };
 
+  handleAddHoldComplete = () => {
+    this.holdsRef.current &&
+      this.holdsRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
   render() {
     const { match } = this.props;
+    const styleColourId = match.params.id;
 
     return (
       <Query
         query={QueryGetStyleColour}
-        variables={{ id: match.params.id }}
+        variables={{ id: styleColourId }}
         fetchPolicy="network-only"
       >
         {({ loading, error, data }) => {
@@ -100,10 +103,12 @@ class StyleColour extends Component {
                     {humanize(styleColour.remaining)} yard
                     {styleColour.remaining === 1 ? "" : "s"}
                   </div>
-                  <div style={holdStyle}>
-                    {humanize(holdLength)} yard{holdLength === 1 ? "" : "s"} on
-                    hold
-                  </div>
+                  {holdLength > 0 ? (
+                    <div style={holdStyle}>
+                      {humanize(holdLength)} yard{holdLength === 1 ? "" : "s"}{" "}
+                      on hold
+                    </div>
+                  ) : null}
                   {incomingLength ? (
                     <div style={incomingStyle}>
                       {humanize(incomingLength)} yard
@@ -140,8 +145,8 @@ class StyleColour extends Component {
                   <Table key={incoming.id}>
                     <tbody>
                       <tr>
-                        <td>Length</td>
-                        <td>
+                        <td style={cellStyle}>Length</td>
+                        <td style={cellStyle}>
                           {humanize(incoming.length)} yard
                           {incoming.length === 1 ? "" : "s"}
                           <Mutation
@@ -149,7 +154,7 @@ class StyleColour extends Component {
                             refetchQueries={[
                               {
                                 query: QueryGetStyleColour,
-                                variables: { id: match.params.id },
+                                variables: { id: styleColourId },
                               },
                             ]}
                           >
@@ -161,7 +166,7 @@ class StyleColour extends Component {
                                 )}
                                 style={deleteStyle}
                               >
-                                ⓧ
+                                ⊗
                               </span>
                             )}
                           </Mutation>
@@ -169,20 +174,20 @@ class StyleColour extends Component {
                       </tr>
                       {incoming.notes && (
                         <tr>
-                          <td>Notes</td>
-                          <td>{incoming.notes}</td>
+                          <td style={cellStyle}>Notes</td>
+                          <td style={cellStyle}>{incoming.notes}</td>
                         </tr>
                       )}
                       {incoming.orderId && (
                         <tr>
-                          <td>Order Id</td>
-                          <td>{incoming.orderId}</td>
+                          <td style={cellStyle}>Order Id</td>
+                          <td style={cellStyle}>{incoming.orderId}</td>
                         </tr>
                       )}
                       {incoming.timestamp && (
                         <tr>
-                          <td>Date requested</td>
-                          <td>
+                          <td style={cellStyle}>Date requested</td>
+                          <td style={cellStyle}>
                             {moment(incoming.timestamp).format("MMMM Do, YYYY")}
                           </td>
                         </tr>
@@ -191,91 +196,28 @@ class StyleColour extends Component {
                   </Table>
                 ))}
 
-              {styleColourPage.holds && styleColourPage.holds.length ? (
-                <h1>Holds</h1>
-              ) : null}
-              {styleColourPage.holds.map((hold) => (
-                <Table key={hold.id}>
-                  <tbody>
-                    <tr>
-                      <td>
-                        Length
-                        <OverlayTrigger
-                          rootClose
-                          trigger="click"
-                          placement="bottom"
-                          overlay={
-                            <Dimensions
-                              weight={styleColourPage.styleColour.style.weight}
-                              thickness={
-                                styleColourPage.styleColour.style.thickness
-                              }
-                              length={hold.length}
-                            />
-                          }
-                        >
-                          <span style={{ position: "relative" }}> ⓘ</span>
-                        </OverlayTrigger>
-                      </td>
-                      <td>
-                        {humanize(hold.length)} yard
-                        {hold.length === 1 ? "" : "s"}
-                        <Mutation
-                          mutation={MutationDeleteHold}
-                          refetchQueries={[
-                            {
-                              query: QueryGetStyleColour,
-                              variables: { id: match.params.id },
-                            },
-                          ]}
-                        >
-                          {(deleteHold, { loading, error }) => (
-                            <span
-                              onClick={this.deleteHold(deleteHold, hold.id)}
-                              style={deleteStyle}
-                            >
-                              ⓧ
-                            </span>
-                          )}
-                        </Mutation>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Reason</td>
-                      <td>{getReasonName(hold.reason)}</td>
-                    </tr>
-                    {hold.notes && (
-                      <tr>
-                        <td>Notes</td>
-                        <td>{hold.notes}</td>
-                      </tr>
-                    )}
-                    {hold.orderId && (
-                      <tr>
-                        <td>Order Id</td>
-                        <td>{hold.orderId}</td>
-                      </tr>
-                    )}
-                    {hold.timestamp && (
-                      <tr>
-                        <td>Date requested</td>
-                        <td>
-                          {moment(hold.timestamp).format("MMMM Do, YYYY")}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </Table>
-              ))}
+              <a name="holds" ref={this.holdsRef}>
+                {styleColourPage.holds && styleColourPage.holds.length ? (
+                  <h1>Holds</h1>
+                ) : null}
+                {styleColourPage.holds.map((hold) => (
+                  <Hold
+                    hold={hold}
+                    styleColourId={styleColourId}
+                    styleColourPage={styleColourPage}
+                    key={hold.id}
+                  />
+                ))}
+              </a>
 
               <div style={{ height: "3vh" }} />
               <AccessControl>
                 <AddIncoming
-                  colourStyleId={match.params.id}
+                  colourStyleId={styleColourId}
                   refetchQueries={[
                     {
                       query: QueryGetStyleColour,
-                      variables: { id: match.params.id },
+                      variables: { id: styleColourId },
                     },
                   ]}
                 />
@@ -283,24 +225,25 @@ class StyleColour extends Component {
               </AccessControl>
               <AccessControl>
                 <AddHold
-                  colourStyleId={match.params.id}
+                  colourStyleId={styleColourId}
                   refetchQueries={[
                     {
                       query: QueryGetStyleColour,
-                      variables: { id: match.params.id },
+                      variables: { id: styleColourId },
                     },
                   ]}
+                  onComplete={this.handleAddHoldComplete}
                 />
                 <div style={{ height: "3vh" }} />
               </AccessControl>
               <AccessControl>
                 <AddRoll
                   shipments={styleColourPage.shipments}
-                  styleColourId={match.params.id}
+                  styleColourId={styleColourId}
                   refetchQueries={[
                     {
                       query: QueryGetStyleColour,
-                      variables: { id: match.params.id },
+                      variables: { id: styleColourId },
                     },
                   ]}
                 />

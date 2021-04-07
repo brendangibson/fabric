@@ -1,14 +1,14 @@
 import gql from "graphql-tag";
 
 export default gql(`
-mutation CreateHold($length: Float!, $colourStyleId: ID!, $orderId: String, $notes: String, $reason: String) {
+mutation CreateHold($length: Float!, $colourStyleId: ID!, $notes: String, $owner: String, $expires: String) {
   createHold(
-    length: $length, colourStyleId: $colourStyleId, orderId: $orderId, notes: $notes, reason: $reason
+    length: $length, colourStyleId: $colourStyleId, notes: $notes, owner: $owner, expires: $expires
   ) {
     id
     length
-    reason
     notes
-    orderId
+    owner
+    expires
   }
 }`);

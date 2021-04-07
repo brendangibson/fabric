@@ -37,8 +37,8 @@ query($id: ID!) {
         holds {
             id
             length
-            reason
-            orderId
+            expires
+            owner
             notes
             timestamp
         }

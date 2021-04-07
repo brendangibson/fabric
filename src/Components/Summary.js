@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Query } from "react-apollo";
 import QueryGetStylesColours from "../GraphQL/QueryGetStylesColours";
@@ -6,6 +6,7 @@ import { humanize } from "../DataFunctions/Cuts";
 import Loading from "./Loading";
 import Swatch from "./Swatch";
 import moment from "moment";
+import AddHold from "./AddHold";
 
 const wrapperStyle = {
   display: "flex",
@@ -28,7 +29,29 @@ const rightColumnStyle = {
   width: "67vw",
 };
 
+const holdModalStyle = {
+  position: "absolute",
+  background: "#FFF",
+  padding: 8,
+  border: "1px solid grey",
+};
+
+const reserveLinkStyle = {
+  color: "lightskyblue",
+  cursor: "pointer",
+};
+
 const StyleColour = ({ styleColour }) => {
+  const [addingHoldId, setAddingHoldId] = useState();
+
+  const openHold = (id) => () => {
+    setAddingHoldId((value) => (value === id ? undefined : id));
+  };
+
+  const handleAddedHold = () => {
+    setAddingHoldId(undefined);
+  };
+
   return (
     <div style={rowStyle}>
       <div style={leftColumnStyle}>
@@ -44,8 +67,10 @@ const StyleColour = ({ styleColour }) => {
         </a>
       </div>
       <div style={rightColumnStyle}>
-        <strong>{styleColour.name}</strong>
-
+        <strong>{styleColour.name}</strong>{" "}
+        <a onClick={openHold(styleColour.id)} style={reserveLinkStyle}>
+          reserve
+        </a>
         <div>
           <strong>
             {humanize(styleColour.remaining)} yard
@@ -68,6 +93,19 @@ const StyleColour = ({ styleColour }) => {
         {styleColour.incomingLength && !styleColour.incoming ? (
           <div style={{ color: "olive" }}>
             {styleColour.incomingLength} yards on their way
+          </div>
+        ) : null}
+        {addingHoldId === styleColour.id ? (
+          <div style={holdModalStyle}>
+            <AddHold
+              colourStyleId={addingHoldId}
+              refetchQueries={[
+                {
+                  query: QueryGetStylesColours,
+                },
+              ]}
+              onComplete={handleAddedHold}
+            />
           </div>
         ) : null}
       </div>

@@ -25,46 +25,57 @@ import "bootstrap/dist/css/bootstrap.min.css";
 Amplify.configure(awsconfig);
 
 export const TradeContext = React.createContext(true);
+export const UsernameContext = React.createContext();
 
 const WebApp = ({ authState, ...other }) => {
   const [isTrade, setIsTrade] = useState(false);
+  const [username, setUsername] = useState();
 
   useEffect(() => {
-    Auth.currentSession().then((a) => {
-      const decoded = a.getAccessToken().decodePayload();
-      setIsTrade(
-        decoded &&
-          decoded["cognito:groups"] &&
-          decoded["cognito:groups"].includes("trade")
-      );
-    });
+    Auth.currentSession()
+      .then((a) => {
+        const decoded = a.getAccessToken().decodePayload();
+        setIsTrade(
+          decoded &&
+            decoded["cognito:groups"] &&
+            decoded["cognito:groups"].includes("trade")
+        );
+        setUsername(decoded.username);
+      })
+      .catch((e) => {
+        setIsTrade(false);
+        setUsername(undefined);
+      });
   }, [authState]);
 
   return authState !== "signedIn" ? null : (
     <Router>
       <TradeContext.Provider value={isTrade}>
-        <App>
-          <Route
-            exact={true}
-            path="/"
-            component={isTrade ? Summary : StylesColours}
-          />
-          {!isTrade && <Route path="/styles" component={Styles} />}
-          {!isTrade && (
-            <Route path="/stylescolours" component={StylesColours} />
-          )}
-          {!isTrade && (
-            <Route path="/stylecolour/:id" component={StyleColour} exact />
-          )}
-          <Route path="/summary" component={Summary} />
-          {!isTrade && <Route path="/roll/:id" component={Roll} />}
-          {!isTrade && <Route path="/shipments" component={Shipments} />}
-          {!isTrade && <Route path="/stock" component={Stock} />}
-          {!isTrade && <Route path="/report" component={Standings} exact />}
-          {!isTrade && (
-            <Route path="/report/timeline" component={Timeline} exact />
-          )}
-        </App>
+        <UsernameContext.Provider value={username}>
+          <App>
+            <Route
+              exact={true}
+              path="/"
+              component={isTrade ? Summary : StylesColours}
+            />
+            {!isTrade && <Route path="/styles" component={Styles} />}
+            {!isTrade && (
+              <Route path="/stylescolours" component={StylesColours} />
+            )}
+            {!isTrade && (
+              <Route path="/stylecolour/:id" component={StyleColour} exact />
+            )}
+            <Route path="/summary" component={Summary} />
+            {!isTrade && <Route path="/roll/:id" component={Roll} />}
+            {!isTrade && <Route path="/shipments" component={Shipments} />}
+            {!isTrade && <Route path="/stock" component={Stock} />}
+            {!isTrade && <Route path="/report" component={Standings} exact />}
+            {!isTrade && (
+              <Route path="/report/timeline" component={Timeline} exact />
+            )}
+            <Route component={isTrade ? Summary : StylesColours} />
+          </App>
+        </UsernameContext.Provider>
       </TradeContext.Provider>
     </Router>
   );

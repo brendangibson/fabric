@@ -45,9 +45,7 @@ const dropdownStyle = {
 export default function Header() {
   const isTrade = useContext(TradeContext);
   const onLogout = (apolloClient) => () => {
-    Auth.signOut()
-      .then((data) => console.log("data: ", data))
-      .catch((err) => console.log("err:", err));
+    Auth.signOut().catch((err) => console.error("err:", err));
     localStorage.clear();
     apolloClient.resetStore();
     apolloClient.clearStore();

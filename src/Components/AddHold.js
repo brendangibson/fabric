@@ -1,46 +1,57 @@
-import React, { Component } from "react";
+import React, { useState, useContext } from "react";
 import { Mutation } from "react-apollo";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
-
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import FormError from "./FormError";
 import Loading from "./Loading";
 import MutationCreateHold from "../GraphQL/MutationCreateHold";
-import { reasons } from "../DataFunctions/Cuts";
+import { UsernameContext } from "../WebApp";
+import moment from "moment";
+import AccessControl from "./AccessControl";
 
-class AddHold extends Component {
-  state = {
-    length: 0,
-    inches: 0,
-    reason: reasons[0][0],
-    notes: null,
-    orderId: null,
-    errors: {},
-  };
+const AddHold = ({ colourStyleId, refetchQueries, onComplete = () => {} }) => {
+  const username = useContext(UsernameContext);
 
-  onChange = (index) => {
+  const [length, setLength] = useState(0);
+  const [notes, setNotes] = useState(null);
+  const [owner, setOwner] = useState(username);
+  const [expires, setExpires] = useState(
+    moment().add(2, "weeks").format("YYYY-MM-DD")
+  );
+  const [errors, setErrors] = useState({});
+
+  const onChange = (index) => {
     return ({ target: { value } }) => {
-      this.setState({ [index]: value });
-      this.setErrors(index, value);
+      switch (index) {
+        case "length":
+          setLength(value);
+          break;
+        case "notes":
+          setNotes(value);
+          break;
+        case "owner":
+          setOwner(value);
+          break;
+        case "expires":
+          setExpires(value);
+          break;
+        default:
+      }
+      checkErrors(index, value);
     };
   };
 
-  addHold = (mutator) => {
+  const submit = (mutator) => {
     return () => {
-      const { length, inches, reason, notes, orderId } = this.state;
-      const { colourStyleId } = this.props;
-
-      const totalLength = parseInt(length, 10) + parseInt(inches, 10) / 36;
+      const totalLength = parseInt(length, 10);
       mutator({
         variables: {
           colourStyleId,
           length: totalLength,
-          reason,
           notes,
-          orderId,
+          owner,
+          expires: moment(expires).utc().format(),
         },
         optimisticResponse: {
           __typename: "Mutation",
@@ -49,31 +60,17 @@ class AddHold extends Component {
             id: "12345",
             colourStyleId,
             length: totalLength,
-            reason,
             notes,
-            orderId,
+            owner,
+            expires,
           },
         },
       });
-      this.setState({
-        length: 0,
-        inches: 0,
-        reason: reasons[0][0],
-        notes: null,
-        orderId: null,
-        errors: {},
-      });
+      onComplete();
     };
   };
 
-  getCurrentReasonName = () => {
-    return reasons.find((reason) => {
-      return this.state.reason === reason[0];
-    })[1];
-  };
-
-  setErrors = (index, value) => {
-    let { errors } = this.state;
+  const checkErrors = (index, value) => {
     switch (index) {
       case "length":
         if (isNaN(value)) {
@@ -88,123 +85,95 @@ class AddHold extends Component {
         break;
       default:
     }
-    this.setState({ errors });
+    setErrors(errors);
   };
 
-  isDisabled = () => {
-    const { errors, length, inches } = this.state;
+  const isDisabled =
+    !length ||
+    Object.keys(errors).some((error) => {
+      return errors[error] !== null;
+    });
 
-    return (
-      !(length + inches) ||
-      Object.keys(errors).some((error) => {
-        return errors[error] !== null;
-      })
-    );
-  };
-
-  selectAll = (e) => {
+  const selectAll = (e) => {
     const el = e.target;
     el.select();
   };
 
-  render() {
-    const { errors } = this.state;
+  return (
+    <Mutation mutation={MutationCreateHold} refetchQueries={refetchQueries}>
+      {(addHold, { loading, error }) => (
+        <div>
+          <h1>Add Hold</h1>
+          {loading && <Loading />}
+          {error && <p>Error :( Please try again</p>}
+          <Form.Group>
+            <Form.Label>Length</Form.Label>
+            <Form.Row>
+              <Col>
+                <Form.Control
+                  onClick={selectAll}
+                  value={length}
+                  type="number"
+                  id="length"
+                  name="length"
+                  onChange={onChange("length")}
+                  placeholder="yards"
+                />
+              </Col>
+              <Col style={{ lineHeight: "calc(2.25rem + 2px)" }}>yards</Col>
+            </Form.Row>
+            <FormError errorMsg={errors.length} />
+          </Form.Group>
 
-    return (
-      <Mutation
-        mutation={MutationCreateHold}
-        refetchQueries={this.props.refetchQueries}
-      >
-        {(addHold, { loading, error }) => (
-          <div>
-            <h1>Add Hold</h1>
-            {loading && <Loading />}
-            {error && <p>Error :( Please try again</p>}
+          <AccessControl>
             <Form.Group>
-              <Form.Label>Length</Form.Label>
-              <Form.Row>
-                <Col>
-                  <Form.Control
-                    onClick={this.selectAll}
-                    value={this.state.length}
-                    type="number"
-                    id="length"
-                    name="length"
-                    onChange={this.onChange("length")}
-                    placeholder="yards"
-                  />
-                </Col>
-                <Col style={{ lineHeight: "calc(2.25rem + 2px)" }}>yards</Col>
-                <Col>
-                  <Form.Control
-                    onClick={this.selectAll}
-                    value={this.state.inches}
-                    type="number"
-                    id="inches"
-                    name="inches"
-                    onChange={this.onChange("inches")}
-                    placeholder="inches"
-                  />
-                </Col>
-                <Col style={{ lineHeight: "calc(2.25rem + 2px)" }}>inches</Col>
-              </Form.Row>
-              <FormError errorMsg={errors.length} />
-            </Form.Group>
-
-            <Form.Group>
-              <Form.Label>Reason</Form.Label>
-              <DropdownButton
-                variant="dark"
-                id="dropdown-basic-button"
-                title={this.getCurrentReasonName()}
-              >
-                {reasons.map((reason) => (
-                  <Dropdown.Item
-                    as="button"
-                    onClick={this.onChange("reason")}
-                    value={reason[0]}
-                    key={reason[0]}
-                  >
-                    {reason[1]}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Order Id</Form.Label>
+              <Form.Label>Owner</Form.Label>
               <Form.Control
-                value={this.state.orderId || ""}
-                type="text"
-                id="orderId"
-                name="orderId"
-                onChange={this.onChange("orderId")}
-                placeholder="Shopify order id"
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Notes</Form.Label>
-              <Form.Control
-                value={this.state.notes || ""}
+                value={owner || username}
                 type="textarea"
-                id="notes"
-                name="notes"
-                onChange={this.onChange("notes")}
-                placeholder="Notes"
+                id="owner"
+                name="owner"
+                onChange={onChange("owner")}
+                placeholder="Owner"
               />
             </Form.Group>
-            <Button
-              disabled={loading || this.isDisabled()}
-              variant="dark"
-              size="lg"
-              onClick={this.addHold(addHold)}
-            >
-              Add Hold
-            </Button>
-          </div>
-        )}
-      </Mutation>
-    );
-  }
-}
+          </AccessControl>
+
+          <Form.Group>
+            <Form.Label>Expires</Form.Label>
+            <Form.Control
+              type="date"
+              id="expires"
+              name="expires"
+              onChange={onChange("expires")}
+              value={expires || ""}
+            />
+            <FormError errorMsg={errors.expires} />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Notes</Form.Label>
+            <Form.Control
+              value={notes || ""}
+              type="textarea"
+              id="notes"
+              name="notes"
+              onChange={onChange("notes")}
+              placeholder="Notes"
+            />
+          </Form.Group>
+          <Button
+            disabled={loading || isDisabled}
+            variant="dark"
+            size="lg"
+            onClick={submit(addHold)}
+          >
+            Add Hold
+          </Button>
+        </div>
+      )}
+    </Mutation>
+  );
+};
 
 export default AddHold;

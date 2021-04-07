@@ -5,8 +5,8 @@ query($id: ID!) {
   getHold(id: $id) {
     id
     length
-    reason
-    orderId
+    owner
+    expires
     notes
   }
 }`);

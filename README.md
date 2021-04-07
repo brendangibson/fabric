@@ -31,5 +31,6 @@ on AWS AppSync
 1. Get the URL of the Writer
 2. `mysql -h appsyncrdsinstance-rcy4ohoyyzhlvahtxrucs5oix4.clghn7faucwg.us-east-2.rds.amazonaws.com -u master -p`
 3. If that fails, you may have to update your IP for the security group for the Writer
-4. `use myrds`
-5. `show tables`
+4. If that fails try rebooting the database in the AWS console
+5. `use myrds`
+6. `show tables`
