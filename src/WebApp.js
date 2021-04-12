@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Amplify, { Auth } from "aws-amplify";
 import { Authenticator } from "aws-amplify-react";
 
@@ -53,27 +53,33 @@ const WebApp = ({ authState, ...other }) => {
       <TradeContext.Provider value={isTrade}>
         <UsernameContext.Provider value={username}>
           <App>
-            <Route
-              exact={true}
-              path="/"
-              component={isTrade ? Summary : StylesColours}
-            />
-            {!isTrade && <Route path="/styles" component={Styles} />}
-            {!isTrade && (
-              <Route path="/stylescolours" component={StylesColours} />
-            )}
-            {!isTrade && (
-              <Route path="/stylecolour/:id" component={StyleColour} exact />
-            )}
-            <Route path="/summary" component={Summary} />
-            {!isTrade && <Route path="/roll/:id" component={Roll} />}
-            {!isTrade && <Route path="/shipments" component={Shipments} />}
-            {!isTrade && <Route path="/stock" component={Stock} />}
-            {!isTrade && <Route path="/report" component={Standings} exact />}
-            {!isTrade && (
-              <Route path="/report/timeline" component={Timeline} exact />
-            )}
-            <Route component={isTrade ? Summary : StylesColours} />
+            <Switch>
+              <Route
+                exact={true}
+                path="/"
+                component={isTrade ? Summary : StylesColours}
+              />
+              {!isTrade && <Route path="/styles" component={Styles} />}
+              {!isTrade && (
+                <Route path="/stylescolours" component={StylesColours} />
+              )}
+              {!isTrade && (
+                <Route path="/stylecolour/:id" component={StyleColour} exact />
+              )}
+              <Route path="/summary" component={Summary} />
+              {!isTrade && <Route path="/roll/:id" component={Roll} />}
+              {!isTrade && <Route path="/shipments" component={Shipments} />}
+              {!isTrade && <Route path="/stock" component={Stock} />}
+              {!isTrade && <Route path="/report" component={Standings} exact />}
+              {!isTrade && (
+                <Route path="/report/timeline" component={Timeline} exact />
+              )}
+              <Route
+                path="*"
+                exact
+                component={isTrade ? Summary : StylesColours}
+              />
+            </Switch>
           </App>
         </UsernameContext.Provider>
       </TradeContext.Provider>
