@@ -39,7 +39,7 @@ const deleteStyle = {
 
 const lengthStyle = {};
 const holdStyle = { color: "sienna" };
-const incomingStyle = { color: "olive" };
+const incomingStyle = { color: "#58735F" };
 const cellStyle = { width: "50vw" };
 
 class StyleColour extends Component {

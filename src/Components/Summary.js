@@ -7,6 +7,7 @@ import Loading from "./Loading";
 import Swatch from "./Swatch";
 import moment from "moment";
 import AddHold from "./AddHold";
+import Button from "react-bootstrap/Button";
 
 const wrapperStyle = {
   display: "flex",
@@ -16,7 +17,6 @@ const wrapperStyle = {
 
 const rowStyle = {
   display: "flex",
-  height: "35vw",
 };
 
 const leftColumnStyle = {
@@ -34,11 +34,6 @@ const holdModalStyle = {
   background: "#FFF",
   padding: 8,
   border: "1px solid grey",
-};
-
-const reserveLinkStyle = {
-  color: "lightskyblue",
-  cursor: "pointer",
 };
 
 const StyleColour = ({ styleColour }) => {
@@ -68,9 +63,6 @@ const StyleColour = ({ styleColour }) => {
       </div>
       <div style={rightColumnStyle}>
         <strong>{styleColour.name}</strong>{" "}
-        <a onClick={openHold(styleColour.id)} style={reserveLinkStyle}>
-          reserve
-        </a>
         <div>
           <strong>
             {humanize(styleColour.remaining)} yard
@@ -85,16 +77,19 @@ const StyleColour = ({ styleColour }) => {
         ) : null}
         {styleColour.incoming &&
           styleColour.incoming.map((i) => (
-            <div key={i.id} style={{ color: "olive" }}>
+            <div key={i.id} style={{ color: "#58735F" }}>
               {i.length} yards expected{" "}
               {i.expected ? moment(i.expected).format("MMM D") : ""}
             </div>
           ))}
         {styleColour.incomingLength && !styleColour.incoming ? (
-          <div style={{ color: "olive" }}>
+          <div style={{ color: "#58735F" }}>
             {styleColour.incomingLength} yards on their way
           </div>
         ) : null}
+        <Button variant="dark" size="sm" onClick={openHold(styleColour.id)}>
+          Request a reserve
+        </Button>
         {addingHoldId === styleColour.id ? (
           <div style={holdModalStyle}>
             <AddHold
@@ -105,6 +100,7 @@ const StyleColour = ({ styleColour }) => {
                 },
               ]}
               onComplete={handleAddedHold}
+              onClose={openHold(styleColour.id)}
             />
           </div>
         ) : null}

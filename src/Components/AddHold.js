@@ -10,7 +10,20 @@ import { UsernameContext } from "../WebApp";
 import moment from "moment";
 import AccessControl from "./AccessControl";
 
-const AddHold = ({ colourStyleId, refetchQueries, onComplete = () => {} }) => {
+const closeButtonStyle = {
+  position: "absolute",
+  right: "1vw",
+  top: "1vw",
+  border: "none",
+  background: "transparent",
+};
+
+const AddHold = ({
+  colourStyleId,
+  refetchQueries,
+  onComplete = () => {},
+  onClose,
+}) => {
   const username = useContext(UsernameContext);
 
   const [length, setLength] = useState(0);
@@ -103,6 +116,11 @@ const AddHold = ({ colourStyleId, refetchQueries, onComplete = () => {} }) => {
     <Mutation mutation={MutationCreateHold} refetchQueries={refetchQueries}>
       {(addHold, { loading, error }) => (
         <div>
+          {onClose ? (
+            <button onClick={onClose} style={closeButtonStyle}>
+              X
+            </button>
+          ) : null}
           <h1>Add Hold</h1>
           {loading && <Loading />}
           {error && <p>Error :( Please try again</p>}
@@ -152,14 +170,13 @@ const AddHold = ({ colourStyleId, refetchQueries, onComplete = () => {} }) => {
           </Form.Group>
 
           <Form.Group>
-            <Form.Label>Notes</Form.Label>
+            <Form.Label>Sidemark</Form.Label>
             <Form.Control
               value={notes || ""}
               type="textarea"
               id="notes"
               name="notes"
               onChange={onChange("notes")}
-              placeholder="Notes"
             />
           </Form.Group>
           <Button
