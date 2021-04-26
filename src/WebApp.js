@@ -17,6 +17,7 @@ import Roll from "./Components/Roll";
 import Shipments from "./Components/Shipments";
 import Standings from "./Components/Standings";
 import Stock from "./Components/Stock";
+import Holds from "./Components/Holds";
 
 import Timeline from "./Components/Timeline";
 import App from "./App";
@@ -67,6 +68,8 @@ const WebApp = ({ authState, ...other }) => {
                 <Route path="/stylecolour/:id" component={StyleColour} exact />
               )}
               <Route path="/summary" component={Summary} />
+              <Route path="/holds" component={Holds} />
+
               {!isTrade && <Route path="/roll/:id" component={Roll} />}
               {!isTrade && <Route path="/shipments" component={Shipments} />}
               {!isTrade && <Route path="/stock" component={Stock} />}

@@ -206,6 +206,12 @@ class StyleColour extends Component {
                     styleColourId={styleColourId}
                     styleColourPage={styleColourPage}
                     key={hold.id}
+                    refetchQueries={[
+                      {
+                        query: QueryGetStyleColour,
+                        variables: { id: styleColourId },
+                      },
+                    ]}
                   />
                 ))}
               </a>

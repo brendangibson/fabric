@@ -8,6 +8,7 @@ import Loading from "./Loading";
 import MutationUpdateHold from "../GraphQL/MutationUpdateHold";
 import { UsernameContext } from "../WebApp";
 import moment from "moment";
+import AccessControl from "./AccessControl";
 
 const UpdateHold = ({ hold, colourStyleId, refetchQueries, onComplete }) => {
   const username = useContext(UsernameContext);
@@ -124,17 +125,19 @@ const UpdateHold = ({ hold, colourStyleId, refetchQueries, onComplete }) => {
             <FormError errorMsg={errors.length} />
           </Form.Group>
 
-          <Form.Group>
-            <Form.Label>Owner</Form.Label>
-            <Form.Control
-              value={owner || username}
-              type="textarea"
-              id="owner"
-              name="owner"
-              onChange={onChange("owner")}
-              placeholder="Owner"
-            />
-          </Form.Group>
+          <AccessControl>
+            <Form.Group>
+              <Form.Label>Owner</Form.Label>
+              <Form.Control
+                value={owner || username}
+                type="textarea"
+                id="owner"
+                name="owner"
+                onChange={onChange("owner")}
+                placeholder="Owner"
+              />
+            </Form.Group>
+          </AccessControl>
           <Form.Group>
             <Form.Label>Expires</Form.Label>
             <Form.Control

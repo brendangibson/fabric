@@ -5,9 +5,9 @@ import MutationDeleteHold from "../GraphQL/MutationDeleteHold";
 import Table from "react-bootstrap/Table";
 import { Mutation } from "react-apollo";
 import { humanize } from "../DataFunctions/Cuts";
-import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
 import moment from "moment";
 import UpdateHold from "./UpdateHold";
+import AccessControl from "./AccessControl";
 
 const deleteStyle = {
   display: "inline-block",
@@ -23,7 +23,7 @@ const editStyle = {
   paddingLeft: "16px",
 };
 
-const Hold = ({ hold, styleColourId, styleColourPage }) => {
+const Hold = ({ hold, styleColourId, styleColourPage, refetchQueries }) => {
   const [editMode, setEditMode] = useState(false);
 
   const deleteHoldMutation = (mutator, id) => {
@@ -42,16 +42,15 @@ const Hold = ({ hold, styleColourId, styleColourPage }) => {
     setEditMode(false);
   };
 
+  const weight = styleColourPage && styleColourPage.styleColour.style.weight;
+  const thickness =
+    styleColourPage && styleColourPage.styleColour.style.thickness;
+
   return editMode ? (
     <UpdateHold
       hold={hold}
       colourStyleId={styleColourId}
-      refetchQueries={[
-        {
-          query: QueryGetStyleColour,
-          variables: { id: styleColourId },
-        },
-      ]}
+      refetchQueries={refetchQueries}
       onComplete={handleUpdateHoldComplete}
     />
   ) : (
@@ -60,20 +59,22 @@ const Hold = ({ hold, styleColourId, styleColourPage }) => {
         <tr>
           <td style={cellStyle}>
             Length
-            <OverlayTrigger
-              rootClose
-              trigger="click"
-              placement="bottom"
-              overlay={
-                <Dimensions
-                  weight={styleColourPage.styleColour.style.weight}
-                  thickness={styleColourPage.styleColour.style.thickness}
-                  length={hold.length}
-                />
-              }
-            >
-              <span style={{ position: "relative" }}> ⓘ</span>
-            </OverlayTrigger>
+            {weight && thickness ? (
+              <OverlayTrigger
+                rootClose
+                trigger="click"
+                placement="bottom"
+                overlay={
+                  <Dimensions
+                    weight={styleColourPage.styleColour.style.weight}
+                    thickness={styleColourPage.styleColour.style.thickness}
+                    length={hold.length}
+                  />
+                }
+              >
+                <span style={{ position: "relative" }}> ⓘ</span>
+              </OverlayTrigger>
+            ) : null}
           </td>
           <td style={cellStyle}>
             {humanize(hold.length)} yard
@@ -88,12 +89,7 @@ const Hold = ({ hold, styleColourId, styleColourPage }) => {
             </span>
             <Mutation
               mutation={MutationDeleteHold}
-              refetchQueries={[
-                {
-                  query: QueryGetStyleColour,
-                  variables: { id: styleColourId },
-                },
-              ]}
+              refetchQueries={refetchQueries}
             >
               {(deleteHold, { loading, error }) => (
                 <span
@@ -107,10 +103,13 @@ const Hold = ({ hold, styleColourId, styleColourPage }) => {
           </td>
         </tr>
         {hold.owner && (
-          <tr>
-            <td style={cellStyle}>Owner</td>
-            <td style={cellStyle}>{hold.owner}</td>
-          </tr>
+          <AccessControl>
+            {" "}
+            <tr>
+              <td style={cellStyle}>Owner</td>
+              <td style={cellStyle}>{hold.owner}</td>
+            </tr>
+          </AccessControl>
         )}
         {hold.notes && (
           <tr>
