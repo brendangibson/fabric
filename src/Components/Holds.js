@@ -17,7 +17,7 @@ const Summary = () => {
 
   return (
     <div style={wrapperStyle}>
-      <h1>My Holds</h1>
+      <h1>My Reserves</h1>
       <Query
         query={QueryGetHoldsByOwner}
         fetchPolicy="network-only"
@@ -33,7 +33,7 @@ const Summary = () => {
           return (
             <div>
               {data.getHoldsByOwner.length === 0
-                ? "No fabric currently on hold"
+                ? "No fabric currently reserved"
                 : data.getHoldsByOwner.map((hold) => (
                     <Hold
                       hold={hold}

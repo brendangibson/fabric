@@ -121,7 +121,6 @@ const AddHold = ({
               X
             </button>
           ) : null}
-          <h1>Add Hold</h1>
           {loading && <Loading />}
           {error && <p>Error :( Please try again</p>}
           <Form.Group>
@@ -185,7 +184,7 @@ const AddHold = ({
             size="lg"
             onClick={submit(addHold)}
           >
-            Add Hold
+            Reserve
           </Button>
         </div>
       )}

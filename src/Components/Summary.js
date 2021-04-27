@@ -72,18 +72,18 @@ const StyleColour = ({ styleColour }) => {
         </div>
         {styleColour.holdsLength ? (
           <div style={{ color: "sienna" }}>
-            {humanize(styleColour.holdsLength)} yards on hold
+            {humanize(styleColour.holdsLength)} yards reserved
           </div>
         ) : null}
         {styleColour.incoming &&
           styleColour.incoming.map((i) => (
-            <div key={i.id} style={{ color: "#58735F" }}>
+            <div key={i.id} style={{ color: "#58735F", marginBottom: "1vh" }}>
               {i.length} yards expected{" "}
               {i.expected ? moment(i.expected).format("MMM D") : ""}
             </div>
           ))}
         {styleColour.incomingLength && !styleColour.incoming ? (
-          <div style={{ color: "#58735F" }}>
+          <div style={{ color: "#58735F", marginBottom: "1vh" }}>
             {styleColour.incomingLength} yards on their way
           </div>
         ) : null}
