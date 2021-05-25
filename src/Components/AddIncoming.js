@@ -124,23 +124,11 @@ class AddIncoming extends Component {
                   />
                 </Col>
                 <Col style={{ lineHeight: "calc(2.25rem + 2px)" }}>yards</Col>
-                <Col>
-                  <Form.Control
-                    onClick={this.selectAll}
-                    value={this.state.inches}
-                    type="number"
-                    id="inches"
-                    name="inches"
-                    onChange={this.onChange("inches")}
-                    placeholder="inches"
-                  />
-                </Col>
-                <Col style={{ lineHeight: "calc(2.25rem + 2px)" }}>inches</Col>
               </Form.Row>
               <FormError errorMsg={errors.length} />
             </Form.Group>
 
-            <Form.Group>
+            {/* <Form.Group>
               <Form.Label>Order Id</Form.Label>
               <Form.Control
                 value={this.state.orderId || ""}
@@ -161,7 +149,7 @@ class AddIncoming extends Component {
                 onChange={this.onChange("notes")}
                 placeholder="Notes"
               />
-            </Form.Group>
+            </Form.Group> */}
             <Form.Group>
               <Form.Label>Expected</Form.Label>
               <Form.Control
