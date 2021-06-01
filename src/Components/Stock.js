@@ -38,11 +38,14 @@ const renderStyleColour = (styleColourPage) => {
 
 const getTotalIncoming = (styleColourPage) => {
   return styleColourPage.rolls.reduce((outerAccum, outerValue) => {
+    console.log("outerValue: ", outerValue);
     return (
       outerAccum +
-      outerValue.incoming.reduce((accumulator, currentValue) => {
-        return accumulator + currentValue.length;
-      }, 0)
+      (outerValue
+        ? outerValue.incoming.reduce((accumulator, currentValue) => {
+            return accumulator + currentValue.length;
+          }, 0)
+        : 0)
     );
   }, 0);
 };

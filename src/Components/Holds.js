@@ -12,7 +12,7 @@ const wrapperStyle = {
   padding: "5vw 0",
 };
 
-const Summary = () => {
+const Holds = () => {
   const username = useContext(UsernameContext);
 
   return (
@@ -56,4 +56,4 @@ const Summary = () => {
   );
 };
 
-export default Summary;
+export default Holds;

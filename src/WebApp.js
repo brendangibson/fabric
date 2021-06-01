@@ -18,6 +18,7 @@ import Shipments from "./Components/Shipments";
 import Standings from "./Components/Standings";
 import Stock from "./Components/Stock";
 import Holds from "./Components/Holds";
+import AllHolds from "./Components/AllHolds";
 
 import Timeline from "./Components/Timeline";
 import App from "./App";
@@ -36,10 +37,21 @@ const WebApp = ({ authState, ...other }) => {
     Auth.currentSession()
       .then((a) => {
         const decoded = a.getAccessToken().decodePayload();
+        console.log(
+          "decoded: ",
+          decoded,
+          Boolean(
+            decoded &&
+              decoded["cognito:groups"] &&
+              decoded["cognito:groups"].includes("trade")
+          )
+        );
         setIsTrade(
-          decoded &&
-            decoded["cognito:groups"] &&
-            decoded["cognito:groups"].includes("trade")
+          Boolean(
+            decoded &&
+              decoded["cognito:groups"] &&
+              decoded["cognito:groups"].includes("trade")
+          )
         );
         setUsername(decoded.username);
       })
@@ -68,7 +80,11 @@ const WebApp = ({ authState, ...other }) => {
                 <Route path="/stylecolour/:id" component={StyleColour} exact />
               )}
               <Route path="/summary" component={Summary} />
-              <Route path="/holds" component={Holds} />
+              {isTrade ? (
+                <Route path="/holds" component={Holds} />
+              ) : (
+                <Route path="/holds" component={AllHolds} />
+              )}
 
               {!isTrade && <Route path="/roll/:id" component={Roll} />}
               {!isTrade && <Route path="/shipments" component={Shipments} />}

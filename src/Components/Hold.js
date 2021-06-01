@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import Dimensions from "./Dimensions";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import MutationDeleteHold from "../GraphQL/MutationDeleteHold";
+import MutationUpdateHoldPending from "../GraphQL/MutationUpdateHoldPending";
 import Table from "react-bootstrap/Table";
 import { Mutation } from "react-apollo";
 import { humanize } from "../DataFunctions/Cuts";
 import moment from "moment";
 import UpdateHold from "./UpdateHold";
 import AccessControl from "./AccessControl";
+import Button from "react-bootstrap/Button";
 
 const deleteStyle = {
   display: "inline-block",
@@ -25,6 +27,17 @@ const editStyle = {
 
 const Hold = ({ hold, styleColourId, styleColourPage, refetchQueries }) => {
   const [editMode, setEditMode] = useState(false);
+
+  const approve = (mutator) => {
+    return () => {
+      mutator({
+        variables: {
+          id: hold.id,
+          pending: false,
+        },
+      });
+    };
+  };
 
   const deleteHoldMutation = (mutator, id) => {
     return () => {
@@ -104,7 +117,6 @@ const Hold = ({ hold, styleColourId, styleColourPage, refetchQueries }) => {
         </tr>
         {hold.owner && (
           <AccessControl>
-            {" "}
             <tr>
               <td style={cellStyle}>Owner</td>
               <td style={cellStyle}>{hold.owner}</td>
@@ -136,6 +148,29 @@ const Hold = ({ hold, styleColourId, styleColourPage, refetchQueries }) => {
             <td style={cellStyle}>Expires</td>
             <td style={cellStyle}>
               {moment(hold.expires).format("MMMM Do, YYYY")}
+            </td>
+          </tr>
+        )}
+        {hold.pending && (
+          <tr>
+            <td style={cellStyle}>Pending</td>
+            <td style={cellStyle}>
+              <AccessControl>
+                <Mutation
+                  mutation={MutationUpdateHoldPending}
+                  refetchQueries={refetchQueries}
+                >
+                  {(updateHoldPending, { loading, error }) => (
+                    <Button
+                      variant="dark"
+                      size="sm"
+                      onClick={approve(updateHoldPending)}
+                    >
+                      Approve
+                    </Button>
+                  )}
+                </Mutation>
+              </AccessControl>
             </td>
           </tr>
         )}

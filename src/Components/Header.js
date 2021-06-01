@@ -72,7 +72,7 @@ export default function Header() {
                 <NavDropdown.Item href="/report">Status</NavDropdown.Item>
               )}
               <NavDropdown.Item href="/summary">Summary</NavDropdown.Item>
-              <NavDropdown.Item href="/holds">My Holds</NavDropdown.Item>
+              <NavDropdown.Item href="/holds">Holds</NavDropdown.Item>
 
               {!isTrade && (
                 <NavDropdown.Item href="/stock">Stock</NavDropdown.Item>

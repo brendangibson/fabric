@@ -6,7 +6,7 @@ import Col from "react-bootstrap/Col";
 import FormError from "./FormError";
 import Loading from "./Loading";
 import MutationCreateHold from "../GraphQL/MutationCreateHold";
-import { UsernameContext } from "../WebApp";
+import { UsernameContext, TradeContext } from "../WebApp";
 import moment from "moment";
 import AccessControl from "./AccessControl";
 
@@ -25,6 +25,7 @@ const AddHold = ({
   onClose,
 }) => {
   const username = useContext(UsernameContext);
+  const isTrade = useContext(TradeContext);
 
   const [length, setLength] = useState(0);
   const [notes, setNotes] = useState(null);
@@ -65,6 +66,7 @@ const AddHold = ({
           notes,
           owner,
           expires: moment(expires).utc().format(),
+          pending: isTrade,
         },
         optimisticResponse: {
           __typename: "Mutation",
@@ -76,6 +78,7 @@ const AddHold = ({
             notes,
             owner,
             expires,
+            pending: isTrade,
           },
         },
       });
