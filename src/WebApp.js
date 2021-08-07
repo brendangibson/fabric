@@ -37,15 +37,7 @@ const WebApp = ({ authState, ...other }) => {
     Auth.currentSession()
       .then((a) => {
         const decoded = a.getAccessToken().decodePayload();
-        console.log(
-          "decoded: ",
-          decoded,
-          Boolean(
-            decoded &&
-              decoded["cognito:groups"] &&
-              decoded["cognito:groups"].includes("trade")
-          )
-        );
+
         setIsTrade(
           Boolean(
             decoded &&

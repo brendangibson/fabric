@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { Query, Mutation } from "react-apollo";
+import { Query } from "react-apollo";
 import { Link } from "react-router-dom";
-import Table from "react-bootstrap/Table";
 import Hold from "./Hold";
-import MutationDeleteIncoming from "../GraphQL/MutationDeleteIncoming";
+import Incoming from "./Incoming";
 import { humanize } from "../DataFunctions/Cuts";
 import { calculateRemaining } from "../DataFunctions/Roll";
 import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
@@ -29,18 +28,9 @@ const labelStyle = {
   verticalAlign: "top",
 };
 
-const deleteStyle = {
-  display: "inline-block",
-  marginLeft: 16,
-  verticalAlign: "top",
-  cursor: "pointer",
-  color: "sienna",
-};
-
 const lengthStyle = {};
 const holdStyle = { color: "sienna" };
 const incomingStyle = { color: "#58735F" };
-const cellStyle = { width: "50vw" };
 
 class StyleColour extends Component {
   constructor(props) {
@@ -141,60 +131,22 @@ class StyleColour extends Component {
                 <h1>Incoming Fabric</h1>
               ) : null}
               {styleColourPage.incoming &&
-                styleColourPage.incoming.map((incoming) => (
-                  <Table key={incoming.id}>
-                    <tbody>
-                      <tr>
-                        <td style={cellStyle}>Length</td>
-                        <td style={cellStyle}>
-                          {humanize(incoming.length)} yard
-                          {incoming.length === 1 ? "" : "s"}
-                          <Mutation
-                            mutation={MutationDeleteIncoming}
-                            refetchQueries={[
-                              {
-                                query: QueryGetStyleColour,
-                                variables: { id: styleColourId },
-                              },
-                            ]}
-                          >
-                            {(deleteIncoming, { loading, error }) => (
-                              <span
-                                onClick={this.deleteIncoming(
-                                  deleteIncoming,
-                                  incoming.id
-                                )}
-                                style={deleteStyle}
-                              >
-                                ⊗
-                              </span>
-                            )}
-                          </Mutation>
-                        </td>
-                      </tr>
-                      {incoming.notes && (
-                        <tr>
-                          <td style={cellStyle}>Notes</td>
-                          <td style={cellStyle}>{incoming.notes}</td>
-                        </tr>
-                      )}
-                      {incoming.orderId && (
-                        <tr>
-                          <td style={cellStyle}>Order Id</td>
-                          <td style={cellStyle}>{incoming.orderId}</td>
-                        </tr>
-                      )}
-                      {incoming.timestamp && (
-                        <tr>
-                          <td style={cellStyle}>Date requested</td>
-                          <td style={cellStyle}>
-                            {moment(incoming.timestamp).format("MMMM Do, YYYY")}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </Table>
-                ))}
+                styleColourPage.incoming
+                  .sort((a, b) => moment(a.expected) - moment(b.expected))
+                  .map((incoming) => (
+                    <Incoming
+                      incoming={incoming}
+                      styleColourId={styleColourId}
+                      styleColourPage={styleColourPage}
+                      key={incoming.id}
+                      refetchQueries={[
+                        {
+                          query: QueryGetStyleColour,
+                          variables: { id: styleColourId },
+                        },
+                      ]}
+                    />
+                  ))}
 
               <a name="holds" ref={this.holdsRef}>
                 {styleColourPage.holds && styleColourPage.holds.length ? (

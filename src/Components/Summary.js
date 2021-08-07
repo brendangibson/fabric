@@ -76,18 +76,25 @@ const StyleColour = ({ styleColour }) => {
           </div>
         ) : null}
         {styleColour.incoming &&
-          styleColour.incoming.map((i) => (
-            <div key={i.id} style={{ color: "#58735F", marginBottom: "1vh" }}>
-              {i.length} yards expected{" "}
-              {i.expected ? moment(i.expected).format("MMM D") : ""}
-            </div>
-          ))}
+          styleColour.incoming
+            .sort((a, b) => moment(a.expected) - moment(b.expected))
+            .map((i) => (
+              <div key={i.id} style={{ color: "#58735F" }}>
+                {i.length} yards expected{" "}
+                {i.expected ? moment(i.expected).format("DD/MM/YY") : ""}
+              </div>
+            ))}
         {styleColour.incomingLength && !styleColour.incoming ? (
-          <div style={{ color: "#58735F", marginBottom: "1vh" }}>
+          <div style={{ color: "#58735F" }}>
             {styleColour.incomingLength} yards on their way
           </div>
         ) : null}
-        <Button variant="dark" size="sm" onClick={openHold(styleColour.id)}>
+        <Button
+          variant="dark"
+          size="sm"
+          onClick={openHold(styleColour.id)}
+          style={{ marginTop: "1vh" }}
+        >
           Request a reserve
         </Button>
         {addingHoldId === styleColour.id ? (

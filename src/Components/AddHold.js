@@ -126,6 +126,7 @@ const AddHold = ({
           ) : null}
           {loading && <Loading />}
           {error && <p>Error :( Please try again</p>}
+          <h1>Add Hold</h1>
           <Form.Group>
             <Form.Label>Length</Form.Label>
             <Form.Row>
