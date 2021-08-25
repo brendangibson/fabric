@@ -81,7 +81,7 @@ const StyleColour = ({ styleColour }) => {
             .map((i) => (
               <div key={i.id} style={{ color: "#58735F" }}>
                 {i.length} yards expected{" "}
-                {i.expected ? moment(i.expected).format("DD/MM/YY") : ""}
+                {i.expected ? moment(i.expected).format("MM/DD/YY") : ""}
               </div>
             ))}
         {styleColour.incomingLength && !styleColour.incoming ? (
