@@ -34,3 +34,10 @@ on AWS AppSync
 4. If that fails try rebooting the database in the AWS console
 5. `use myrds`
 6. `show tables;`
+
+### Add in a new style/colour
+
+1. Take a picture of the fabric. Put that image in `public/assets`. Build an deploy
+2. `INSERT INTO colours (id, name) VALUES (uuid(), 'New Colour Name');`
+3. `INSERT INTO styles (id, name) VALUES (UUID(), 'New Style Name');`
+4. `INSERT INTO stylesColours (id, colourId, styleId, swatchUrl) VALUES (uuid(), 'New Colour Id', 'New Style ID', 'https://sienandco.space/assets/newimage.jpg')`
