@@ -33,4 +33,4 @@ on AWS AppSync
 3. If that fails, you may have to update your IP for the security group for the Writer
 4. If that fails try rebooting the database in the AWS console
 5. `use myrds`
-6. `show tables`
+6. `show tables;`
