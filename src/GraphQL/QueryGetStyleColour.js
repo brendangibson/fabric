@@ -50,5 +50,9 @@ query($id: ID!) {
             timestamp
             expected
         }
+        standby {
+            id
+            length
+        }
       }
 }`);

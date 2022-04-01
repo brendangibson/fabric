@@ -3,6 +3,7 @@ import { Query } from "react-apollo";
 import { Link } from "react-router-dom";
 import Hold from "./Hold";
 import Incoming from "./Incoming";
+import Standby from "./Standby";
 import { humanize } from "../DataFunctions/Cuts";
 import { calculateRemaining } from "../DataFunctions/Roll";
 import QueryGetStyleColour from "../GraphQL/QueryGetStyleColour";
@@ -12,6 +13,7 @@ import Loading from "./Loading";
 import Swatch from "./Swatch";
 import AddHold from "./AddHold";
 import AddIncoming from "./AddIncoming";
+import AddStandby from "./AddStandby";
 import moment from "moment";
 import AccessControl from "./AccessControl";
 
@@ -38,6 +40,13 @@ class StyleColour extends Component {
     this.holdsRef = React.createRef();
   }
   deleteIncoming = (mutator, id) => {
+    return () => {
+      mutator({
+        variables: { id },
+      });
+    };
+  };
+  deleteStandby = (mutator, id) => {
     return () => {
       mutator({
         variables: { id },
@@ -75,6 +84,10 @@ class StyleColour extends Component {
             (accumulator, incoming) => accumulator + incoming.length,
             0
           );
+          const standbyLength = styleColourPage.standby.reduce(
+            (accumulator, standby) => accumulator + standby.length,
+            0
+          );
 
           const bigRolls = styleColourPage.rolls.filter(
             (roll) => !roll.returned && calculateRemaining(roll) > 0.5
@@ -103,6 +116,12 @@ class StyleColour extends Component {
                     <div style={incomingStyle}>
                       {humanize(incomingLength)} yard
                       {incomingLength === 1 ? " on its way" : "s on their way"}
+                    </div>
+                  ) : null}
+                  {standbyLength ? (
+                    <div style={incomingStyle}>
+                      {humanize(standbyLength)} yard
+                      {standbyLength === 1 ? " on standby" : "s on standby"}
                     </div>
                   ) : null}
                   <i style={{ fontSize: "smaller" }}>
@@ -148,6 +167,25 @@ class StyleColour extends Component {
                     />
                   ))}
 
+              {styleColourPage.standby && styleColourPage.standby.length ? (
+                <h1>Fabric on Standby</h1>
+              ) : null}
+              {styleColourPage.standby &&
+                styleColourPage.standby.map((standby) => (
+                  <Standby
+                    standby={standby}
+                    styleColourId={styleColourId}
+                    styleColourPage={styleColourPage}
+                    key={standby.id}
+                    refetchQueries={[
+                      {
+                        query: QueryGetStyleColour,
+                        variables: { id: styleColourId },
+                      },
+                    ]}
+                  />
+                ))}
+
               <a name="holds" ref={this.holdsRef}>
                 {styleColourPage.holds && styleColourPage.holds.length ? (
                   <h1>Holds</h1>
@@ -171,6 +209,18 @@ class StyleColour extends Component {
               <div style={{ height: "3vh" }} />
               <AccessControl>
                 <AddIncoming
+                  colourStyleId={styleColourId}
+                  refetchQueries={[
+                    {
+                      query: QueryGetStyleColour,
+                      variables: { id: styleColourId },
+                    },
+                  ]}
+                />
+                <div style={{ height: "3vh" }} />
+              </AccessControl>
+              <AccessControl>
+                <AddStandby
                   colourStyleId={styleColourId}
                   refetchQueries={[
                     {

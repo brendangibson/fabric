@@ -14,5 +14,10 @@ query {
           length
           expected
         }
+        standbyLength
+        standby {
+          id
+          length
+        }
       }
 }`);

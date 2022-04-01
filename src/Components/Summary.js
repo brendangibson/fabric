@@ -89,6 +89,17 @@ const StyleColour = ({ styleColour }) => {
             {styleColour.incomingLength} yards on their way
           </div>
         ) : null}
+        {styleColour.standby &&
+          styleColour.standby.map((i) => (
+            <div key={i.id} style={{ color: "#58735F" }}>
+              {i.length} yards on standby{" "}
+            </div>
+          ))}
+        {styleColour.standbyLength && !styleColour.standby ? (
+          <div style={{ color: "#58735F" }}>
+            {styleColour.standbyLength} yards on standby
+          </div>
+        ) : null}
         <Button
           variant="dark"
           size="sm"

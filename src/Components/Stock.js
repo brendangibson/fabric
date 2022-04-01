@@ -16,6 +16,7 @@ const renderStyleColour = (styleColourPage) => {
     styleColourPage.styleColour.style.name +
     " " +
     styleColourPage.styleColour.colour.name;
+  const standbyLength = getTotalStandby(styleColourPage);
   const incomingLength = getTotalIncoming(styleColourPage);
   const holdLength = getTotalHolds(styleColourPage);
   return (
@@ -30,15 +31,28 @@ const renderStyleColour = (styleColourPage) => {
         </Link>
       </td>
       <td>{name}</td>
+      <td>{standbyLength && standbyLength.toFixed(1) + "yds"}</td>
       <td>{incomingLength && incomingLength.toFixed(1) + "yds"}</td>
       <td>{holdLength && holdLength.toFixed(1) + "yds"}</td>
     </tr>
   );
 };
 
+const getTotalStandby = (styleColourPage) => {
+  return styleColourPage.rolls.reduce((outerAccum, outerValue) => {
+    return (
+      outerAccum +
+      (outerValue
+        ? outerValue.standby.reduce((accumulator, currentValue) => {
+            return accumulator + currentValue.length;
+          }, 0)
+        : 0)
+    );
+  }, 0);
+};
+
 const getTotalIncoming = (styleColourPage) => {
   return styleColourPage.rolls.reduce((outerAccum, outerValue) => {
-    console.log("outerValue: ", outerValue);
     return (
       outerAccum +
       (outerValue
@@ -71,6 +85,7 @@ const Stock = () => (
           <thead>
             <tr>
               <th colSpan={2}>Style Colour</th>
+              <th>On Standby</th>
               <th>Incoming</th>
               <th>Holds</th>
             </tr>

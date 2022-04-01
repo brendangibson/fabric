@@ -27,5 +27,8 @@ query {
           incoming {
             length
           }
+          standby {
+            length
+          }
       }
 }`);
