@@ -69,19 +69,19 @@ export default function Header() {
                 <NavDropdown.Item href="/shipments">Shipments</NavDropdown.Item>
               )}
               {!isTrade && (
-                <NavDropdown.Item href="/report">Status</NavDropdown.Item>
+                <NavDropdown.Item href="/status">Status</NavDropdown.Item>
               )}
               <NavDropdown.Item href="/summary">Summary</NavDropdown.Item>
               <NavDropdown.Item href="/holds">Holds</NavDropdown.Item>
 
-              {!isTrade && (
+              {/* {!isTrade && (
                 <NavDropdown.Item href="/stock">Stock</NavDropdown.Item>
               )}
               {!isTrade && (
                 <NavDropdown.Item href="/report/timeline">
                   Timeline
                 </NavDropdown.Item>
-              )}
+              )} */}
               <NavDropdown.Item onClick={onLogout(apolloClient)}>
                 Log out
               </NavDropdown.Item>

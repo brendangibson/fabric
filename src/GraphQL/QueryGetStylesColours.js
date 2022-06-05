@@ -7,6 +7,7 @@ query {
         name
         swatchUrl
         remaining
+        rate
         holdsLength
         incomingLength
         incoming {

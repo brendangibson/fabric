@@ -124,6 +124,19 @@ class StyleColour extends Component {
                       {standbyLength === 1 ? " on standby" : "s on standby"}
                     </div>
                   ) : null}
+                  {styleColour.rate &&
+                  styleColour.remaining + standbyLength + incomingLength ? (
+                    <div>
+                      (
+                      {Math.floor(
+                        (styleColour.remaining +
+                          standbyLength +
+                          incomingLength) /
+                          styleColour.rate
+                      )}
+                      <span> days)</span>
+                    </div>
+                  ) : null}
                   <i style={{ fontSize: "smaller" }}>
                     {styleColour.glenRavenName}
                   </i>

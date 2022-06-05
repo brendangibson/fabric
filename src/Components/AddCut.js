@@ -169,7 +169,7 @@ class AddCut extends Component {
                 ))}
               </DropdownButton>
             </Form.Group>
-            <Form.Group>
+            {/* <Form.Group>
               <Form.Label>Order Id</Form.Label>
               <Form.Control
                 value={this.state.orderId || ""}
@@ -179,7 +179,7 @@ class AddCut extends Component {
                 onChange={this.onChange("orderId")}
                 placeholder="Shopify order id"
               />
-            </Form.Group>
+            </Form.Group> */}
             <Form.Group>
               <Form.Label>Notes</Form.Label>
               <Form.Control
