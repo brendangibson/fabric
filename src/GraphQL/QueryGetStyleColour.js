@@ -16,7 +16,6 @@ query($id: ID!) {
             swatchUrl
             glenRavenName
             remaining
-            rate
         }
         rolls{
             id

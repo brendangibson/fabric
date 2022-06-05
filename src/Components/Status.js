@@ -71,7 +71,7 @@ const Standings = () => (
               <th>Incoming (yds)</th>
               <th>Standby (yds)</th>
               <th>Holds (yds)</th>
-              <th>Daily Rate (all time)</th>
+              <th>Daily Rate (1 yr)</th>
               <th>Days remaining</th>
             </tr>
           </thead>
