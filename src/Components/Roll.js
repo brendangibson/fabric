@@ -9,12 +9,21 @@ import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import { getReasonName, humanize } from "../DataFunctions/Cuts";
 import MutationReturnRoll from "../GraphQL/MutationReturnRoll";
+import MutationUnReturnRoll from "../GraphQL/MutationUnReturnRoll";
 import Dimensions from "./Dimensions";
 import Button from "react-bootstrap/Button";
 import AccessControl from "./AccessControl";
 import moment from "moment";
 
 class Roll extends Component {
+  unReturnRoll = (mutator, id) => {
+    return () => {
+      mutator({
+        variables: { id },
+      });
+    };
+  };
+
   returnRoll = (mutator, id) => {
     return () => {
       mutator({
@@ -154,7 +163,31 @@ class Roll extends Component {
 
               <div style={{ height: "3vh" }} />
               <AccessControl>
-                {roll.returned ? null : (
+                {roll.returned ? (
+                  <Mutation
+                    mutation={MutationUnReturnRoll}
+                    refetchQueries={[
+                      {
+                        query: QueryGetRoll,
+                        variables: { id: match.params.id },
+                      },
+                    ]}
+                  >
+                    {(unReturnRoll, { loading, error }) => (
+                      <Button
+                        disabled={loading}
+                        variant="dark"
+                        size="lg"
+                        onClick={this.unReturnRoll(
+                          unReturnRoll,
+                          match.params.id
+                        )}
+                      >
+                        Undo "Return Roll"
+                      </Button>
+                    )}
+                  </Mutation>
+                ) : (
                   <Mutation
                     mutation={MutationReturnRoll}
                     refetchQueries={[
