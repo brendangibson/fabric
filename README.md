@@ -26,6 +26,11 @@ on AWS AppSync
 
 1. `npm run start`
 
+### Build and deploy
+
+1. `npm run build`
+2. Commit to git and push
+
 ### Connect to the database
 
 1. Get the URL of the Writer
@@ -37,7 +42,7 @@ on AWS AppSync
 
 ### Add in a new style/colour
 
-1. Take a picture of the fabric. Put that image in `public/assets`. Build an deploy
+1. Take a picture of the fabric. Put that image in `public/assets`. Build and deploy
 2. `INSERT INTO colours (id, name) VALUES (uuid(), 'New Colour Name');`
 3. `INSERT INTO styles (id, name) VALUES (UUID(), 'New Style Name');`
 4. `INSERT INTO stylesColours (id, colourId, styleId, swatchUrl, sku) VALUES (uuid(), 'New Colour Id', 'New Style ID', 'https://sienandco.space/assets/newimage.jpg', 'AAABBBFAB)`
