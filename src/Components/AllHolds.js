@@ -30,30 +30,54 @@ const AllHolds = () => {
               {data.getHolds
                 .filter((hold) => hold.pending)
                 .map((hold) => (
-                  <Hold
-                    hold={hold}
-                    key={hold.id}
-                    refetchQueries={[
-                      {
-                        query: QueryGetHolds,
-                      },
-                    ]}
-                  />
+                  <div key={hold.id}>
+                    <img
+                      src={hold.styleColour.swatchUrl}
+                      height="64"
+                      width="64"
+                      alt={
+                        hold.styleColour.style.name +
+                        " " +
+                        hold.styleColour.colour.name
+                      }
+                    />{" "}
+                    {hold.styleColour.style.name} {hold.styleColour.colour.name}
+                    <Hold
+                      hold={hold}
+                      refetchQueries={[
+                        {
+                          query: QueryGetHolds,
+                        },
+                      ]}
+                    />
+                  </div>
                 ))}
               <h3>Approved</h3>
 
               {data.getHolds
                 .filter((hold) => !hold.pending)
                 .map((hold) => (
-                  <Hold
-                    hold={hold}
-                    key={hold.id}
-                    refetchQueries={[
-                      {
-                        query: QueryGetHolds,
-                      },
-                    ]}
-                  />
+                  <div key={hold.id}>
+                    <img
+                      src={hold.styleColour.swatchUrl}
+                      height="64"
+                      width="64"
+                      alt={
+                        hold.styleColour.style.name +
+                        " " +
+                        hold.styleColour.colour.name
+                      }
+                    />{" "}
+                    {hold.styleColour.style.name} {hold.styleColour.colour.name}
+                    <Hold
+                      hold={hold}
+                      refetchQueries={[
+                        {
+                          query: QueryGetHolds,
+                        },
+                      ]}
+                    />
+                  </div>
                 ))}
             </div>
           );

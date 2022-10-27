@@ -73,21 +73,6 @@ const Hold = ({ hold, styleColourId, styleColourPage, refetchQueries }) => {
       <tbody>
         <tr>
           <td style={cellStyle}>
-            <img
-              src={hold.styleColour.swatchUrl}
-              height="16"
-              width="16"
-              alt={
-                hold.styleColour.style.name + " " + hold.styleColour.colour.name
-              }
-            />
-          </td>
-          <td style={cellStyle}>
-            {hold.styleColour.style.name} {hold.styleColour.colour.name}
-          </td>
-        </tr>
-        <tr>
-          <td style={cellStyle}>
             Length
             {weight && thickness ? (
               <OverlayTrigger
