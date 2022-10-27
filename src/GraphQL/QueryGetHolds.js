@@ -9,5 +9,14 @@ query {
     expires
     notes
     pending
+    styleColour {
+      style {
+        name
+      }
+      colour {
+        name
+      }
+      swatchUrl
+    }
   }
 }`);

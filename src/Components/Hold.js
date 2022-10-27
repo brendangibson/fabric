@@ -28,6 +28,8 @@ const editStyle = {
 const Hold = ({ hold, styleColourId, styleColourPage, refetchQueries }) => {
   const [editMode, setEditMode] = useState(false);
 
+  console.log("hold: ", hold);
+
   const approve = (mutator) => {
     return () => {
       mutator({
@@ -69,6 +71,21 @@ const Hold = ({ hold, styleColourId, styleColourPage, refetchQueries }) => {
   ) : (
     <Table key={hold.id}>
       <tbody>
+        <tr>
+          <td style={cellStyle}>
+            <img
+              src={hold.styleColour.swatchUrl}
+              height="16"
+              width="16"
+              alt={
+                hold.styleColour.style.name + " " + hold.styleColour.colour.name
+              }
+            />
+          </td>
+          <td style={cellStyle}>
+            {hold.styleColour.style.name} {hold.styleColour.colour.name}
+          </td>
+        </tr>
         <tr>
           <td style={cellStyle}>
             Length
