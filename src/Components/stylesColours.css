@@ -1,0 +1,17 @@
+.colourStyleCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 920px) {
+  .colourStyleCard {
+    flex-basis: 18vw;
+  }
+}
+
+@media (max-width: 920px) {
+  .colourStyleCard {
+    flex-basis: 42vw;
+  }
+}

@@ -5,19 +5,13 @@ import QueryHome from "../GraphQL/QueryHome";
 import { Link } from "react-router-dom";
 import Loading from "./Loading";
 import Swatch from "./Swatch";
+import "./stylesColours.css";
 
 const wrapperStyle = {
-  display: "grid",
-  gridTemplateColumns: "42vw 42vw",
-  gridColumnGap: "6vw",
-  gridRowGap: "6vw",
-  justifyItems: "center",
+  display: "flex",
+  gap: "6vw",
   padding: "5vw 0",
-};
-
-const cardStyle = {
-  textAlign: "center",
-  width: "100%",
+  flexWrap: "wrap",
 };
 
 const renderStyleColour = (stylecolour) => {
@@ -26,8 +20,8 @@ const renderStyleColour = (stylecolour) => {
   return (
     <Link
       to={`/stylecolour/${stylecolour.id}`}
-      style={cardStyle}
       key={stylecolour.id}
+      className="colourStyleCard"
     >
       <Swatch src={stylecolour.swatchUrl} />
       <span>{label}</span>
