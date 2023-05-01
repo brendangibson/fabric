@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { Query } from "react-apollo";
-import QueryGetStylesColours from "../GraphQL/QueryGetStylesColours";
+import QueryGetStylesColoursSummary from "../GraphQL/QueryGetStylesColoursSummary";
 import { humanize } from "../DataFunctions/Cuts";
 import Loading from "./Loading";
 import Swatch from "./Swatch";
@@ -114,7 +114,7 @@ const StyleColour = ({ styleColour }) => {
               colourStyleId={addingHoldId}
               refetchQueries={[
                 {
-                  query: QueryGetStylesColours,
+                  query: QueryGetStylesColoursSummary,
                 },
               ]}
               onComplete={handleAddedHold}
@@ -128,12 +128,12 @@ const StyleColour = ({ styleColour }) => {
 };
 
 const Summary = () => (
-  <Query query={QueryGetStylesColours} fetchPolicy="network-only">
+  <Query query={QueryGetStylesColoursSummary} fetchPolicy="network-only">
     {(stylesColoursResponse) => {
       if (stylesColoursResponse.loading) return <Loading />;
 
       if (stylesColoursResponse.error)
-        return `Error! ${stylesColoursResponse.error.message}`;
+        return `ZZError! ${stylesColoursResponse.error.message}`;
 
       return (
         <div style={wrapperStyle}>
