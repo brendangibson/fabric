@@ -54,7 +54,6 @@ const createTokenFromUser = (user: AuthUser): AuthToken => {
 			email: user.email
 		}
 	};
-	// console.log('createTokenFromUser token: ', token);
 	return token;
 };
 export const handle = SvelteKitAuth({
@@ -69,7 +68,6 @@ export const handle = SvelteKitAuth({
 				password: { label: 'Password', type: 'password' }
 			},
 			async authorize(credentials) {
-				console.log('authorize');
 				if (!credentials) return null;
 				try {
 					const response = await getSession(credentials?.username, credentials?.password);
@@ -97,7 +95,6 @@ export const handle = SvelteKitAuth({
 		 *
 		 */
 		async jwt({ token, user, account }: any) {
-			// console.log('jwt() token: ', token, ' user: ', user);
 			// Initial sign in; we have plugged tokens and expiry date into the user object in the authorize callback; object
 			// returned here will be saved in the JWT and will be available in the session callback as well as this callback
 			// on next requests

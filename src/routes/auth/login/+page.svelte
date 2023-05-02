@@ -2,12 +2,10 @@
 	import { signIn } from '@auth/sveltekit/client';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	console.log('page: ', $page);
 
 	const handleSubmit = async (event: any) => {
 		const data = new FormData(event.target);
 		try {
-			console.log('signing in');
 			const result = await signIn('credentials', {
 				username: data.get('email'),
 				password: data.get('password'),

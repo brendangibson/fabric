@@ -16,13 +16,10 @@ const CONFIGS = {
 	ClientId: COGNITO_CLIENT_ID
 };
 
-console.log('CONFIGS: ', CONFIGS);
 // Create a new Cognito User Pool
 const Pool = new CognitoUserPool(CONFIGS);
-console.log('Pool: ', Pool);
 // Wrapper function to create a new Cognito User from the User Pool
 const User = (Username: string): CognitoUser => new CognitoUser({ Username, Pool });
-console.log('User: ', User);
 /**
  * Login to Cognito User Pool using the provided credentials.
  * This will return the session data at the time of login.
