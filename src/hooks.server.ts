@@ -54,7 +54,7 @@ const createTokenFromUser = (user: AuthUser): AuthToken => {
 			email: user.email
 		}
 	};
-	console.log('createTokenFromUser token: ', token);
+	// console.log('createTokenFromUser token: ', token);
 	return token;
 };
 export const handle = SvelteKitAuth({
@@ -86,6 +86,7 @@ export const handle = SvelteKitAuth({
 	 */
 	pages: {
 		signIn: '/auth/login',
+		signOut: '/auth/login',
 		error: '/auth/login'
 	},
 	callbacks: {
@@ -127,7 +128,6 @@ export const handle = SvelteKitAuth({
 		 * @returns - Promise with the result of the session
 		 */
 		async session({ session, token }: any) {
-			console.log('session(): ', session, token);
 			session.user = token.user;
 			session.accessToken = token.accessToken;
 			session.error = token.error;
