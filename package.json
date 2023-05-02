@@ -31,5 +31,10 @@
 		"vite": "^4.3.0",
 		"vitest": "^0.25.3"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@auth/core": "^0.7.1",
+		"@auth/sveltekit": "^0.3.1",
+		"amazon-cognito-identity-js": "^6.2.0"
+	}
 }
