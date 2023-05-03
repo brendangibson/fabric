@@ -18,6 +18,7 @@ import { AUTH_SECRET } from '$env/static/private';
 import { sequence } from '@sveltejs/kit/hooks';
 import { createPool } from '@vercel/postgres';
 import { POSTGRES_URL } from '$env/static/private';
+import type { Session } from './app';
 
 interface AuthToken {
 	accessToken: string;
@@ -82,7 +83,7 @@ const authHandler = SvelteKitAuth({
 					return null;
 				}
 			}
-		}) as any
+		})
 	],
 	/**
 	 * Since we are using custom implementation; we have defined URLs for the login and error pages
@@ -99,7 +100,7 @@ const authHandler = SvelteKitAuth({
 		 * For subsequent requests we are refreshing the access token and creating a new token from the user object. If the refresh token has expired
 		 *
 		 */
-		async jwt({ token, user, account }: any) {
+		async jwt({ token, user }) {
 			// Initial sign in; we have plugged tokens and expiry date into the user object in the authorize callback; object
 			// returned here will be saved in the JWT and will be available in the session callback as well as this callback
 			// on next requests
@@ -129,7 +130,7 @@ const authHandler = SvelteKitAuth({
 		 * @param token - Decrypted JWT that we returned in the jwt callback
 		 * @returns - Promise with the result of the session
 		 */
-		async session({ session, token }: any) {
+		async session({ session, token }: Session) {
 			session.user = token.user;
 			session.accessToken = token.accessToken;
 			session.error = token.error;

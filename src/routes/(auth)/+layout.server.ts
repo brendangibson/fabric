@@ -1,9 +1,10 @@
 import { redirect } from '@sveltejs/kit';
+import type { Session } from '../../app';
 
 // import { getAccount } from '$lib/domain/auth/api/getAccount';
 export const load = async ({ locals, url }) => {
 	// Get the session from the locals
-	const session = (await locals?.getSession()) as any;
+	const session = (await locals?.getSession()) as Session | null;
 
 	// If the user is not authenticated, redirect to the login page
 	if (!session?.user?.id || !session?.accessToken) {
