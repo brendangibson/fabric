@@ -1,0 +1,23 @@
+:root {
+	--grey-200: #222222;
+	--grey-600: #666666;
+	--white: #ffffff;
+}
+
+h1 {
+	text-align: center;
+	font-size: 4vh;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+a {
+	color: var(--grey-200);
+	text-decoration: none;
+}
+
+a:hover {
+	color: var(--grey-600);
+}

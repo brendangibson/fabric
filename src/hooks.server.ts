@@ -15,6 +15,10 @@ import {
 import type AuthUser from '$lib/domains/auth/types/AuthUser';
 // Import the secret key from the environment variables
 import { AUTH_SECRET } from '$env/static/private';
+import { sequence } from '@sveltejs/kit/hooks';
+import { createPool } from '@vercel/postgres';
+import { POSTGRES_URL } from '$env/static/private';
+
 interface AuthToken {
 	accessToken: string;
 	accessTokenExpires: number;
@@ -56,7 +60,8 @@ const createTokenFromUser = (user: AuthUser): AuthToken => {
 	};
 	return token;
 };
-export const handle = SvelteKitAuth({
+
+const authHandler = SvelteKitAuth({
 	secret: AUTH_SECRET,
 	providers: [
 		Credentials({
@@ -132,3 +137,11 @@ export const handle = SvelteKitAuth({
 		}
 	}
 });
+
+const dbHandler = async ({ event, resolve }) => {
+	event.locals.db = createPool({ connectionString: POSTGRES_URL });
+	const response = await resolve(event);
+	return response;
+};
+
+export const handle = sequence(authHandler, dbHandler);

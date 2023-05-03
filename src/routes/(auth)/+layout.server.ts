@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 
 // import { getAccount } from '$lib/domain/auth/api/getAccount';
-export const load = async ({ locals, route, url }) => {
+export const load = async ({ locals, url }) => {
 	// Get the session from the locals
 	const session = (await locals?.getSession()) as any;
 
@@ -19,6 +19,5 @@ export const load = async ({ locals, route, url }) => {
 	// On success, we can send the session and account data to the sub layouts
 	return {
 		session
-		// account,
 	};
 };
