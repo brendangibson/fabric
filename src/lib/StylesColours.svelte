@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Swatch from '$lib/Swatch.svelte';
-	import type { TStyleColour } from '../app';
+	import type { TStyleColour } from '../fabric';
 
 	export let stylesColours: TStyleColour[];
 </script>

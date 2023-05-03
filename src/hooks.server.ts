@@ -19,8 +19,6 @@ import { createPool } from '@vercel/postgres';
 import { POSTGRES_URL } from '$env/static/private';
 import type { AuthUser, TSession } from './app';
 import type { Handle } from '@sveltejs/kit';
-import type { JWT } from '@auth/core/jwt';
-import type { Awaitable } from '@auth/core/types';
 
 interface AuthToken {
 	accessToken: string;

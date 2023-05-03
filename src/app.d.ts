@@ -29,11 +29,4 @@ type TSession = {
 	error: string;
 };
 
-type TStyleColour = {
-	id: string;
-	swatchUrl?: string;
-	colour?: string;
-	style?: string;
-};
-
-export { TSession, TStyleColour, AuthUser };
+export { TSession, AuthUser };
