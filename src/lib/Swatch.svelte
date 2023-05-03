@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let src;
+	export let src: string | undefined;
 </script>
 
 <div style={`background-image: url(${src})`} />

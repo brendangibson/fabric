@@ -12,13 +12,15 @@ import {
 	type CognitoUserSessionType
 } from '$lib/domain/auth/services/Cognito';
 // Type of the user object returned from the Cognito service
-import type AuthUser from '$lib/domains/auth/types/AuthUser';
 // Import the secret key from the environment variables
 import { AUTH_SECRET } from '$env/static/private';
 import { sequence } from '@sveltejs/kit/hooks';
 import { createPool } from '@vercel/postgres';
 import { POSTGRES_URL } from '$env/static/private';
-import type { Session } from './app';
+import type { AuthUser, TSession } from './app';
+import type { Handle } from '@sveltejs/kit';
+import type { JWT } from '@auth/core/jwt';
+import type { Awaitable } from '@auth/core/types';
 
 interface AuthToken {
 	accessToken: string;
@@ -26,7 +28,6 @@ interface AuthToken {
 	refreshToken: string;
 	user: {
 		id: string;
-		name: string;
 		email: string;
 	};
 }
@@ -38,7 +39,6 @@ const extractUserFromSession = (session: CognitoUserSessionType): AuthUser => {
 	const user = session.getIdToken().payload;
 	return {
 		id: user.sub,
-		name: `${user.name} ${user.family_name}`,
 		email: user.email,
 		accessToken: session.getAccessToken().getJwtToken(),
 		accessTokenExpires: session.getAccessToken().getExpiration(),
@@ -55,7 +55,6 @@ const createTokenFromUser = (user: AuthUser): AuthToken => {
 		refreshToken: user.refreshToken,
 		user: {
 			id: user.id,
-			name: user.name,
 			email: user.email
 		}
 	};
@@ -76,7 +75,10 @@ const authHandler = SvelteKitAuth({
 			async authorize(credentials) {
 				if (!credentials) return null;
 				try {
-					const response = await getSession(credentials?.username, credentials?.password);
+					const response = await getSession(
+						credentials?.username as string,
+						credentials?.password as string
+					);
 					return extractUserFromSession(response);
 				} catch (error) {
 					console.error('error: ', error);
@@ -100,20 +102,21 @@ const authHandler = SvelteKitAuth({
 		 * For subsequent requests we are refreshing the access token and creating a new token from the user object. If the refresh token has expired
 		 *
 		 */
-		async jwt({ token, user }) {
+		// eslint
+		async jwt({ token, user }): Promise<any> {
 			// Initial sign in; we have plugged tokens and expiry date into the user object in the authorize callback; object
 			// returned here will be saved in the JWT and will be available in the session callback as well as this callback
 			// on next requests
 			if (user) {
-				return createTokenFromUser(user);
+				return createTokenFromUser(user as AuthUser);
 			}
 			// Return previous token if the access token has not expired yet
-			if (Date.now() < token?.accessTokenExpires) {
+			if (Date.now() < (token?.accessTokenExpires as number)) {
 				return token;
 			}
 			try {
 				const newUserSession = await refreshAccessToken({
-					refreshToken: token?.refreshToken
+					refreshToken: token?.refreshToken as string
 				});
 				const user = extractUserFromSession(newUserSession);
 				return createTokenFromUser(user);
@@ -130,16 +133,16 @@ const authHandler = SvelteKitAuth({
 		 * @param token - Decrypted JWT that we returned in the jwt callback
 		 * @returns - Promise with the result of the session
 		 */
-		async session({ session, token }: Session) {
-			session.user = token.user;
-			session.accessToken = token.accessToken;
-			session.error = token.error;
+		async session({ session, token }) {
+			(session as unknown as TSession).user = token.user as AuthUser;
+			(session as unknown as TSession).accessToken = token.accessToken as string;
+			(session as unknown as TSession).error = token.error as string;
 			return session;
 		}
 	}
 });
 
-const dbHandler = async ({ event, resolve }) => {
+const dbHandler: Handle = async ({ event, resolve }) => {
 	event.locals.db = createPool({ connectionString: POSTGRES_URL });
 	const response = await resolve(event);
 	return response;

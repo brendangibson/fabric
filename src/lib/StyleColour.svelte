@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type { TStyleColour } from '../app';
 	import Swatch from './Swatch.svelte';
 
-	export let styleColour;
+	export let styleColour: TStyleColour;
 </script>
 
 <div>
