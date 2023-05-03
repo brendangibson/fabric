@@ -1,5 +1,5 @@
 import type { QueryError } from '../../../../db';
-import type { TStyleColour } from '../../../../fabric';
+import type { TCut, TRoll, TStyleColour } from '../../../../fabric';
 
 export async function load({ locals, params }) {
 	const { db } = locals;
@@ -42,11 +42,31 @@ export async function load({ locals, params }) {
 			[id]
 		);
 
+		const rollsPromise = db.query<TRoll>(
+			`SELECT id, "glenRavenId", "originalLength", returned FROM rolls WHERE "colourStyleId" = $1`,
+			[id]
+		);
+
+		const cutsPromise = db.query<TCut>(
+			`SELECT length, "rollId" FROM cuts c, rolls r WHERE c."rollId" = r.id AND r."colourStyleId" = $1`,
+			[id]
+		);
+
 		const mainResult = await mainPromise;
 
 		const remainingResult = await remainingPromise;
 
 		const holdsLengthResult = await holdsLengthPromise;
+
+		const cutsResult = (await cutsPromise).rows;
+		const rollsResult = (await rollsPromise).rows;
+
+		const rolls = rollsResult.map((roll) => {
+			return {
+				...roll,
+				cuts: cutsResult.filter((cut) => cut.rollId === roll.id)
+			};
+		});
 
 		return {
 			styleColour: {
@@ -54,7 +74,8 @@ export async function load({ locals, params }) {
 				...remainingResult?.rows?.[0],
 				...holdsLengthResult?.rows?.[0],
 				...(await standbyLengthPromise)?.rows?.[0],
-				...(await incomingLengthPromise)?.rows?.[0]
+				...(await incomingLengthPromise)?.rows?.[0],
+				...{ rolls }
 			}
 		};
 	} catch (error) {

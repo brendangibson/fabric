@@ -1,9 +1,15 @@
 <script lang="ts">
 	import { humanize } from '../dataFunctions/cuts';
+	import { calculateRemaining } from '../dataFunctions/rolls';
 	import type { TStyleColour } from '../fabric';
+	import RollIcon from './RollIcon.svelte';
 	import Swatch from './Swatch.svelte';
 
 	export let styleColour: TStyleColour;
+
+	const bigRolls = styleColour?.rolls?.filter(
+		(roll) => !roll.returned && calculateRemaining(roll) > 0.5
+	);
 </script>
 
 <div>
@@ -39,6 +45,18 @@
 			{/if}
 		</div>
 	</div>
+	{#if bigRolls}
+		{#each bigRolls as roll}
+			<a href={`/roll/${roll.id}`} class="rollLink" class:returned={roll.returned}>
+				<RollIcon
+					originalLength={roll.originalLength ?? 0}
+					swatchUrl={styleColour.swatchUrl ?? ''}
+					glenRavenId={roll.glenRavenId ?? ''}
+					remaining={calculateRemaining(roll)}
+				/>
+			</a>
+		{/each}
+	{/if}
 </div>
 
 <style>
@@ -69,5 +87,13 @@
 
 	i {
 		font-size: smaller;
+	}
+
+	.rollLink {
+		display: block;
+	}
+
+	.rollLink.returned {
+		opacity: 0.25;
 	}
 </style>
