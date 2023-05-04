@@ -4,12 +4,21 @@
 	import type { TStyleColour } from '../fabric';
 	import RollIcon from './RollIcon.svelte';
 	import Swatch from './Swatch.svelte';
+	import Incoming from './Incoming.svelte';
 
 	export let styleColour: TStyleColour;
 
 	const bigRolls = styleColour?.rolls?.filter(
 		(roll) => !roll.returned && calculateRemaining(roll) > 0.5
 	);
+
+	$: sortedIncoming = [
+		...(styleColour.incoming
+			? styleColour.incoming.sort(
+					(a, b) => new Date(a.expected).getTime() - new Date(b.expected).getTime()
+			  )
+			: [])
+	];
 </script>
 
 <div>
@@ -45,6 +54,7 @@
 			{/if}
 		</div>
 	</div>
+
 	{#if bigRolls}
 		{#each bigRolls as roll}
 			<a href={`/roll/${roll.id}`} class="rollLink" class:returned={roll.returned}>
@@ -55,6 +65,14 @@
 					remaining={calculateRemaining(roll)}
 				/>
 			</a>
+		{/each}
+	{/if}
+
+	{#if styleColour.incoming?.length}
+		<h3>Incoming Fabric</h3>
+
+		{#each sortedIncoming as incoming}
+			<Incoming {incoming} styleColourId={styleColour.id} />
 		{/each}
 	{/if}
 </div>

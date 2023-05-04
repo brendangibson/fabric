@@ -1,10 +1,12 @@
-export type TRoll {
+import type { OrderedList } from 'carbon-components-svelte';
+
+export type TRoll = {
 	id: string;
 	originalLength?: number;
 	returned?: boolean;
 	glenRavenId?: string;
-	cuts: TCut[]
-}
+	cuts: TCut[];
+};
 
 export type TStyleColour = {
 	id: string;
@@ -16,7 +18,8 @@ export type TStyleColour = {
 	incomingLength?: number;
 	standbyLength?: number;
 	glenRavenName?: string;
-	rolls?: TRoll[]
+	rolls?: TRoll[];
+	incoming?: TIncoming[];
 };
 
 export type TCut = {
@@ -27,4 +30,12 @@ export type TCut = {
 export type TRoll = {
 	originalLength: number;
 	cuts: TCut[];
+};
+
+export type TIncoming = {
+	id: string;
+	expected: string;
+	orderId: string;
+	notes: string;
+	length: number;
 };

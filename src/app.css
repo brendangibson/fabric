@@ -24,3 +24,8 @@ a {
 a:hover {
 	color: var(--grey-600);
 }
+
+button {
+	border: none;
+	background: none;
+}

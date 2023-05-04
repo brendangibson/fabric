@@ -1,3 +1,4 @@
+import { db } from '@vercel/postgres';
 import type { QueryError } from '../../../../db';
 import type { TCut, TRoll, TStyleColour } from '../../../../fabric';
 
@@ -52,10 +53,13 @@ export async function load({ locals, params }) {
 			[id]
 		);
 
+		const incomingPromise = db.query<TCut>(
+			`SELECT id,  length,expected,"orderId" FROM incoming WHERE  "colourStyleId" = $1`,
+			[id]
+		);
+
 		const mainResult = await mainPromise;
-
 		const remainingResult = await remainingPromise;
-
 		const holdsLengthResult = await holdsLengthPromise;
 
 		const cutsResult = (await cutsPromise).rows;
@@ -75,7 +79,8 @@ export async function load({ locals, params }) {
 				...holdsLengthResult?.rows?.[0],
 				...(await standbyLengthPromise)?.rows?.[0],
 				...(await incomingLengthPromise)?.rows?.[0],
-				...{ rolls }
+				...{ rolls },
+				...{ incoming: (await incomingPromise)?.rows }
 			}
 		};
 	} catch (error) {
@@ -83,3 +88,18 @@ export async function load({ locals, params }) {
 		return { error: (error as QueryError)?.message ?? 'Error getting styleColour' };
 	}
 }
+
+export const actions = {
+	deleteIncoming: async (event) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id');
+		console.log('id: ', id);
+		try {
+			await db.query(`DELETE FROM incoming WHERE id = $1`, [id]);
+			console.log('DELETED!');
+		} catch (error) {
+			console.error('error deleting incoming: ', id, error);
+		}
+	}
+};
