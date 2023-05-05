@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { signOut } from '@auth/sveltekit/client';
+	import { OverflowMenu, OverflowMenuItem } from 'carbon-components-svelte';
+	import { getContext } from 'svelte';
+	import AccessControl from './AccessControl.svelte';
 
-	import { SideNav, SideNavItems, SideNavLink } from 'carbon-components-svelte';
-
-	const isTrade = true;
-	let isOpen = false;
+	$: isTrade = getContext('isTrade');
 
 	const onLogout = () => () => {
 		signOut();
@@ -18,19 +18,16 @@
 			<img src="/bigLogo.png" alt="*" />
 		</a>
 		<h1>Sien + Co</h1>
-		<SideNav bind:isOpen>
-			<SideNavItems>
-				{#if isTrade}
-					<SideNavLink href="/shipments">Shipments</SideNavLink>
-				{/if}
-				{#if !isTrade}
-					<SideNavLink href="/status">Status</SideNavLink>
-				{/if}
-				<SideNavLink href="/summary">Summary</SideNavLink>
-				<SideNavLink href="/holds">Holds</SideNavLink>
-				<SideNavLink on:click={onLogout()}>Log out</SideNavLink>
-			</SideNavItems>
-		</SideNav>
+		<OverflowMenu flipped>
+			<div class="menuButton" slot="menu">☰</div>
+			<AccessControl>
+				<OverflowMenuItem href="/status">Status</OverflowMenuItem>
+				<OverflowMenuItem slot="else" href="/shipments">Shipments</OverflowMenuItem>
+			</AccessControl>
+			<OverflowMenuItem href="/summary">Summary</OverflowMenuItem>
+			<OverflowMenuItem href="/holds">Holds</OverflowMenuItem>
+			<OverflowMenuItem danger on:click={onLogout()}>Log out</OverflowMenuItem>
+		</OverflowMenu>
 	</header>
 	<div class="wrapper" />
 </div>
@@ -61,6 +58,11 @@
 	}
 
 	.wrapper {
+		height: var(--height);
+	}
+
+	:global(header button.bx--overflow-menu) {
+		font-size: 4vh;
 		height: var(--height);
 	}
 </style>
