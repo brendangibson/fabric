@@ -1,5 +1,3 @@
-import type { OrderedList } from 'carbon-components-svelte';
-
 export type TRoll = {
 	id: string;
 	originalLength?: number;
@@ -13,6 +11,8 @@ export type TStyleColour = {
 	swatchUrl?: string;
 	colour?: string;
 	style?: string;
+	weight?: number;
+	thickness?: number;
 	remaining?: number;
 	holdsLength?: number;
 	incomingLength?: number;
@@ -20,6 +20,8 @@ export type TStyleColour = {
 	glenRavenName?: string;
 	rolls?: TRoll[];
 	incoming?: TIncoming[];
+	holds?: THold[];
+	standby: TStandby[];
 };
 
 export type TCut = {
@@ -38,4 +40,26 @@ export type TIncoming = {
 	orderId: string;
 	notes: string;
 	length: number;
+};
+
+export type THold = {
+	id: string;
+	timestamp: string;
+	expires: string;
+	reason: string;
+	owner: string;
+	noted: string;
+	pending: boolean;
+	notes: string;
+	length: number;
+	orderId: string;
+};
+
+export type TStandby = {
+	length: number;
+};
+
+export type TShipment = {
+	id: string;
+	name: string;
 };

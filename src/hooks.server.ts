@@ -35,12 +35,14 @@ interface AuthToken {
 const extractUserFromSession = (session: CognitoUserSessionType): AuthUser => {
 	if (!session?.isValid?.()) throw new Error('Invalid session');
 	const user = session.getIdToken().payload;
+
 	return {
 		id: user.sub,
 		email: user.email,
 		accessToken: session.getAccessToken().getJwtToken(),
 		accessTokenExpires: session.getAccessToken().getExpiration(),
-		refreshToken: session.getRefreshToken().getToken()
+		refreshToken: session.getRefreshToken().getToken(),
+		groups: session.getIdToken().decodePayload()['cognito:groups']
 	};
 };
 /**
@@ -53,7 +55,8 @@ const createTokenFromUser = (user: AuthUser): AuthToken => {
 		refreshToken: user.refreshToken,
 		user: {
 			id: user.id,
-			email: user.email
+			email: user.email,
+			groups: user.groups
 		}
 	};
 	return token;
@@ -105,6 +108,7 @@ const authHandler = SvelteKitAuth({
 			// Initial sign in; we have plugged tokens and expiry date into the user object in the authorize callback; object
 			// returned here will be saved in the JWT and will be available in the session callback as well as this callback
 			// on next requests
+
 			if (user) {
 				return createTokenFromUser(user as AuthUser);
 			}

@@ -1,13 +1,14 @@
-import { db } from '@vercel/postgres';
 import type { QueryError } from '../../../../db';
 import type { TCut, TRoll, TStyleColour } from '../../../../fabric';
+import { identity } from 'svelte/internal';
 
 export async function load({ locals, params }) {
 	const { db } = locals;
 	const id = params.id;
 	try {
 		const mainPromise = db.query<TStyleColour>(
-			`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour, "glenRavenName"
+			`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour, "glenRavenName",
+			s.weight, s.thickness
 			FROM stylescolours sc, styles s, colours c 
 			WHERE sc."colourId" = c.id and sc."styleId" = s.id AND sc.id=$1`,
 			[id]
@@ -54,8 +55,22 @@ export async function load({ locals, params }) {
 		);
 
 		const incomingPromise = db.query<TCut>(
-			`SELECT id,  length,expected,"orderId" FROM incoming WHERE  "colourStyleId" = $1`,
+			`SELECT id, length, expected, "orderId" FROM incoming WHERE  "colourStyleId" = $1`,
 			[id]
+		);
+
+		const holdsPromise = db.query<TCut>(
+			`SELECT id, length, owner, expires, timestamp, "orderId" FROM holds WHERE  "colourStyleId" = $1`,
+			[id]
+		);
+
+		const standbyPromise = db.query<TCut>(
+			`SELECT id, length,timestamp FROM standby WHERE  "colourStyleId" = $1`,
+			[id]
+		);
+
+		const shipmentsPromise = db.query<TStyleColour>(
+			`SELECT id, name FROM shipments ORDER BY "dateReceived" DESC LIMIT 10`
 		);
 
 		const mainResult = await mainPromise;
@@ -80,8 +95,11 @@ export async function load({ locals, params }) {
 				...(await standbyLengthPromise)?.rows?.[0],
 				...(await incomingLengthPromise)?.rows?.[0],
 				...{ rolls },
-				...{ incoming: (await incomingPromise)?.rows }
-			}
+				...{ incoming: (await incomingPromise)?.rows },
+				...{ holds: (await holdsPromise)?.rows },
+				...{ standby: (await standbyPromise)?.rows }
+			},
+			shipments: (await shipmentsPromise)?.rows
 		};
 	} catch (error) {
 		console.error('error getting styleColour: ', (error as QueryError).message);
@@ -90,16 +108,108 @@ export async function load({ locals, params }) {
 }
 
 export const actions = {
+	addIncoming: async (event) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id');
+		const length = data.get('length');
+		const expected =
+			data.get('expected') !== null
+				? new Date(data.get('expected') as string).toISOString()
+				: new Date().toISOString();
+
+		try {
+			const result = await db.query(
+				`INSERT INTO incoming("colourStyleId", length, expected) VALUES ($1, $2, $3)`,
+				[id, length, expected]
+			);
+			console.log('INSERTED!', result);
+		} catch (error) {
+			console.error('error updating incoming: ', id, error);
+		}
+	},
+	addRoll: async (event) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id');
+		const length = data.get('length');
+		const glenRavenId = data.get('glenRavenId');
+		const shipmentId = data.get('shipmentId');
+		const notes = data.get('notes');
+
+		try {
+			const result = await db.query(
+				`INSERT INTO rolls("colourStyleId", "originalLength", "glenRavenId", "shipmentId", notes) VALUES ($1, $2, $3, $4, $5)`,
+				[id, length, glenRavenId, shipmentId, notes]
+			);
+			console.log('ADDED!', result);
+		} catch (error) {
+			console.error('error adding roll: ', id, error);
+		}
+	},
+	approveHold: async (event) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id');
+
+		try {
+			const result = await db.query(`UPDATE holds SET pending=false WHERE id = $1`, [identity]);
+			console.log('APPROVED!', result);
+		} catch (error) {
+			console.error('error approving hold: ', id, error);
+		}
+	},
+	deleteHold: async (event) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id');
+		try {
+			await db.query(`DELETE FROM holds WHERE id = $1`, [id]);
+			console.log('DELETED!');
+		} catch (error) {
+			console.error('error deleting hold: ', id, error);
+		}
+	},
 	deleteIncoming: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id');
-		console.log('id: ', id);
 		try {
 			await db.query(`DELETE FROM incoming WHERE id = $1`, [id]);
 			console.log('DELETED!');
 		} catch (error) {
 			console.error('error deleting incoming: ', id, error);
+		}
+	},
+	deleteStandby: async (event) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id');
+		try {
+			await db.query(`DELETE FROM standby WHERE id = $1`, [id]);
+			console.log('DELETED!');
+		} catch (error) {
+			console.error('error deleting standby: ', id, error);
+		}
+	},
+	updateIncoming: async (event) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id');
+		const length = data.get('length');
+		const expected =
+			data.get('expected') !== null
+				? new Date(data.get('expected') as string).toISOString()
+				: new Date().toISOString();
+
+		try {
+			const result = await db.query(
+				`UPDATE incoming SET(length, expected) = ($2, $3) WHERE id = $1`,
+				[id, length, expected]
+			);
+			console.log('UPDATED!', result);
+		} catch (error) {
+			console.error('error updating incoming: ', id, error);
 		}
 	}
 };

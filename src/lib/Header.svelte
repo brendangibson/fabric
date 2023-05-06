@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { signOut } from '@auth/sveltekit/client';
 	import { OverflowMenu, OverflowMenuItem } from 'carbon-components-svelte';
-	import { getContext } from 'svelte';
 	import AccessControl from './AccessControl.svelte';
-
-	$: isTrade = getContext('isTrade');
 
 	const onLogout = () => () => {
 		signOut();

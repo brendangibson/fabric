@@ -28,4 +28,5 @@ a:hover {
 button {
 	border: none;
 	background: none;
+	cursor: pointer;
 }

@@ -6,16 +6,12 @@
 	import { enhance } from '$app/forms';
 
 	export let incoming: TIncoming;
-	export let styleColourId: string;
+	// export let styleColourId: string;
 
 	let editMode = false;
 
 	const handleEditClick = () => {
 		editMode = true;
-	};
-
-	const handleUpdateIncomingComplete = () => {
-		editMode = false;
 	};
 </script>
 
@@ -38,19 +34,6 @@
 						<input name="id" type="hidden" value={incoming.id} />
 						<button class="delete"> ⊗ </button>
 					</form>
-					<!-- <Mutation
-              mutation={MutationDeleteIncoming}
-              refetchQueries={refetchQueries}
-            >
-              {(deleteIncoming, { loading, error }) => (
-                <span
-                  onClick={deleteIncomingMutation(deleteIncoming, incoming.id)}
-                  style={deleteStyle}
-                >
-                  ⊗
-                </span>
-              )}
-            </Mutation> -->
 				</td>
 			</tr>
 			{#if incoming.notes}

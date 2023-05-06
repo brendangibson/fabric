@@ -1,19 +1,24 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Button, DatePicker, DatePickerInput, NumberInput } from 'carbon-components-svelte';
+	import { Button, NumberInput, Select, SelectItem, TextInput } from 'carbon-components-svelte';
+	import type { TShipment } from '../fabric';
 
 	export let styleColourId: string;
-	let length: number = 1;
-	let expected: number;
+	export let shipments: TShipment[];
+	let length = 1;
+	let glenRavenId: number;
+	let shipmentId: string;
+	let notes = '';
+
+	let fetching = false;
+
 	let errors: Record<string, string | null> = {
-		length: null,
-		expected: null
+		length: null
 	};
 
 	const setErrors = (index: string, value: number) => {
 		switch (index) {
 			case 'length':
-				console.log('value: ', value);
 				if (value === undefined || value === null) return;
 				if (isNaN(value)) {
 					errors[index] = 'Enter the number of yards';
@@ -25,31 +30,38 @@
 					}
 				}
 				break;
+			case 'glenRavenId':
+				if (value < 9999) {
+					errors[index] = 'Should be more digits';
+				} else {
+					errors[index] = null;
+				}
+				break;
 			default:
 		}
 	};
 
-	const handleExpectedChange = (a) => {
-		console.log('handleExpectedChange: ', a);
-		expected = a.detail.selectedDates[0];
-	};
+	const handleShipmentChange = (e: Event) => (shipmentId = (e.target as HTMLInputElement)?.value);
 
 	$: setErrors('length', length);
-	$: setErrors('expected', expected);
+	$: setErrors('glenRavenId', glenRavenId);
 
-	$: disabled = !(Boolean(length) && Boolean(expected));
-
-	$: console.log('expected: ', expected);
-	$: console.log('errors: ', errors);
-
-	$: console.log('errors.length: ', errors.length);
+	$: disabled = !(Boolean(length) && Boolean(glenRavenId) && Boolean(shipmentId)) || fetching;
 </script>
 
-<form method="POST" action="?/addIncoming" use:enhance>
+<form
+	method="POST"
+	action="?/addRoll"
+	use:enhance={() => {
+		fetching = true;
+		return async () => {
+			fetching = false;
+		};
+	}}
+>
 	<input type="hidden" name="id" value={styleColourId} />
-	<input type="hidden" name="expected" value={expected} />
 
-	<h4>Add Incoming Fabric</h4>
+	<h4>Add Roll</h4>
 
 	<NumberInput
 		label="Length"
@@ -59,18 +71,33 @@
 		invalidText={errors.length ?? undefined}
 		name="length"
 	/>
-	<DatePicker datePickerType="single" on:change={handleExpectedChange}>
-		<DatePickerInput
-			labelText="Expected"
-			placeholder="mm/dd/yyyy"
-			invalid={Boolean(errors.expected)}
-			invalidText={errors.expected ?? undefined}
-			bind:value={expected}
-			name="expected"
-		/>
-	</DatePicker>
 
-	<Button type="submit" kind="secondary" {disabled}>Add Incoming</Button>
+	<NumberInput
+		label="GlenRaven Id"
+		bind:value={glenRavenId}
+		placeholder="From sticker on bag"
+		invalid={Boolean(errors.glenRavenId)}
+		invalidText={errors.glenRavenId ?? undefined}
+		name="glenRavenId"
+	/>
+
+	{#if shipments}
+		<Select labelText="Shipment" on:change={handleShipmentChange} name="shipment">
+			{#each shipments as shipment}
+				<SelectItem value={shipment.id} text={shipment.name} />
+			{/each}
+		</Select>
+	{/if}
+
+	<TextInput
+		labelText="Notes"
+		bind:value={notes}
+		invalid={Boolean(errors.notes)}
+		invalidText={errors.notes ?? undefined}
+		name="notes"
+	/>
+
+	<Button type="submit" kind="secondary" {disabled}>Add Roll</Button>
 </form>
 
 <style>

@@ -1,22 +1,20 @@
 <script lang="ts">
 	import { humanize } from '../dataFunctions/cuts';
-	import type { THold } from '../fabric';
+	import type { THold, TStyleColour } from '../fabric';
 	import { Button, Table } from 'carbon-components-svelte';
 	import { format } from 'date-fns';
 	import { enhance } from '$app/forms';
 	import AccessControl from './AccessControl.svelte';
+	import Dimensions from './Dimensions.svelte';
 
 	export let hold: THold;
 	export let styleColourId: string;
+	export let styleColour: TStyleColour;
 
 	let editMode = false;
 
 	const handleEditClick = () => {
 		editMode = true;
-	};
-
-	const handleUpdateHoldComplete = () => {
-		editMode = false;
 	};
 </script>
 
@@ -31,7 +29,14 @@
 	<Table>
 		<tbody>
 			<tr>
-				<td>Length</td>
+				<td
+					>Length
+					{#if styleColour.weight && styleColour.thickness}<Dimensions
+							weight={styleColour.weight}
+							length={54}
+							thickness={styleColour.thickness}
+						/>{/if}</td
+				>
 				<td>
 					{humanize(hold.length)} yard{hold.length === 1 ? '' : 's'}
 					<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
@@ -82,9 +87,11 @@
 				<tr>
 					<td>Pending</td>
 					<td
-						><form><Button type="submit" kind="secondary">Approve</Button></form>
-						></td
-					>
+						><form method="POST" action="?/approveHold" use:enhance>
+							<input type="hidden" name="id" value={styleColourId} />
+							<Button type="submit" kind="secondary">Approve</Button>
+						</form>
+					</td>
 				</tr>
 			{/if}
 		</tbody>

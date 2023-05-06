@@ -3,8 +3,8 @@
 	import { Button, DatePicker, DatePickerInput, NumberInput } from 'carbon-components-svelte';
 
 	export let styleColourId: string;
-	let length: number = 1;
-	let expected: number;
+	let length = 1;
+	let expected: string;
 	let errors: Record<string, string | null> = {
 		length: null,
 		expected: null
@@ -13,7 +13,6 @@
 	const setErrors = (index: string, value: number) => {
 		switch (index) {
 			case 'length':
-				console.log('value: ', value);
 				if (value === undefined || value === null) return;
 				if (isNaN(value)) {
 					errors[index] = 'Enter the number of yards';
@@ -29,27 +28,28 @@
 		}
 	};
 
-	const handleExpectedChange = (a) => {
-		console.log('handleExpectedChange: ', a);
-		expected = a.detail.selectedDates[0];
+	const handleExpectedChange = (
+		e: CustomEvent<
+			| string
+			| {
+					selectedDates: [dateFrom: Date, dateTo?: Date | undefined];
+					dateStr: string | { from: string; to: string };
+			  }
+		>
+	) => {
+		if (typeof e.detail !== 'string') expected = e.detail.selectedDates[0].toISOString();
 	};
 
 	$: setErrors('length', length);
-	$: setErrors('expected', expected);
 
 	$: disabled = !(Boolean(length) && Boolean(expected));
-
-	$: console.log('expected: ', expected);
-	$: console.log('errors: ', errors);
-
-	$: console.log('errors.length: ', errors.length);
 </script>
 
-<form method="POST" action="?/addIncoming" use:enhance>
+<form method="POST" action="?/addHold" use:enhance>
 	<input type="hidden" name="id" value={styleColourId} />
 	<input type="hidden" name="expected" value={expected} />
 
-	<h4>Add Incoming Fabric</h4>
+	<h4>Add Hold</h4>
 
 	<NumberInput
 		label="Length"
@@ -70,7 +70,7 @@
 		/>
 	</DatePicker>
 
-	<Button type="submit" kind="secondary" {disabled}>Add Incoming</Button>
+	<Button type="submit" kind="secondary" {disabled}>Add Hold</Button>
 </form>
 
 <style>

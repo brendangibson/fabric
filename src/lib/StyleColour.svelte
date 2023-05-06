@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { humanize } from '../dataFunctions/cuts';
 	import { calculateRemaining } from '../dataFunctions/rolls';
-	import type { TStyleColour } from '../fabric';
+	import type { TShipment, TStyleColour } from '../fabric';
 	import RollIcon from './RollIcon.svelte';
 	import Swatch from './Swatch.svelte';
 	import Incoming from './Incoming.svelte';
@@ -10,8 +10,11 @@
 	import AddStandby from './AddStandby.svelte';
 	import AddHold from './AddHold.svelte';
 	import AddRoll from './AddRoll.svelte';
+	import Hold from './Hold.svelte';
+	import Standby from './Standby.svelte';
 
 	export let styleColour: TStyleColour;
+	export let shipments: TShipment[];
 
 	const bigRolls = styleColour?.rolls?.filter(
 		(roll) => !roll.returned && calculateRemaining(roll) > 0.5
@@ -77,42 +80,47 @@
 		{/each}
 	{/if}
 
-	{#if styleColour.incoming?.length}
+	<div class="spacer" />
+
+	{#if sortedIncoming?.length}
 		<h3>Incoming Fabric</h3>
 
 		{#each sortedIncoming as incoming}
-			<Incoming {incoming} styleColourId={styleColour.id} />
+			<Incoming {incoming} />
 		{/each}
 	{/if}
 	<AccessControl>
 		<AddIncoming styleColourId={styleColour.id} />
 	</AccessControl>
+	<div class="spacer" />
 
-	{#if styleColour.incoming?.length}
+	{#if styleColour.standby?.length}
 		<h3>Fabric on Standby</h3>
 
-		{#each sortedIncoming as incoming}
-			<Standby {incoming} styleColourId={styleColour.id} />
+		{#each styleColour.standby as standby}
+			<Standby {standby} styleColourId={styleColour.id} />
 		{/each}
 	{/if}
 	<AccessControl>
 		<AddStandby styleColourId={styleColour.id} />
 	</AccessControl>
+	<div class="spacer" />
 
-	{#if styleColour.incoming?.length}
+	{#if styleColour.holds?.length}
 		<h3>Fabric on Hold</h3>
 
-		{#each sortedIncoming as incoming}
-			<Hold {incoming} styleColourId={styleColour.id} />
+		{#each styleColour.holds as hold}
+			<Hold {hold} styleColourId={styleColour.id} {styleColour} />
 		{/each}
 	{/if}
 
 	<AccessControl>
 		<AddHold styleColourId={styleColour.id} />
 	</AccessControl>
+	<div class="spacer" />
 
 	<AccessControl>
-		<AddRoll styleColourId={styleColour.id} />
+		<AddRoll styleColourId={styleColour.id} {shipments} />
 	</AccessControl>
 
 	{#if smallRolls}
@@ -168,9 +176,7 @@
 		opacity: 0.25;
 	}
 
-	.adds {
-		display: flex;
-		flex-direction: column;
-		gap: 2vh;
+	.spacer {
+		height: 3vh;
 	}
 </style>
