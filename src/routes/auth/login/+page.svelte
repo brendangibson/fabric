@@ -32,16 +32,16 @@
 </script>
 
 <main>
-	<h1>Login</h1>
 	{#if fetching}
 		<Loading />
 	{:else}
+		<img src="/textLogo.svg" alt="Sien+Co" />
 		<form name="login" method="POST" on:submit|preventDefault={handleSubmit}>
 			<TextInput labelText="Username" name="email" type="text" placeholder="username" />
 			<TextInput
 				labelText="Password"
 				name="password"
-				placeholder="8 chars, upper, lower, special, and number"
+				placeholder="8 uc, lc, special, number"
 				type="password"
 			/>
 			<Button type="submit" kind="secondary" disabled={fetching}>Sign In</Button>

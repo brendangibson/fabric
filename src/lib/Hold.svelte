@@ -6,12 +6,16 @@
 	import { enhance } from '$app/forms';
 	import AccessControl from './AccessControl.svelte';
 	import Dimensions from './Dimensions.svelte';
+	import AddHold from './AddHold.svelte';
+	import InlineError from './InlineError.svelte';
 
 	export let hold: THold;
 	export let styleColourId: string;
 	export let styleColour: TStyleColour;
 
 	let editMode = false;
+	let errorMsg: string | null = null;
+	let approveButtonDisabled = false;
 
 	const handleEditClick = () => {
 		editMode = true;
@@ -19,12 +23,12 @@
 </script>
 
 {#if editMode}
-	<!-- <UpdateIncoming
+	<AddHold
 		{hold}
-		colourStyleId={styleColourId}
-		{refetchQueries}
-		onComplete={handleUpdateIncomingComplete}
-	/> -->
+		{styleColourId}
+		onCancel={() => (editMode = false)}
+		onSuccess={() => (editMode = false)}
+	/>
 {:else}
 	<Table>
 		<tbody>
@@ -38,12 +42,29 @@
 						/>{/if}</td
 				>
 				<td>
-					{humanize(hold.length)} yard{hold.length === 1 ? '' : 's'}
-					<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
-					<form method="POST" action="?/deleteIncoming" use:enhance>
-						<input name="id" type="hidden" value={hold.id} />
-						<button class="delete"> ⊗ </button>
-					</form>
+					<div class="actionCell">
+						{humanize(hold.length)} yard{hold.length === 1 ? '' : 's'}
+						<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
+						<form
+							method="POST"
+							action="?/deleteIncoming"
+							use:enhance={() => {
+								return async ({ result, update }) => {
+									console.log('result: ', result);
+									if (result.type === 'failure') {
+										errorMsg = result.data?.error;
+									} else {
+										errorMsg = null;
+										await update();
+									}
+								};
+							}}
+						>
+							<input name="id" type="hidden" value={hold.id} />
+							<button class="delete"> ⊗ </button>
+						</form>
+						<InlineError {errorMsg} />
+					</div>
 				</td>
 			</tr>
 			<AccessControl>
@@ -87,10 +108,31 @@
 				<tr>
 					<td>Pending</td>
 					<td
-						><form method="POST" action="?/approveHold" use:enhance>
+						><form
+							method="POST"
+							action="?/approveHold"
+							use:enhance={() => {
+								approveButtonDisabled = true;
+
+								return async ({ result, update }) => {
+									console.log('result: ', result);
+									// `result` is an `ActionResult` object
+									if (result.type === 'failure') {
+										errorMsg = result.data?.error;
+									} else {
+										errorMsg = null;
+										await update();
+									}
+									approveButtonDisabled = false;
+								};
+							}}
+						>
 							<input type="hidden" name="id" value={styleColourId} />
-							<Button type="submit" kind="secondary">Approve</Button>
+							<Button type="submit" kind="secondary" disabled={approveButtonDisabled}
+								>Approve</Button
+							>
 						</form>
+						<InlineError {errorMsg} />
 					</td>
 				</tr>
 			{/if}
@@ -99,6 +141,9 @@
 {/if}
 
 <style>
+	.actionCell {
+		display: flex;
+	}
 	.delete {
 		display: inline-block;
 		margin-left: 16;

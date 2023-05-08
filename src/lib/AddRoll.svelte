@@ -54,7 +54,8 @@
 	action="?/addRoll"
 	use:enhance={() => {
 		fetching = true;
-		return async () => {
+		return async ({ update }) => {
+			await update();
 			fetching = false;
 		};
 	}}

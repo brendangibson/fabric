@@ -1,16 +1,29 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { Button, DatePicker, DatePickerInput, NumberInput } from 'carbon-components-svelte';
+	import type { THold } from '../fabric';
+	import InlineError from './InlineError.svelte';
 
 	export let styleColourId: string;
-	let length = 1;
-	let expected: string;
+	export let hold: THold | undefined = undefined;
+	export let onCancel = () => {
+		/*deliberate*/
+	};
+	export let onSuccess = () => {
+		/*deliberate*/
+	};
+
+	$: editing = Boolean(hold);
+	$: length = editing ? hold?.length : 1;
+	$: expires = editing ? hold?.expires : undefined;
 	let errors: Record<string, string | null> = {
 		length: null,
 		expected: null
 	};
+	let fetching = false;
+	let errorMsg: string | null = null;
 
-	const setErrors = (index: string, value: number) => {
+	const setErrors = (index: string, value: number | undefined) => {
 		switch (index) {
 			case 'length':
 				if (value === undefined || value === null) return;
@@ -28,28 +41,35 @@
 		}
 	};
 
-	const handleExpectedChange = (
-		e: CustomEvent<
-			| string
-			| {
-					selectedDates: [dateFrom: Date, dateTo?: Date | undefined];
-					dateStr: string | { from: string; to: string };
-			  }
-		>
-	) => {
-		if (typeof e.detail !== 'string') expected = e.detail.selectedDates[0].toISOString();
-	};
-
 	$: setErrors('length', length);
 
-	$: disabled = !(Boolean(length) && Boolean(expected));
+	$: disabled = !(Boolean(length) && Boolean(expires)) || fetching;
 </script>
 
-<form method="POST" action="?/addHold" use:enhance>
-	<input type="hidden" name="id" value={styleColourId} />
-	<input type="hidden" name="expected" value={expected} />
+<form
+	method="POST"
+	action="?/addHold"
+	use:enhance={() => {
+		fetching = true;
 
-	<h4>Add Hold</h4>
+		return async ({ result, update }) => {
+			console.log('result: ', result);
+			if (result.type === 'failure') {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
+				await update();
+				onSuccess();
+			}
+			fetching = false;
+		};
+	}}
+>
+	<input type="hidden" name="id" value={styleColourId} />
+
+	<h4>
+		{#if editing}Update{:else}Add{/if} Hold
+	</h4>
 
 	<NumberInput
 		label="Length"
@@ -59,18 +79,23 @@
 		invalidText={errors.length ?? undefined}
 		name="length"
 	/>
-	<DatePicker datePickerType="single" on:change={handleExpectedChange}>
+	<DatePicker datePickerType="single" bind:value={expires}>
 		<DatePickerInput
-			labelText="Expected"
+			labelText="Expires"
 			placeholder="mm/dd/yyyy"
-			invalid={Boolean(errors.expected)}
-			invalidText={errors.expected ?? undefined}
-			bind:value={expected}
-			name="expected"
+			invalid={Boolean(errors.expires)}
+			invalidText={errors.expires ?? undefined}
+			name="expires"
 		/>
 	</DatePicker>
 
-	<Button type="submit" kind="secondary" {disabled}>Add Hold</Button>
+	<Button type="submit" kind="secondary" {disabled}
+		>{#if editing}Update{:else}Add{/if} Hold</Button
+	>
+	{#if editing}
+		<Button type="tertiary" on:click={onCancel}>Cancel</Button>
+	{/if}
+	<InlineError {errorMsg} />
 </form>
 
 <style>

@@ -1,3 +1,4 @@
+import { fail } from '@sveltejs/kit';
 import type { QueryError } from '../../../../db';
 import type { TCut, TRoll, TStyleColour } from '../../../../fabric';
 import { identity } from 'svelte/internal';
@@ -102,8 +103,9 @@ export async function load({ locals, params }) {
 			shipments: (await shipmentsPromise)?.rows
 		};
 	} catch (error) {
-		console.error('error getting styleColour: ', (error as QueryError).message);
-		return { error: (error as QueryError)?.message ?? 'Error getting styleColour' };
+		return fail(422, {
+			error: (error as QueryError)?.message
+		});
 	}
 }
 
@@ -126,6 +128,10 @@ export const actions = {
 			console.log('INSERTED!', result);
 		} catch (error) {
 			console.error('error updating incoming: ', id, error);
+			return fail(422, {
+				description: data.get('description'),
+				error: (error as QueryError)?.message
+			});
 		}
 	},
 	addRoll: async (event) => {
@@ -145,6 +151,30 @@ export const actions = {
 			console.log('ADDED!', result);
 		} catch (error) {
 			console.error('error adding roll: ', id, error);
+			return fail(422, {
+				description: data.get('description'),
+				error: (error as QueryError)?.message
+			});
+		}
+	},
+	addStandby: async (event) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id');
+		const length = data.get('length');
+
+		try {
+			const result = await db.query(
+				`INSERT INTO standby("colourStyleId", length) VALUES ($1, $2)`,
+				[id, length]
+			);
+			console.log('INSERTED!', result);
+		} catch (error) {
+			console.error('error adding standby: ', id, error, (error as QueryError)?.message);
+			return fail(422, {
+				description: data.get('description'),
+				error: (error as QueryError)?.message
+			});
 		}
 	},
 	approveHold: async (event) => {
@@ -157,6 +187,10 @@ export const actions = {
 			console.log('APPROVED!', result);
 		} catch (error) {
 			console.error('error approving hold: ', id, error);
+			return fail(422, {
+				description: data.get('description'),
+				error: (error as QueryError)?.message
+			});
 		}
 	},
 	deleteHold: async (event) => {
@@ -168,6 +202,10 @@ export const actions = {
 			console.log('DELETED!');
 		} catch (error) {
 			console.error('error deleting hold: ', id, error);
+			return fail(422, {
+				description: data.get('description'),
+				error: (error as QueryError)?.message
+			});
 		}
 	},
 	deleteIncoming: async (event) => {
@@ -179,17 +217,32 @@ export const actions = {
 			console.log('DELETED!');
 		} catch (error) {
 			console.error('error deleting incoming: ', id, error);
+			return fail(422, {
+				description: data.get('description'),
+				error: (error as QueryError)?.message
+			});
 		}
 	},
 	deleteStandby: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id');
+		console.log('id: ', id);
 		try {
-			await db.query(`DELETE FROM standby WHERE id = $1`, [id]);
-			console.log('DELETED!');
+			const result = await db.query(`DELETE FROM standby WHERE id = $1`, [id]);
+			console.log('DELETED!', result);
+			if (result.rowCount === 0) {
+				return fail(422, {
+					description: data.get('description'),
+					error: 'Deleting standby failed'
+				});
+			}
 		} catch (error) {
 			console.error('error deleting standby: ', id, error);
+			return fail(422, {
+				description: data.get('description'),
+				error: (error as QueryError)?.message
+			});
 		}
 	},
 	updateIncoming: async (event) => {
@@ -210,6 +263,27 @@ export const actions = {
 			console.log('UPDATED!', result);
 		} catch (error) {
 			console.error('error updating incoming: ', id, error);
+			return fail(422, {
+				description: data.get('description'),
+				error: (error as QueryError)?.message
+			});
+		}
+	},
+	updateStandby: async (event) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id');
+		const length = data.get('length');
+
+		try {
+			const result = await db.query(`UPDATE standby SET length = $2 WHERE id = $1`, [id, length]);
+			console.log('UPDATED!', result);
+		} catch (error) {
+			console.error('error updating standby: ', id, error);
+			return fail(422, {
+				description: data.get('description'),
+				error: (error as QueryError)?.message
+			});
 		}
 	}
 };

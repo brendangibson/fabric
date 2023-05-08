@@ -16,6 +16,10 @@ h1 {
 	z-index: -1;
 }
 
+h3 {
+	margin-bottom: 1rem;
+}
+
 a {
 	color: var(--grey-200);
 	text-decoration: none;

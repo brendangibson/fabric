@@ -1,16 +1,31 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { Button, DatePicker, DatePickerInput, NumberInput } from 'carbon-components-svelte';
+	import type { TIncoming } from '../fabric';
 
-	export let styleColourId: string;
-	let length = 1;
-	let expected: string;
+	export let styleColourId: string | undefined = undefined;
+	export let incoming: TIncoming | null = null;
+	export let onCancel = () => {
+		/*deliberate*/
+	};
+	export let onSuccess = () => {
+		/*deliberate*/
+	};
+
+	let editing = Boolean(incoming);
+	let length = editing ? incoming?.length : 1;
+	let expected =
+		editing && incoming?.expected ? new Date(incoming?.expected).toISOString() : undefined;
 	let errors: Record<string, string | null> = {
 		length: null,
 		expected: null
 	};
 
-	const setErrors = (index: string, value: number) => {
+	let fetching = false;
+
+	$: console.log('expected: ', expected);
+
+	const setErrors = (index: string, value: number | undefined) => {
 		switch (index) {
 			case 'length':
 				if (value === undefined || value === null) return;
@@ -28,28 +43,37 @@
 		}
 	};
 
-	const handleExpectedChange = (
-		e: CustomEvent<
-			| string
-			| {
-					selectedDates: [dateFrom: Date, dateTo?: Date | undefined];
-					dateStr: string | { from: string; to: string };
-			  }
-		>
-	) => {
-		if (typeof e.detail !== 'string') expected = e.detail.selectedDates[0].toISOString();
-	};
-
 	$: setErrors('length', length);
 
-	$: disabled = !(Boolean(length) && Boolean(expected));
+	$: disabled = !(Boolean(length) && Boolean(expected)) || fetching;
 </script>
 
-<form method="POST" action="?/addIncoming" use:enhance>
-	<input type="hidden" name="id" value={styleColourId} />
+<form
+	method="POST"
+	action={editing ? '?/updateIncoming' : '?/addIncoming'}
+	use:enhance={() => {
+		fetching = true;
+
+		return async ({ result, update }) => {
+			console.log('result: ', result);
+			if (result.type !== 'error') {
+				await update();
+				onSuccess();
+			}
+			fetching = false;
+		};
+	}}
+>
+	{#if editing}
+		<input type="hidden" name="id" value={incoming?.id} />
+	{:else}
+		<input type="hidden" name="id" value={styleColourId} />
+	{/if}
 	<input type="hidden" name="expected" value={expected} />
 
-	<h4>Add Incoming Fabric</h4>
+	<h4>
+		{#if editing}Edit{:else}Add{/if} Incoming Fabric
+	</h4>
 
 	<NumberInput
 		label="Length"
@@ -59,18 +83,22 @@
 		invalidText={errors.length ?? undefined}
 		name="length"
 	/>
-	<DatePicker datePickerType="single" on:change={handleExpectedChange}>
+	<DatePicker datePickerType="single" bind:value={expected}>
 		<DatePickerInput
 			labelText="Expected"
 			placeholder="mm/dd/yyyy"
 			invalid={Boolean(errors.expected)}
 			invalidText={errors.expected ?? undefined}
-			bind:value={expected}
 			name="expected"
 		/>
 	</DatePicker>
 
-	<Button type="submit" kind="secondary" {disabled}>Add Incoming</Button>
+	<Button type="submit" kind="secondary" {disabled}
+		>{#if editing}Update{:else}Add Incoming{/if}</Button
+	>
+	{#if editing}
+		<Button kind="tertiary" on:click={onCancel}>Cancel</Button>
+	{/if}
 </form>
 
 <style>

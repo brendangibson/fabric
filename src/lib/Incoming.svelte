@@ -4,6 +4,7 @@
 	import { Table } from 'carbon-components-svelte';
 	import { format } from 'date-fns';
 	import { enhance } from '$app/forms';
+	import AddIncoming from './AddIncoming.svelte';
 
 	export let incoming: TIncoming;
 	// export let styleColourId: string;
@@ -16,24 +17,25 @@
 </script>
 
 {#if editMode}
-	<!-- <UpdateIncoming
+	<AddIncoming
 		{incoming}
-		colourStyleId={styleColourId}
-		{refetchQueries}
-		onComplete={handleUpdateIncomingComplete}
-	/> -->
+		onCancel={() => (editMode = false)}
+		onSuccess={() => (editMode = false)}
+	/>
 {:else}
 	<Table>
 		<tbody>
 			<tr>
 				<td>Length</td>
 				<td>
-					{humanize(incoming.length)} yard{incoming.length === 1 ? '' : 's'}
-					<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
-					<form method="POST" action="?/deleteIncoming" use:enhance>
-						<input name="id" type="hidden" value={incoming.id} />
-						<button class="delete"> ⊗ </button>
-					</form>
+					<div class="actionCell">
+						{humanize(incoming.length)} yard{incoming.length === 1 ? '' : 's'}
+						<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
+						<form method="POST" action="?/deleteIncoming" use:enhance>
+							<input name="id" type="hidden" value={incoming.id} />
+							<button class="delete"> ⊗ </button>
+						</form>
+					</div>
 				</td>
 			</tr>
 			{#if incoming.notes}
@@ -61,6 +63,9 @@
 {/if}
 
 <style>
+	.actionCell {
+		display: flex;
+	}
 	.delete {
 		display: inline-block;
 		margin-left: 16;

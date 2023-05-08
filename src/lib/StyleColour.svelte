@@ -89,6 +89,8 @@
 			<Incoming {incoming} />
 		{/each}
 	{/if}
+	<div class="spacer" />
+
 	<AccessControl>
 		<AddIncoming styleColourId={styleColour.id} />
 	</AccessControl>

@@ -3,9 +3,13 @@
 	import type { TStandby } from '../fabric';
 	import { Table } from 'carbon-components-svelte';
 	import { enhance } from '$app/forms';
+	import AddStandby from './AddStandby.svelte';
+	import InlineError from './InlineError.svelte';
 
 	export let standby: TStandby;
 	export let styleColourId: string;
+
+	let errorMsg: string | null = null;
 
 	let editMode = false;
 
@@ -15,24 +19,41 @@
 </script>
 
 {#if editMode}
-	<!-- <UpdateStandby
+	<AddStandby
 		{standby}
-		colourStyleId={styleColourId}
-		{refetchQueries}
-		onComplete={handleUpdateStandbyComplete}
-	/> -->
+		{styleColourId}
+		onCancel={() => (editMode = false)}
+		onSuccess={() => (editMode = false)}
+	/>
 {:else}
 	<Table>
 		<tbody>
 			<tr>
 				<td>Length</td>
 				<td>
-					{humanize(standby.length)} yard{standby.length === 1 ? '' : 's'}
-					<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
-					<form method="POST" action="?/deleteStandby" use:enhance>
-						<input name="id" type="hidden" value={styleColourId} />
-						<button class="delete"> ⊗ </button>
-					</form>
+					<div class="actionCell">
+						{humanize(standby.length)} yard{standby.length === 1 ? '' : 's'}
+						<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
+						<form
+							method="POST"
+							action="?/deleteStandby"
+							use:enhance={() => {
+								return async ({ result, update }) => {
+									console.log('result: ', result);
+									if (result.type === 'failure') {
+										errorMsg = result.data?.error;
+									} else {
+										errorMsg = null;
+										await update();
+									}
+								};
+							}}
+						>
+							<input name="id" type="hidden" value={standby.id} />
+							<button class="delete"> ⊗ </button>
+							<InlineError {errorMsg} />
+						</form>
+					</div>
 				</td>
 			</tr>
 		</tbody>
@@ -40,6 +61,9 @@
 {/if}
 
 <style>
+	.actionCell {
+		display: flex;
+	}
 	.delete {
 		display: inline-block;
 		margin-left: 16;

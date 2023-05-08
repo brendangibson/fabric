@@ -1,16 +1,30 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Button, DatePicker, DatePickerInput, NumberInput } from 'carbon-components-svelte';
+	import { Button, NumberInput } from 'carbon-components-svelte';
+	import type { TStandby } from '../fabric';
+	import InlineError from './InlineError.svelte';
 
 	export let styleColourId: string;
-	let length = 1;
-	let expected: string;
-	let errors: Record<string, string | null> = {
-		length: null,
-		expected: null
+	export let standby: TStandby | undefined = undefined;
+	export let onCancel = () => {
+		/*deliberate*/
+	};
+	export let onSuccess = () => {
+		/*deliberate*/
 	};
 
-	const setErrors = (index: string, value: number) => {
+	$: editing = Boolean(standby);
+
+	$: console.log('standby: ', standby, ' length: ', length);
+
+	$: length = editing ? standby?.length : 1;
+	let errors: Record<string, string | null> = {
+		length: null
+	};
+	let fetching = false;
+	let errorMsg: string | null = null;
+
+	const setErrors = (index: string, value: number | undefined) => {
 		switch (index) {
 			case 'length':
 				if (value === undefined || value === null) return;
@@ -28,28 +42,39 @@
 		}
 	};
 
-	const handleExpectedChange = (
-		e: CustomEvent<
-			| string
-			| {
-					selectedDates: [dateFrom: Date, dateTo?: Date | undefined];
-					dateStr: string | { from: string; to: string };
-			  }
-		>
-	) => {
-		if (typeof e.detail !== 'string') expected = e.detail.selectedDates[0].toISOString();
-	};
-
 	$: setErrors('length', length);
 
-	$: disabled = !(Boolean(length) && Boolean(expected));
+	$: disabled = !length || fetching;
 </script>
 
-<form method="POST" action="?/addStandby" use:enhance>
-	<input type="hidden" name="id" value={styleColourId} />
-	<input type="hidden" name="expected" value={expected} />
+<form
+	method="POST"
+	action={editing ? '?/updateStandby' : '?/addStandby'}
+	use:enhance={() => {
+		fetching = true;
 
-	<h4>Add Fabric on Standby</h4>
+		return async ({ result, update }) => {
+			console.log('result: ', result);
+			// `result` is an `ActionResult` object
+			if (result.type === 'failure') {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
+				await update();
+				onSuccess();
+			}
+			fetching = false;
+		};
+	}}
+>
+	{#if editing}
+		<input type="hidden" name="id" value={standby?.id} />
+	{:else}
+		<input type="hidden" name="id" value={styleColourId} />
+	{/if}
+	<h4>
+		{#if editing}Edit{:else}Add{/if} Fabric on Standby
+	</h4>
 
 	<NumberInput
 		label="Length"
@@ -59,18 +84,14 @@
 		invalidText={errors.length ?? undefined}
 		name="length"
 	/>
-	<DatePicker datePickerType="single" on:change={handleExpectedChange}>
-		<DatePickerInput
-			labelText="Expected"
-			placeholder="mm/dd/yyyy"
-			invalid={Boolean(errors.expected)}
-			invalidText={errors.expected ?? undefined}
-			bind:value={expected}
-			name="expected"
-		/>
-	</DatePicker>
 
-	<Button type="submit" kind="secondary" {disabled}>Add Standby</Button>
+	<Button type="submit" kind="secondary" {disabled}
+		>{#if editing}Update Standby{:else}Add Standby{/if}</Button
+	>
+	{#if editing}
+		<Button kind="tertiary" on:click={onCancel}>Cancel</Button>
+	{/if}
+	<InlineError {errorMsg} />
 </form>
 
 <style>

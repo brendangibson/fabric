@@ -56,6 +56,7 @@ export type THold = {
 };
 
 export type TStandby = {
+	id: string;
 	length: number;
 };
 
