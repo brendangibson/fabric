@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Button, DatePicker, DatePickerInput, NumberInput } from 'carbon-components-svelte';
+	import {
+		Button,
+		ButtonSet,
+		DatePicker,
+		DatePickerInput,
+		NumberInput
+	} from 'carbon-components-svelte';
 	import type { THold } from '../fabric';
 	import InlineError from './InlineError.svelte';
 
@@ -48,7 +54,7 @@
 
 <form
 	method="POST"
-	action="?/addHold"
+	action={editing ? '?/updateHold' : '?/addHold'}
 	use:enhance={() => {
 		fetching = true;
 
@@ -65,7 +71,11 @@
 		};
 	}}
 >
-	<input type="hidden" name="id" value={styleColourId} />
+	{#if editing}
+		<input type="hidden" name="id" value={hold?.id} />
+	{:else}
+		<input type="hidden" name="id" value={styleColourId} />
+	{/if}
 
 	<h4>
 		{#if editing}Update{:else}Add{/if} Hold
@@ -89,12 +99,15 @@
 		/>
 	</DatePicker>
 
-	<Button type="submit" kind="secondary" {disabled}
-		>{#if editing}Update{:else}Add{/if} Hold</Button
-	>
-	{#if editing}
-		<Button type="tertiary" on:click={onCancel}>Cancel</Button>
-	{/if}
+	<ButtonSet>
+		<Button type="submit" kind="secondary" {disabled}
+			>{#if editing}Update{:else}Add{/if}</Button
+		>
+		{#if editing}
+			<Button type="tertiary" on:click={onCancel}>Cancel</Button>
+		{/if}
+	</ButtonSet>
+
 	<InlineError {errorMsg} />
 </form>
 

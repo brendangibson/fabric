@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Button, DatePicker, DatePickerInput, NumberInput } from 'carbon-components-svelte';
+	import {
+		Button,
+		ButtonSet,
+		DatePicker,
+		DatePickerInput,
+		NumberInput
+	} from 'carbon-components-svelte';
 	import type { TIncoming } from '../fabric';
+	import InlineError from './InlineError.svelte';
 
 	export let styleColourId: string | undefined = undefined;
 	export let incoming: TIncoming | null = null;
@@ -22,8 +29,7 @@
 	};
 
 	let fetching = false;
-
-	$: console.log('expected: ', expected);
+	let errorMsg: string | null = null;
 
 	const setErrors = (index: string, value: number | undefined) => {
 		switch (index) {
@@ -56,7 +62,10 @@
 
 		return async ({ result, update }) => {
 			console.log('result: ', result);
-			if (result.type !== 'error') {
+			if ((result.type = 'failure')) {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
 				await update();
 				onSuccess();
 			}
@@ -93,12 +102,15 @@
 		/>
 	</DatePicker>
 
-	<Button type="submit" kind="secondary" {disabled}
-		>{#if editing}Update{:else}Add Incoming{/if}</Button
+	<ButtonSet>
+		<Button type="submit" kind="secondary" {disabled}
+			>{#if editing}Update{:else}Add{/if}</Button
+		>
+		{#if editing}
+			<Button kind="tertiary" on:click={onCancel}>Cancel</Button>
+		{/if}</ButtonSet
 	>
-	{#if editing}
-		<Button kind="tertiary" on:click={onCancel}>Cancel</Button>
-	{/if}
+	<InlineError {errorMsg} />
 </form>
 
 <style>

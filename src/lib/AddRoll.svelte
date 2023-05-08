@@ -98,7 +98,7 @@
 		name="notes"
 	/>
 
-	<Button type="submit" kind="secondary" {disabled}>Add Roll</Button>
+	<Button type="submit" kind="secondary" {disabled}>Add</Button>
 </form>
 
 <style>

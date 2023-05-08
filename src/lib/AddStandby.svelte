@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Button, NumberInput } from 'carbon-components-svelte';
+	import { Button, ButtonSet, NumberInput } from 'carbon-components-svelte';
 	import type { TStandby } from '../fabric';
 	import InlineError from './InlineError.svelte';
 
@@ -85,12 +85,14 @@
 		name="length"
 	/>
 
-	<Button type="submit" kind="secondary" {disabled}
-		>{#if editing}Update Standby{:else}Add Standby{/if}</Button
-	>
-	{#if editing}
-		<Button kind="tertiary" on:click={onCancel}>Cancel</Button>
-	{/if}
+	<ButtonSet>
+		<Button type="submit" kind="secondary" {disabled}
+			>{#if editing}Update{:else}Add{/if}</Button
+		>
+		{#if editing}
+			<Button kind="tertiary" on:click={onCancel}>Cancel</Button>
+		{/if}
+	</ButtonSet>
 	<InlineError {errorMsg} />
 </form>
 

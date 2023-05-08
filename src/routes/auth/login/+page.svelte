@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import { Button, TextInput } from 'carbon-components-svelte';
 	import Loading from '$lib/Loading.svelte';
+	import InlineError from '$lib/InlineError.svelte';
 
 	let errorMsg = '';
 	let fetching = false;
@@ -46,7 +47,7 @@
 			/>
 			<Button type="submit" kind="secondary" disabled={fetching}>Sign In</Button>
 		</form>
-		<div class="error">{errorMsg}</div>
+		<InlineError {errorMsg} />
 	{/if}
 </main>
 
@@ -56,10 +57,6 @@
 		top: 50%;
 		left: 50%;
 		position: absolute;
-	}
-
-	.error {
-		color: var(--error);
 	}
 
 	form {
