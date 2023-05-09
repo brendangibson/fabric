@@ -19,7 +19,7 @@ export async function load({ locals, params }) {
 			`SELECT COALESCE(
 				(
 					SELECT SUM(CASE WHEN i.length > 1 THEN i.length ELSE 0 END)
-					FROM (SELECT r."originalLength" - COALESCE(SUM(c.length),0) AS length, r."colourStyleId" AS csi, r."originalLength" FROM rolls r
+					FROM (SELECT r."originalLength" - COALESCE(SUM(c.length),0) AS length, r."styleColourId" AS csi, r."originalLength" FROM rolls r
 					LEFT JOIN cuts c ON r.id = c."rollId"
 					WHERE NOT r.returned GROUP BY r.id
 				) AS i
@@ -31,42 +31,42 @@ export async function load({ locals, params }) {
 		);
 
 		const holdsLengthPromise = db.query<{ holdsLength: number }>(
-			`SELECT COALESCE(SUM(length),0) AS holdsLength FROM holds WHERE "colourStyleId" = $1 AND expires > NOW()`,
+			`SELECT COALESCE(SUM(length),0) AS holdsLength FROM holds WHERE "styleColourId" = $1 AND expires > NOW()`,
 			[id]
 		);
 
 		const incomingLengthPromise = db.query<{ incomingLength: number }>(
-			`SELECT COALESCE(SUM(length),0) AS incomingLength FROM incoming WHERE "colourStyleId" = $1`,
+			`SELECT COALESCE(SUM(length),0) AS incomingLength FROM incoming WHERE "styleColourId" = $1`,
 			[id]
 		);
 
 		const standbyLengthPromise = db.query<{ standbyLength: number }>(
-			`SELECT COALESCE(SUM(length),0) AS standbyLength FROM standby WHERE "colourStyleId" = $1`,
+			`SELECT COALESCE(SUM(length),0) AS standbyLength FROM standby WHERE "styleColourId" = $1`,
 			[id]
 		);
 
 		const rollsPromise = db.query<TRoll>(
-			`SELECT id, "glenRavenId", "originalLength", returned FROM rolls WHERE "colourStyleId" = $1`,
+			`SELECT id, "glenRavenId", "originalLength", returned FROM rolls WHERE "styleColourId" = $1`,
 			[id]
 		);
 
 		const cutsPromise = db.query<TCut>(
-			`SELECT length, "rollId" FROM cuts c, rolls r WHERE c."rollId" = r.id AND r."colourStyleId" = $1`,
+			`SELECT length, "rollId" FROM cuts c, rolls r WHERE c."rollId" = r.id AND r."styleColourId" = $1`,
 			[id]
 		);
 
 		const incomingPromise = db.query<TCut>(
-			`SELECT id, length, expected, "orderId" FROM incoming WHERE  "colourStyleId" = $1`,
+			`SELECT id, length, expected, "orderId" FROM incoming WHERE  "styleColourId" = $1`,
 			[id]
 		);
 
 		const holdsPromise = db.query<TCut>(
-			`SELECT id, length, owner, expires, timestamp, "orderId" FROM holds WHERE  "colourStyleId" = $1`,
+			`SELECT id, length, owner, expires, timestamp, "orderId" FROM holds WHERE  "styleColourId" = $1`,
 			[id]
 		);
 
 		const standbyPromise = db.query<TCut>(
-			`SELECT id, length,timestamp FROM standby WHERE  "colourStyleId" = $1`,
+			`SELECT id, length,timestamp FROM standby WHERE  "styleColourId" = $1`,
 			[id]
 		);
 
@@ -117,7 +117,7 @@ export const actions = {
 		const length = data.get('length');
 
 		try {
-			const result = await db.query(`INSERT INTO holds("colourStyleId", length) VALUES ($1, $2)`, [
+			const result = await db.query(`INSERT INTO holds("styleColourId", length) VALUES ($1, $2)`, [
 				id,
 				length
 			]);
@@ -142,7 +142,7 @@ export const actions = {
 
 		try {
 			const result = await db.query(
-				`INSERT INTO incoming("colourStyleId", length, expected) VALUES ($1, $2, $3)`,
+				`INSERT INTO incoming("styleColourId", length, expected) VALUES ($1, $2, $3)`,
 				[id, length, expected]
 			);
 			console.log('INSERTED!', result);
@@ -165,7 +165,7 @@ export const actions = {
 
 		try {
 			const result = await db.query(
-				`INSERT INTO rolls("colourStyleId", "originalLength", "glenRavenId", "shipmentId", notes) VALUES ($1, $2, $3, $4, $5)`,
+				`INSERT INTO rolls("styleColourId", "originalLength", "glenRavenId", "shipmentId", notes) VALUES ($1, $2, $3, $4, $5)`,
 				[id, length, glenRavenId, shipmentId, notes]
 			);
 			console.log('ADDED!', result);
@@ -185,7 +185,7 @@ export const actions = {
 
 		try {
 			const result = await db.query(
-				`INSERT INTO standby("colourStyleId", length) VALUES ($1, $2)`,
+				`INSERT INTO standby("styleColourId", length) VALUES ($1, $2)`,
 				[id, length]
 			);
 			console.log('INSERTED!', result);

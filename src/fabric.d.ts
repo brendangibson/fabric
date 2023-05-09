@@ -68,4 +68,5 @@ export type TStyleColour = {
 	incoming?: TIncoming[];
 	holds?: THold[];
 	standby: TStandby[];
+	rate?: number;
 };
