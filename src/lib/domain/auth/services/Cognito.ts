@@ -29,6 +29,7 @@ const User = (Username: string): CognitoUser => new CognitoUser({ Username, Pool
  * @returns - Promise with the result of the login
  */
 export const getSession = (Username: string, Password: string): Promise<CognitoUserSession> => {
+	console.log('getSession');
 	return new Promise((resolve, reject) =>
 		User(Username).authenticateUser(new AuthenticationDetails({ Username, Password }), {
 			onSuccess: resolve,
@@ -46,6 +47,7 @@ export const getSession = (Username: string, Password: string): Promise<CognitoU
 export const refreshAccessToken = async (sessionData: {
 	refreshToken: string;
 }): Promise<CognitoUserSession> => {
+	console.log('refreshAccessToken');
 	const cognitoUser = Pool.getCurrentUser();
 	// Check if the user is logged in
 	if (!cognitoUser) {

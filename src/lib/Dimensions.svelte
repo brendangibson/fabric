@@ -12,8 +12,8 @@
 </script>
 
 <div class="dimensionsWrapper">
-	<button on:click={() => (open = !open)}>ⓘ</button>
-	<Popover bind:open on:click:outside={() => (open = false)}>
+	<button on:click|preventDefault={() => (open = !open)}>ⓘ</button>
+	<Popover bind:open>
 		<div class="dimensions">
 			<DimensionIcon {length} {diameter} weight={length * weight} />
 		</div>

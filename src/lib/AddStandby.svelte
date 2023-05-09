@@ -25,6 +25,7 @@
 	let errorMsg: string | null = null;
 
 	const setErrors = (index: string, value: number | undefined) => {
+		console.log('setErrors');
 		switch (index) {
 			case 'length':
 				if (value === undefined || value === null) return;
@@ -51,6 +52,7 @@
 	method="POST"
 	action={editing ? '?/updateStandby' : '?/addStandby'}
 	use:enhance={() => {
+		console.log('submit add standby');
 		fetching = true;
 
 		return async ({ result, update }) => {

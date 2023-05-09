@@ -10,25 +10,31 @@
 	let fetching = false;
 
 	const handleSubmit = async (event: SubmitEvent) => {
+		console.log('handleSumbmit');
 		if (!event?.target) {
 			errorMsg = 'Submit did not pass event target';
 			return;
 		}
 		const data = new FormData(event.target as HTMLFormElement);
 		try {
+			console.log('fetching');
 			fetching = true;
 			await signIn('credentials', {
 				username: data.get('email'),
 				password: data.get('password'),
 				callbackUrl: $page.url.searchParams.get('callbackUrl')
 			});
+			console.log('fetched');
 		} catch (error) {
 			console.error('error: ', error);
 			errorMsg = error as string;
 			await invalidateAll();
+			console.log('invalidated');
 		} finally {
 			fetching = false;
+			console.log('finally');
 		}
+		console.log('after finally');
 	};
 </script>
 

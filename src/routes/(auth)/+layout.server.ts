@@ -3,6 +3,7 @@ import type { TSession } from '../../app';
 
 // import { getAccount } from '$lib/domain/auth/api/getAccount';
 export const load = async ({ locals, url }) => {
+	console.log('layour.server.ts load');
 	// Get the session from the locals
 	const session = (await locals?.getSession()) as TSession | null;
 

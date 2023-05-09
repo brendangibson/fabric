@@ -86,7 +86,7 @@
 		bind:value={length}
 		placeholder="yards"
 		invalid={Boolean(errors.length)}
-		invalidText={errors.length ?? undefined}
+		invalidText={errors.length ?? ''}
 		name="length"
 	/>
 	<DatePicker datePickerType="single" bind:value={expires}>

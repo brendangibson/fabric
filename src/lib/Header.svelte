@@ -18,8 +18,8 @@
 		<OverflowMenu flipped>
 			<div class="menuButton" slot="menu">☰</div>
 			<AccessControl>
-				<OverflowMenuItem href="/status">Status</OverflowMenuItem>
-				<OverflowMenuItem slot="else" href="/shipments">Shipments</OverflowMenuItem>
+				<OverflowMenuItem href="/shipments">Shipments</OverflowMenuItem>
+				<OverflowMenuItem slot="else" href="/status">Status</OverflowMenuItem>
 			</AccessControl>
 			<OverflowMenuItem href="/summary">Summary</OverflowMenuItem>
 			<OverflowMenuItem href="/holds">Holds</OverflowMenuItem>
