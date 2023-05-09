@@ -2,6 +2,7 @@ import { fail } from '@sveltejs/kit';
 import type { QueryError } from '../../../../db';
 import type { TCut, TRoll, TStyleColour } from '../../../../fabric';
 import { identity } from 'svelte/internal';
+import { addHold } from '../../../../db/actions';
 
 export async function load({ locals, params }) {
 	const { db } = locals;
@@ -110,26 +111,7 @@ export async function load({ locals, params }) {
 }
 
 export const actions = {
-	addHold: async (event) => {
-		const data = await event.request.formData();
-		const { db } = event.locals;
-		const id = data.get('id');
-		const length = data.get('length');
-
-		try {
-			const result = await db.query(`INSERT INTO holds("styleColourId", length) VALUES ($1, $2)`, [
-				id,
-				length
-			]);
-			console.log('INSERTED!', result);
-		} catch (error) {
-			console.error('error adding hold: ', id, error, (error as QueryError)?.message);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
-		}
-	},
+	addHold,
 	addIncoming: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;

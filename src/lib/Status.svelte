@@ -23,30 +23,32 @@
 		}
 	};
 
-	$: sortedStylesColours = [
-		...stylesColours?.sort((a, b) => {
-			switch (sortBy) {
-				case 'name':
+	$: sortedStylesColours = stylesColours
+		? [
+				...stylesColours.sort((a, b) => {
 					const aName = `${a.style} ${a.colour}`;
 					const bName = `${b.style} ${b.colour}`;
-					return bName.localeCompare(aName);
-				case 'remaining':
-					return (b.remaining ?? 0) - (a.remaining ?? 0);
-				case 'incoming':
-					return (b.incomingLength ?? 0) - (a.incomingLength ?? 0);
-				case 'standby':
-					return (b.standbyLength ?? 0) - (a.standbyLength ?? 0);
-				case 'holds':
-					return (b.holdsLength ?? 0) - (a.holdsLength ?? 0);
-				case 'rate':
-					return (b.rate ?? 0) - (a.rate ?? 0);
-				case 'daysRemaining':
-					return (daysRemaining(b) ?? 0) - (daysRemaining(a) ?? 0);
-				default:
-					return 0;
-			}
-		})
-	];
+					switch (sortBy) {
+						case 'name':
+							return bName.localeCompare(aName);
+						case 'remaining':
+							return (b.remaining ?? 0) - (a.remaining ?? 0);
+						case 'incoming':
+							return (b.incomingLength ?? 0) - (a.incomingLength ?? 0);
+						case 'standby':
+							return (b.standbyLength ?? 0) - (a.standbyLength ?? 0);
+						case 'holds':
+							return (b.holdsLength ?? 0) - (a.holdsLength ?? 0);
+						case 'rate':
+							return (b.rate ?? 0) - (a.rate ?? 0);
+						case 'daysRemaining':
+							return (daysRemaining(b) ?? 0) - (daysRemaining(a) ?? 0);
+						default:
+							return 0;
+					}
+				})
+		  ]
+		: [];
 
 	$: sortDirection, (sortedStylesColours = [...sortedStylesColours].reverse());
 

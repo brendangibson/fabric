@@ -5,8 +5,6 @@
 		DatePicker,
 		DatePickerInput,
 		NumberInput,
-		Select,
-		SelectItem,
 		TextInput
 	} from 'carbon-components-svelte';
 
@@ -36,7 +34,7 @@
 
 	$: setErrors('name', name);
 
-	$: disabled = !Boolean(name) || fetching;
+	$: disabled = !name || fetching;
 </script>
 
 <form

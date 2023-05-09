@@ -44,7 +44,7 @@
 
 	$: setErrors('length', length);
 
-	$: disabled = !Boolean(length + inches) || fetching;
+	$: disabled = !(length + inches) || fetching;
 </script>
 
 <form
