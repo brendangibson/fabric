@@ -61,7 +61,6 @@
 		fetching = true;
 
 		return async ({ result, update }) => {
-			console.log('result: ', result);
 			if (result.type === 'failure') {
 				errorMsg = result.data?.error;
 			} else {

@@ -22,7 +22,11 @@
 				<OverflowMenuItem href="/status">Status</OverflowMenuItem>
 			</AccessControl>
 			<OverflowMenuItem href="/summary">Summary</OverflowMenuItem>
-			<OverflowMenuItem href="/holds">Holds</OverflowMenuItem>
+			<AccessControl>
+				<OverflowMenuItem href="/allholds">Holds</OverflowMenuItem>
+
+				<OverflowMenuItem slot="else" href="/holds">Holds</OverflowMenuItem>
+			</AccessControl>
 			<OverflowMenuItem danger on:click={onLogout()}>Log out</OverflowMenuItem>
 		</OverflowMenu>
 	</header>

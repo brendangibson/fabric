@@ -28,8 +28,6 @@ export async function load({ locals, params }) {
 			}
 		};
 
-		console.log('payload: ', payload);
-
 		return payload;
 	} catch (error) {
 		return fail(422, {
@@ -52,7 +50,6 @@ export const actions = {
 				`INSERT INTO cuts("rollId", length, reason, notes) VALUES ($1, $2, $3, $4)`,
 				[id, length, reason, notes]
 			);
-			console.log('INSERTED!', result);
 		} catch (error) {
 			console.error('error adding cut: ', id, error, (error as QueryError)?.message);
 			return fail(422, {
@@ -69,7 +66,6 @@ export const actions = {
 
 		try {
 			const result = await db.query(`UPDATE rolls SET returned = true WHERE id = $1`, [id]);
-			console.log('RETURNED!', result);
 		} catch (error) {
 			console.error('error returning roll: ', id, error, (error as QueryError)?.message);
 			return fail(422, {
@@ -85,7 +81,6 @@ export const actions = {
 
 		try {
 			const result = await db.query(`UPDATE rolls SET returned = false WHERE id = $1`, [id]);
-			console.log('UNRETURNED!', result);
 		} catch (error) {
 			console.error('error unreturning roll: ', id, error, (error as QueryError)?.message);
 			return fail(422, {

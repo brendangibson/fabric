@@ -51,8 +51,6 @@
 		: [];
 
 	$: sortDirection, (sortedStylesColours = [...sortedStylesColours].reverse());
-
-	$: console.log('stylesColours: ', stylesColours);
 </script>
 
 <Table>

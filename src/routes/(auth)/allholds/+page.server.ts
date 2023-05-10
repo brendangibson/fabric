@@ -1,17 +1,14 @@
 import { addHold, deleteHold, updateHold } from '../../../db/actions';
 import type { THold, TStyleColour } from '../../../fabric';
 
-export async function load({ locals, parent }) {
+export async function load({ locals }) {
 	const { db } = locals;
-
-	const owner = (await parent())?.session?.user?.username;
 
 	try {
 		const mainPromise = db.query<THold>(
 			`SELECT h.*, sc."swatchUrl", s.name AS style, c.name As colour
             FROM holds h, stylescolours sc, styles s, colours c 
-            WHERE owner=$1 AND expires > NOW() AND h."styleColourId" = sc.id AND s.id = sc."styleId" AND c.id = sc."colourId"`,
-			[owner]
+            WHERE h.expires > NOW() AND h."styleColourId" = sc.id AND s.id = sc."styleId" AND c.id = sc."colourId"`
 		);
 
 		const styleColourPromise = db.query<TStyleColour>(

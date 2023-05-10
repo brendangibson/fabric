@@ -47,10 +47,9 @@
 						<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
 						<form
 							method="POST"
-							action="?/deleteIncoming"
+							action="?/deleteHold"
 							use:enhance={() => {
 								return async ({ result, update }) => {
-									console.log('result: ', result);
 									if (result.type === 'failure') {
 										errorMsg = result.data?.error;
 									} else {
@@ -115,7 +114,6 @@
 								approveButtonDisabled = true;
 
 								return async ({ result, update }) => {
-									console.log('result: ', result);
 									// `result` is an `ActionResult` object
 									if (result.type === 'failure') {
 										errorMsg = result.data?.error;

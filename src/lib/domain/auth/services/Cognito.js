@@ -10,16 +10,14 @@ import {
 	CognitoUserPool,
 	CognitoUserSession
 } from 'amazon-cognito-identity-js';
-export type CognitoUserSessionType = CognitoUserSession;
 const CONFIGS = {
 	UserPoolId: COGNITO_USER_POOL_ID,
 	ClientId: COGNITO_CLIENT_ID
 };
-
 // Create a new Cognito User Pool
 const Pool = new CognitoUserPool(CONFIGS);
 // Wrapper function to create a new Cognito User from the User Pool
-const User = (Username: string): CognitoUser => new CognitoUser({ Username, Pool });
+const User = (Username) => new CognitoUser({ Username, Pool });
 /**
  * Login to Cognito User Pool using the provided credentials.
  * This will return the session data at the time of login.
@@ -28,7 +26,7 @@ const User = (Username: string): CognitoUser => new CognitoUser({ Username, Pool
  * @param Password - Password of the user to login
  * @returns - Promise with the result of the login
  */
-export const getSession = (Username: string, Password: string): Promise<CognitoUserSession> => {
+export const getSession = (Username, Password) => {
 	return new Promise((resolve, reject) =>
 		User(Username).authenticateUser(new AuthenticationDetails({ Username, Password }), {
 			onSuccess: resolve,
@@ -43,9 +41,7 @@ export const getSession = (Username: string, Password: string): Promise<CognitoU
  * @param sessionData - Session data of the user with the refresh token
  * @returns - Promise with the new user object with tokens and expiration date
  */
-export const refreshAccessToken = async (sessionData: {
-	refreshToken: string;
-}): Promise<CognitoUserSession> => {
+export const refreshAccessToken = async (sessionData) => {
 	const cognitoUser = Pool.getCurrentUser();
 	// Check if the user is logged in
 	if (!cognitoUser) {
@@ -55,9 +51,10 @@ export const refreshAccessToken = async (sessionData: {
 	const RefreshToken = new CognitoRefreshToken({
 		RefreshToken: sessionData.refreshToken
 	});
-	return new Promise<CognitoUserSession>((resolve) => {
-		cognitoUser.refreshSession(RefreshToken, (_resp, session: CognitoUserSession) => {
+	return new Promise((resolve) => {
+		cognitoUser.refreshSession(RefreshToken, (_resp, session) => {
 			resolve(session);
 		});
 	});
 };
+//# sourceMappingURL=Cognito.js.map

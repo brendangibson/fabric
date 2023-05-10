@@ -2,7 +2,7 @@ import { fail } from '@sveltejs/kit';
 import type { QueryError } from '../../../../db';
 import type { TCut, TRoll, TStyleColour } from '../../../../fabric';
 import { identity } from 'svelte/internal';
-import { addHold } from '../../../../db/actions';
+import { addHold, deleteHold, updateHold } from '../../../../db/actions';
 
 export async function load({ locals, params }) {
 	const { db } = locals;
@@ -36,7 +36,7 @@ export async function load({ locals, params }) {
 			[id]
 		);
 
-		const incomingLengthPromise = db.query<{ incomingLength: number }>(
+		const incomingLengthPromise = db.query(
 			`SELECT COALESCE(SUM(length),0) AS incomingLength FROM incoming WHERE "styleColourId" = $1`,
 			[id]
 		);
@@ -127,7 +127,6 @@ export const actions = {
 				`INSERT INTO incoming("styleColourId", length, expected) VALUES ($1, $2, $3)`,
 				[id, length, expected]
 			);
-			console.log('INSERTED!', result);
 		} catch (error) {
 			console.error('error updating incoming: ', id, error);
 			return fail(422, {
@@ -150,7 +149,6 @@ export const actions = {
 				`INSERT INTO rolls("styleColourId", "originalLength", "glenRavenId", "shipmentId", notes) VALUES ($1, $2, $3, $4, $5)`,
 				[id, length, glenRavenId, shipmentId, notes]
 			);
-			console.log('ADDED!', result);
 		} catch (error) {
 			console.error('error adding roll: ', id, error);
 			return fail(422, {
@@ -170,7 +168,6 @@ export const actions = {
 				`INSERT INTO standby("styleColourId", length) VALUES ($1, $2)`,
 				[id, length]
 			);
-			console.log('INSERTED!', result);
 		} catch (error) {
 			console.error('error adding standby: ', id, error, (error as QueryError)?.message);
 			return fail(422, {
@@ -186,7 +183,6 @@ export const actions = {
 
 		try {
 			const result = await db.query(`UPDATE holds SET pending=false WHERE id = $1`, [identity]);
-			console.log('APPROVED!', result);
 		} catch (error) {
 			console.error('error approving hold: ', id, error);
 			return fail(422, {
@@ -195,28 +191,13 @@ export const actions = {
 			});
 		}
 	},
-	deleteHold: async (event) => {
-		const data = await event.request.formData();
-		const { db } = event.locals;
-		const id = data.get('id');
-		try {
-			await db.query(`DELETE FROM holds WHERE id = $1`, [id]);
-			console.log('DELETED!');
-		} catch (error) {
-			console.error('error deleting hold: ', id, error);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
-		}
-	},
+	deleteHold,
 	deleteIncoming: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id');
 		try {
 			await db.query(`DELETE FROM incoming WHERE id = $1`, [id]);
-			console.log('DELETED!');
 		} catch (error) {
 			console.error('error deleting incoming: ', id, error);
 			return fail(422, {
@@ -229,10 +210,8 @@ export const actions = {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id');
-		console.log('id: ', id);
 		try {
 			const result = await db.query(`DELETE FROM standby WHERE id = $1`, [id]);
-			console.log('DELETED!', result);
 			if (result.rowCount === 0) {
 				return fail(422, {
 					description: data.get('description'),
@@ -247,31 +226,7 @@ export const actions = {
 			});
 		}
 	},
-	updateHold: async (event) => {
-		const data = await event.request.formData();
-		const { db } = event.locals;
-		const id = data.get('id');
-		const length = data.get('length');
-		const expires =
-			data.get('expected') !== null
-				? new Date(data.get('expires') as string).toISOString()
-				: new Date().toISOString();
-
-		try {
-			const result = await db.query(`UPDATE holds SET(length, expires) = ($2, $3) WHERE id = $1`, [
-				id,
-				length,
-				expires
-			]);
-			console.log('UPDATED!', result);
-		} catch (error) {
-			console.error('error updating hold: ', id, error);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
-		}
-	},
+	updateHold,
 	updateIncoming: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
@@ -287,7 +242,6 @@ export const actions = {
 				`UPDATE incoming SET(length, expected) = ($2, $3) WHERE id = $1`,
 				[id, length, expected]
 			);
-			console.log('UPDATED!', result);
 		} catch (error) {
 			console.error('error updating incoming: ', id, error);
 			return fail(422, {
@@ -304,7 +258,6 @@ export const actions = {
 
 		try {
 			const result = await db.query(`UPDATE standby SET length = $2 WHERE id = $1`, [id, length]);
-			console.log('UPDATED!', result);
 		} catch (error) {
 			console.error('error updating standby: ', id, error);
 			return fail(422, {

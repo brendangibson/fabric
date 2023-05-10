@@ -3,8 +3,6 @@
 	import SummaryStyleColour from './SummaryStyleColour.svelte';
 
 	export let stylesColours: TStyleColour[];
-
-	console.log('stylesColours: ', stylesColours);
 </script>
 
 <div class="summary">

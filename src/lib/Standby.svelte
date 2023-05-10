@@ -39,7 +39,6 @@
 							action="?/deleteStandby"
 							use:enhance={() => {
 								return async ({ result, update }) => {
-									console.log('result: ', result);
 									if (result.type === 'failure') {
 										errorMsg = result.data?.error;
 									} else {

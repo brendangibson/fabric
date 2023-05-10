@@ -30,7 +30,6 @@ export async function load({ locals }) {
 		);
 
 		const payload = { stylesColours: (await mainPromise)?.rows };
-		console.log('payload: ', payload);
 
 		return payload;
 	} catch (error) {

@@ -13,8 +13,6 @@ export async function load({ locals }) {
 			shipments: mainResult?.rows
 		};
 
-		console.log('payload: ', payload);
-
 		return payload;
 	} catch (error) {
 		return fail(422, {
@@ -37,7 +35,6 @@ export const actions = {
 				`INSERT INTO shipments(name, "dateSent", "dateReceived", "glenRavenId") VALUES ($1, $2, $3, $4)`,
 				[name, dateSent, dateReceived, glenRavenId]
 			);
-			console.log('INSERTED!', result);
 		} catch (error) {
 			console.error('error adding shipment: ', error, (error as QueryError)?.message);
 			return fail(422, {

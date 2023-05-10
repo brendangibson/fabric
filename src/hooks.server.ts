@@ -27,19 +27,20 @@ interface AuthToken {
 	user: {
 		id: string;
 		email: string;
+		username: string;
 	};
 }
 /**
  * Extract the user object from the session data. This is a helper function that we will use to extract the user object from the session data returned from the Cognito service.
  */
 const extractUserFromSession = (session: CognitoUserSessionType): AuthUser => {
-	console.log('extractUserFromSession');
 	if (!session?.isValid?.()) throw new Error('Invalid session');
 	const user = session.getIdToken().payload;
 
 	return {
 		id: user.sub,
 		email: user.email,
+		username: session.getIdToken().decodePayload()['cognito:username'],
 		accessToken: session.getAccessToken().getJwtToken(),
 		accessTokenExpires: session.getAccessToken().getExpiration(),
 		refreshToken: session.getRefreshToken().getToken(),
@@ -50,7 +51,6 @@ const extractUserFromSession = (session: CognitoUserSessionType): AuthUser => {
  * Create the token object from the user object. This is a helper function that we will use to create the token object from the user object returned from the Cognito service.
  */
 const createTokenFromUser = (user: AuthUser): AuthToken => {
-	console.log('createTokenFromUser');
 	const token = {
 		accessToken: user.accessToken,
 		accessTokenExpires: user.accessTokenExpires,
@@ -58,6 +58,7 @@ const createTokenFromUser = (user: AuthUser): AuthToken => {
 		user: {
 			id: user.id,
 			email: user.email,
+			username: user.username,
 			groups: user.groups
 		}
 	};
@@ -107,7 +108,6 @@ const authHandler = SvelteKitAuth({
 		 */
 		// eslint
 		async jwt({ token, user }): Promise<any> {
-			console.log('jwt');
 			// Initial sign in; we have plugged tokens and expiry date into the user object in the authorize callback; object
 			// returned here will be saved in the JWT and will be available in the session callback as well as this callback
 			// on next requests
@@ -148,7 +148,6 @@ const authHandler = SvelteKitAuth({
 });
 
 const dbHandler: Handle = async ({ event, resolve }) => {
-	console.log('dbHandler');
 	event.locals.db = createPool({ connectionString: POSTGRES_URL });
 	const response = await resolve(event);
 	return response;

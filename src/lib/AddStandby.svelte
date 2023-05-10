@@ -15,8 +15,6 @@
 
 	$: editing = Boolean(standby);
 
-	$: console.log('standby: ', standby, ' length: ', length);
-
 	$: length = editing ? standby?.length : 1;
 	let errors: Record<string, string | null> = {
 		length: null
@@ -25,7 +23,6 @@
 	let errorMsg: string | null = null;
 
 	const setErrors = (index: string, value: number | undefined) => {
-		console.log('setErrors');
 		switch (index) {
 			case 'length':
 				if (value === undefined || value === null) return;
@@ -52,11 +49,9 @@
 	method="POST"
 	action={editing ? '?/updateStandby' : '?/addStandby'}
 	use:enhance={() => {
-		console.log('submit add standby');
 		fetching = true;
 
 		return async ({ result, update }) => {
-			console.log('result: ', result);
 			// `result` is an `ActionResult` object
 			if (result.type === 'failure') {
 				errorMsg = result.data?.error;

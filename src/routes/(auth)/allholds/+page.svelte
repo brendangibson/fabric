@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Holds from '$lib/Holds.svelte';
+	import AllHolds from '$lib/AllHolds.svelte';
 	import type { THold } from '../../../fabric';
 
 	export let data: {
@@ -7,4 +7,4 @@
 	};
 </script>
 
-<Holds holds={data?.holds} />
+<AllHolds holds={data?.holds} />

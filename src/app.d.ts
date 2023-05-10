@@ -8,6 +8,7 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			db: VercelPool;
+			user: AuthUser;
 		}
 		// interface PageData {}
 		// interface Platform {}
@@ -17,6 +18,7 @@ declare global {
 type AuthUser = {
 	id: string;
 	email: string;
+	username: string;
 	accessToken: string;
 	accessTokenExpires: number;
 	refreshToken: string;
@@ -25,6 +27,7 @@ type AuthUser = {
 
 type User = {
 	id: string;
+	username: string;
 	groups?: string[];
 };
 

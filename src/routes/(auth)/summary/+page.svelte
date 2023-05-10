@@ -5,8 +5,6 @@
 	export let data: {
 		stylesColours: TStyleColour[];
 	};
-
-	console.log('data: ', data);
 </script>
 
 <Summary stylesColours={data?.stylesColours} />

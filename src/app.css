@@ -10,7 +10,6 @@
 h1 {
 	text-align: center;
 	font-size: 4vh;
-	position: absolute;
 	top: 0;
 	width: 100%;
 	z-index: -1;

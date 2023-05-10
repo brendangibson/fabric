@@ -9,6 +9,7 @@ export type TCut = {
 
 export type THold = {
 	id: string;
+	styleColourId: string;
 	timestamp: string;
 	expires: string;
 	reason: string;
@@ -18,6 +19,7 @@ export type THold = {
 	notes: string;
 	length: number;
 	orderId: string;
+	styleColour?: TStyleColour;
 };
 
 export type TIncoming = {

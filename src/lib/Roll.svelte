@@ -22,8 +22,6 @@
 		roll?.cuts?.sort((a, b) =>
 			new Date(a.timestamp).getTime() < new Date(b.timestamp).getTime() ? -1 : 1
 		) ?? [];
-
-	$: console.log('sortedCuts: ', sortedCuts);
 </script>
 
 <div>
