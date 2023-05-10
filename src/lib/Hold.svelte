@@ -16,6 +16,7 @@
 	let editMode = false;
 	let errorMsg: string | null = null;
 	let approveButtonDisabled = false;
+	let deleting = false;
 
 	const handleEditClick = () => {
 		editMode = true;
@@ -33,36 +34,45 @@
 	<Table>
 		<tbody>
 			<tr>
-				<td
-					>Length
-					{#if styleColour.weight && styleColour.thickness}<Dimensions
-							weight={styleColour.weight}
-							length={54}
-							thickness={styleColour.thickness}
-						/>{/if}</td
+				<td>
+					<div class="actionCell">
+						Length
+						{#if styleColour.weight && styleColour.thickness}<Dimensions
+								weight={styleColour.weight}
+								length={54}
+								thickness={styleColour.thickness}
+							/>{/if}
+					</div></td
 				>
 				<td>
 					<div class="actionCell">
 						{humanize(hold.length)} yard{hold.length === 1 ? '' : 's'}
-						<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
-						<form
-							method="POST"
-							action="?/deleteHold"
-							use:enhance={() => {
-								return async ({ result, update }) => {
-									if (result.type === 'failure') {
-										errorMsg = result.data?.error;
-									} else {
-										errorMsg = null;
-										await update();
-									}
-								};
-							}}
-						>
-							<input name="id" type="hidden" value={hold.id} />
-							<button class="delete"> ⊗ </button>
-						</form>
-						<InlineError {errorMsg} />
+						{#if !deleting}
+							<button aria-label="Edit" on:click|preventDefault={handleEditClick} class="edit">
+								✏️
+							</button>
+							<form
+								method="POST"
+								action="?/deleteHold"
+								use:enhance={() => {
+									deleting = true;
+									return async ({ result, update }) => {
+										if (result.type === 'failure') {
+											errorMsg = result.data?.error;
+										} else {
+											errorMsg = null;
+											await update();
+										}
+										deleting = false;
+									};
+								}}
+							>
+								<input name="id" type="hidden" value={hold.id} />
+
+								<button class="delete"> ⊗ </button>
+								<InlineError {errorMsg} />
+							</form>
+						{/if}
 					</div>
 				</td>
 			</tr>
@@ -141,6 +151,7 @@
 <style>
 	.actionCell {
 		display: flex;
+		font-weight: bold;
 	}
 	.delete {
 		display: inline-block;

@@ -5,6 +5,7 @@
 	import { format } from 'date-fns';
 	import { humanize } from '../dataFunctions/cuts';
 	import Swatch from './Swatch.svelte';
+	import AccessControl from './AccessControl.svelte';
 
 	export let styleColour: TStyleColour;
 
@@ -18,15 +19,21 @@
 
 <div class="row">
 	<div class="leftColumn">
-		<a
-			href={'https://www.sienandco.com/products/' +
-				styleColour.style?.toLowerCase() +
-				styleColour.colour?.toLowerCase() +
-				'-fabric'}
-			target="_blank"
-		>
-			<Swatch src={styleColour.swatchUrl} />
-		</a>
+		<AccessControl>
+			<a href={`/stylecolour/${styleColour.id}`}>
+				<Swatch src={styleColour.swatchUrl} />
+			</a>
+			<a
+				slot="else"
+				href={'https://www.sienandco.com/products/' +
+					styleColour.style?.toLowerCase() +
+					styleColour.colour?.toLowerCase() +
+					'-fabric'}
+				target="_blank"
+			>
+				<Swatch src={styleColour.swatchUrl} />
+			</a>
+		</AccessControl>
 	</div>
 	<div class="rightColumn">
 		<strong>{`${styleColour.style} ${styleColour.colour}`}</strong>
@@ -71,6 +78,7 @@
 		</Button>
 		{#if holdModalOpen}
 			<div class="holdModal">
+				<button class="close" on:click|preventDefault={() => (holdModalOpen = false)}>X</button>
 				<AddHold
 					styleColourId={styleColour.id}
 					onSuccess={() => (holdModalOpen = false)}
@@ -85,21 +93,40 @@
 	.row {
 		display: flex;
 	}
-
-	.leftColumn {
-		width: 33vw;
-		padding: 1vw;
+	@media (max-width: 960px) {
+		.leftColumn {
+			width: 40vw;
+			padding: 1vw;
+		}
+	}
+	@media (min-width: 960px) {
+		.leftColumn {
+			width: 20vw;
+			padding: 1vw;
+		}
 	}
 
 	.rightColumn {
+		display: flex;
+		flex-direction: column;
+		gap: 1vw;
 		padding: 1vw 5vw;
 		width: 67vw;
 	}
 
 	.holdModal {
 		position: absolute;
-		background: #fff;
-		padding: 8;
+		background: var(--white);
+		padding: 3vh;
 		border: 1px solid grey;
+		z-index: 1;
+	}
+
+	.close {
+		position: absolute;
+		right: 1vw;
+		top: 1vw;
+		border: none;
+		background: transparent;
 	}
 </style>

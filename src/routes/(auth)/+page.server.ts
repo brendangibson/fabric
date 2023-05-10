@@ -1,3 +1,5 @@
+import { handleLoadError } from '../../db/load';
+
 export async function load({ locals }) {
 	const { db } = locals;
 	try {
@@ -10,7 +12,7 @@ export async function load({ locals }) {
 		return {
 			stylesColours
 		};
-	} catch (error) {
-		console.error('error: ', error);
+	} catch (e) {
+		handleLoadError('error getting stylescolours', e);
 	}
 }

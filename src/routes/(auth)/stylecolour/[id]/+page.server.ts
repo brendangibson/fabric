@@ -1,8 +1,6 @@
-import { fail } from '@sveltejs/kit';
-import type { QueryError } from '../../../../db';
 import type { TCut, TRoll, TStyleColour } from '../../../../fabric';
-import { identity } from 'svelte/internal';
-import { addHold, deleteHold, updateHold } from '../../../../db/actions';
+import { addHold, deleteHold, handleActionError, updateHold } from '../../../../db/actions';
+import { handleLoadError } from '../../../../db/load';
 
 export async function load({ locals, params }) {
 	const { db } = locals;
@@ -56,20 +54,15 @@ export async function load({ locals, params }) {
 			[id]
 		);
 
-		const incomingPromise = db.query<TCut>(
-			`SELECT id, length, expected, "orderId" FROM incoming WHERE  "styleColourId" = $1`,
-			[id]
-		);
+		const incomingPromise = db.query<TCut>(`SELECT * FROM incoming WHERE  "styleColourId" = $1`, [
+			id
+		]);
 
-		const holdsPromise = db.query<TCut>(
-			`SELECT id, length, owner, expires, timestamp, "orderId" FROM holds WHERE  "styleColourId" = $1`,
-			[id]
-		);
+		const holdsPromise = db.query<TCut>(`SELECT * FROM holds WHERE  "styleColourId" = $1`, [id]);
 
-		const standbyPromise = db.query<TCut>(
-			`SELECT id, length,timestamp FROM standby WHERE  "styleColourId" = $1`,
-			[id]
-		);
+		const standbyPromise = db.query<TCut>(`SELECT * FROM standby WHERE  "styleColourId" = $1`, [
+			id
+		]);
 
 		const shipmentsPromise = db.query<TStyleColour>(
 			`SELECT id, name FROM shipments ORDER BY "dateReceived" DESC LIMIT 10`
@@ -103,10 +96,8 @@ export async function load({ locals, params }) {
 			},
 			shipments: (await shipmentsPromise)?.rows
 		};
-	} catch (error) {
-		return fail(422, {
-			error: (error as QueryError)?.message
-		});
+	} catch (e) {
+		handleLoadError(`error getting stylecolour ${id}`, e);
 	}
 }
 
@@ -127,12 +118,11 @@ export const actions = {
 				`INSERT INTO incoming("styleColourId", length, expected) VALUES ($1, $2, $3)`,
 				[id, length, expected]
 			);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows inserted when adding incoming to ${id}`);
+			}
 		} catch (error) {
-			console.error('error updating incoming: ', id, error);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error adding incomging to ${id}`, error);
 		}
 	},
 	addRoll: async (event) => {
@@ -149,12 +139,11 @@ export const actions = {
 				`INSERT INTO rolls("styleColourId", "originalLength", "glenRavenId", "shipmentId", notes) VALUES ($1, $2, $3, $4, $5)`,
 				[id, length, glenRavenId, shipmentId, notes]
 			);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows inserted when adding roll to ${id}`);
+			}
 		} catch (error) {
-			console.error('error adding roll: ', id, error);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error adding roll to ${id}`, error);
 		}
 	},
 	addStandby: async (event) => {
@@ -168,12 +157,11 @@ export const actions = {
 				`INSERT INTO standby("styleColourId", length) VALUES ($1, $2)`,
 				[id, length]
 			);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows inserted when adding standby to ${id}`);
+			}
 		} catch (error) {
-			console.error('error adding standby: ', id, error, (error as QueryError)?.message);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error adding standby to ${id}`, error);
 		}
 	},
 	approveHold: async (event) => {
@@ -182,13 +170,12 @@ export const actions = {
 		const id = data.get('id');
 
 		try {
-			const result = await db.query(`UPDATE holds SET pending=false WHERE id = $1`, [identity]);
+			const result = await db.query(`UPDATE holds SET pending=false WHERE id = $1`, [id]);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows inserted when approving hold: ${id}`);
+			}
 		} catch (error) {
-			console.error('error approving hold: ', id, error);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error deleting incoming: ${id}`, error);
 		}
 	},
 	deleteHold,
@@ -197,13 +184,12 @@ export const actions = {
 		const { db } = event.locals;
 		const id = data.get('id');
 		try {
-			await db.query(`DELETE FROM incoming WHERE id = $1`, [id]);
+			const result = await db.query(`DELETE FROM incoming WHERE id = $1`, [id]);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows inserted when deleting incoming: ${id}`);
+			}
 		} catch (error) {
-			console.error('error deleting incoming: ', id, error);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error deleting incoming: ${id}`, error);
 		}
 	},
 	deleteStandby: async (event) => {
@@ -212,18 +198,11 @@ export const actions = {
 		const id = data.get('id');
 		try {
 			const result = await db.query(`DELETE FROM standby WHERE id = $1`, [id]);
-			if (result.rowCount === 0) {
-				return fail(422, {
-					description: data.get('description'),
-					error: 'Deleting standby failed'
-				});
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows inserted when deleting standby: ${id}`);
 			}
 		} catch (error) {
-			console.error('error deleting standby: ', id, error);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error deleting incoming: ${id}`, error);
 		}
 	},
 	updateHold,
@@ -242,12 +221,11 @@ export const actions = {
 				`UPDATE incoming SET(length, expected) = ($2, $3) WHERE id = $1`,
 				[id, length, expected]
 			);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows inserted when incoming standby: ${id}`);
+			}
 		} catch (error) {
-			console.error('error updating incoming: ', id, error);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error updating incoming: ${id}`, error);
 		}
 	},
 	updateStandby: async (event) => {
@@ -258,12 +236,11 @@ export const actions = {
 
 		try {
 			const result = await db.query(`UPDATE standby SET length = $2 WHERE id = $1`, [id, length]);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows inserted when updating standby: ${id}`);
+			}
 		} catch (error) {
-			console.error('error updating standby: ', id, error);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error updating standby: ${id}`, error);
 		}
 	}
 };

@@ -2,15 +2,18 @@
 	import { enhance } from '$app/forms';
 	import { Button, NumberInput, Select, SelectItem, TextInput } from 'carbon-components-svelte';
 	import type { TShipment } from '../fabric';
+	import InlineError from './InlineError.svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	export let styleColourId: string;
 	export let shipments: TShipment[];
 	let length = 1;
-	let glenRavenId: number;
-	let shipmentId: string;
+	let glenRavenId = 999999;
+	let shipmentId = shipments[0].id;
 	let notes = '';
 
 	let fetching = false;
+	let errorMsg: string | null = null;
 
 	let errors: Record<string, string | null> = {
 		length: null
@@ -41,8 +44,6 @@
 		}
 	};
 
-	const handleShipmentChange = (e: Event) => (shipmentId = (e.target as HTMLInputElement)?.value);
-
 	$: setErrors('length', length);
 	$: setErrors('glenRavenId', glenRavenId);
 
@@ -54,8 +55,14 @@
 	action="?/addRoll"
 	use:enhance={() => {
 		fetching = true;
-		return async ({ update }) => {
-			await update();
+		return async ({ update, result }) => {
+			if (result.type === 'failure') {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
+				await update();
+				await invalidateAll();
+			}
 			fetching = false;
 		};
 	}}
@@ -83,7 +90,7 @@
 	/>
 
 	{#if shipments}
-		<Select labelText="Shipment" on:change={handleShipmentChange} name="shipment">
+		<Select labelText="Shipment" bind:selected={shipmentId} name="shipment">
 			{#each shipments as shipment}
 				<SelectItem value={shipment.id} text={shipment.name} />
 			{/each}
@@ -99,6 +106,7 @@
 	/>
 
 	<Button type="submit" kind="secondary" {disabled}>Add</Button>
+	<InlineError {errorMsg} />
 </form>
 
 <style>

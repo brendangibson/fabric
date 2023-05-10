@@ -7,10 +7,13 @@
 
 	export let shipments: TShipment[];
 
-	$: sortedShipments =
-		shipments?.sort((a, b) =>
-			new Date(a.dateReceived).getTime() < new Date(b.dateReceived).getTime() ? 1 : -1
-		) ?? [];
+	$: sortedShipments = shipments
+		? [
+				...shipments.sort((a, b) =>
+					new Date(a.dateReceived).getTime() < new Date(b.dateReceived).getTime() ? 1 : -1
+				)
+		  ] ?? []
+		: [];
 </script>
 
 <div class="shipments">
@@ -21,9 +24,9 @@
 
 	<h3>Shipments</h3>
 	{#if sortedShipments}
-		{#each sortedShipments as shipment}
-			<Table style="margin-top: 1vh; table-layout: fixed;">
-				<tbody>
+		<Table style="margin-top: 1vh; table-layout: fixed;">
+			<tbody>
+				{#each sortedShipments as shipment}
 					<tr>
 						<td>Name</td>
 						<td>
@@ -42,9 +45,9 @@
 						<td>Glenraven Id</td>
 						<td>{shipment.glenRavenId}</td>
 					</tr>
-				</tbody>
-			</Table>
-		{/each}
+				{/each}
+			</tbody>
+		</Table>
 	{/if}
 </div>
 

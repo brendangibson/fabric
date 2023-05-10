@@ -1,4 +1,5 @@
 import { addHold, deleteHold, updateHold } from '../../../db/actions';
+import { handleLoadError } from '../../../db/load';
 import type { THold, TStyleColour } from '../../../fabric';
 
 export async function load({ locals }) {
@@ -27,8 +28,9 @@ export async function load({ locals }) {
 		const payload = { holds: mainResult };
 
 		return payload;
-	} catch (error) {
-		console.error('error: ', error);
+	} catch (e) {
+		// TODO: why does this crash the server?
+		handleLoadError('error getting holds', e);
 	}
 }
 

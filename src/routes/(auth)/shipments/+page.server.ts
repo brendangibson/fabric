@@ -1,6 +1,6 @@
-import { fail } from '@sveltejs/kit';
-import type { QueryError } from '../../../db';
 import type { TShipment } from '../../../fabric';
+import { handleActionError } from '../../../db/actions';
+import { handleLoadError } from '../../../db/load';
 
 export async function load({ locals }) {
 	const { db } = locals;
@@ -14,10 +14,8 @@ export async function load({ locals }) {
 		};
 
 		return payload;
-	} catch (error) {
-		return fail(422, {
-			error: (error as QueryError)?.message
-		});
+	} catch (e) {
+		handleLoadError('error getting shipments', e);
 	}
 }
 
@@ -26,8 +24,10 @@ export const actions = {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const name = data.get('name');
-		const dateSent = data.get('dateSent');
-		const dateReceived = data.get('dateReceived');
+		const dateSent = data.get('dateSent') ? data.get('dateSent') : new Date().toISOString();
+		const dateReceived = data.get('dateReceived')
+			? data.get('dateReceived')
+			: new Date().toISOString();
 		const glenRavenId = data.get('glenRavenId');
 
 		try {
@@ -35,12 +35,11 @@ export const actions = {
 				`INSERT INTO shipments(name, "dateSent", "dateReceived", "glenRavenId") VALUES ($1, $2, $3, $4)`,
 				[name, dateSent, dateReceived, glenRavenId]
 			);
+			if (result.rowCount !== 1) {
+				return handleActionError('no rows inserted when adding shipment');
+			}
 		} catch (error) {
-			console.error('error adding shipment: ', error, (error as QueryError)?.message);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError('error adding shipment', error);
 		}
 	}
 };

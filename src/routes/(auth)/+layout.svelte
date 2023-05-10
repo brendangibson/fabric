@@ -5,6 +5,7 @@
 	export let data;
 
 	$: setContext('isTrade', data?.session?.user?.groups?.includes('trade'));
+	$: setContext('username', data?.session?.user?.username);
 </script>
 
 <main class="fabricApp">

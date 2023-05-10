@@ -17,42 +17,50 @@
 		{:else}
 			<h3>Pending</h3>
 			{#if pendingHolds}
-				{#each pendingHolds as hold}
-					<div>
-						<img
-							src={hold.styleColour?.swatchUrl}
-							height="64"
-							width="64"
-							alt={hold.styleColour?.style + ' ' + hold.styleColour?.colour}
-						/>
-						{hold.styleColour?.style}
-						{hold.styleColour?.colour}
-						{#if hold.styleColour}
-							<Hold {hold} styleColour={hold.styleColour} styleColourId={hold.styleColour?.id} />
-						{/if}
-					</div>
-				{/each}
+				<div class="holds">
+					{#each pendingHolds as hold}
+						<div class="hold">
+							<div class="title">
+								<img
+									src={hold.styleColour?.swatchUrl}
+									height="64"
+									width="64"
+									alt={hold.styleColour?.style + ' ' + hold.styleColour?.colour}
+								/>
+								{hold.styleColour?.style}
+								{hold.styleColour?.colour}
+							</div>
+							{#if hold.styleColour}
+								<Hold {hold} styleColour={hold.styleColour} styleColourId={hold.styleColour?.id} />
+							{/if}
+						</div>
+					{/each}
+				</div>
 			{:else}
 				<p>No fabric reserves curently pending</p>
 			{/if}
 			<h3>Approved</h3>
 
 			{#if approvedHolds}
-				{#each approvedHolds as hold}
-					<div>
-						<img
-							src={hold.styleColour?.swatchUrl}
-							height="64"
-							width="64"
-							alt={hold.styleColour?.style + ' ' + hold.styleColour?.colour}
-						/>{' '}
-						{hold.styleColour?.style}
-						{hold.styleColour?.colour}
-						{#if hold.styleColour}
-							<Hold {hold} styleColour={hold.styleColour} styleColourId={hold.styleColour?.id} />
-						{/if}
-					</div>
-				{/each}
+				<div class="holds">
+					{#each approvedHolds as hold}
+						<div class="hold">
+							<div class="title">
+								<img
+									src={hold.styleColour?.swatchUrl}
+									height="64"
+									width="64"
+									alt={hold.styleColour?.style + ' ' + hold.styleColour?.colour}
+								/>
+								{hold.styleColour?.style}
+								{hold.styleColour?.colour}
+							</div>
+							{#if hold.styleColour}
+								<Hold {hold} styleColour={hold.styleColour} styleColourId={hold.styleColour?.id} />
+							{/if}
+						</div>
+					{/each}
+				</div>
 			{:else}
 				<p>No fabric reserves curently approved</p>
 			{/if}
@@ -64,6 +72,22 @@
 	.allHolds {
 		display: flex;
 		flex-direction: column;
-		padding: 5vw 0;
+	}
+
+	.holds {
+		display: flex;
+		flex-direction: column;
+		gap: 1vh;
+	}
+
+	.hold {
+		vertical-align: middle;
+	}
+
+	.title {
+		display: flex;
+		align-items: center;
+		gap: 1vw;
+		margin-bottom: 1vh;
 	}
 </style>

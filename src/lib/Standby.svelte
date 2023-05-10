@@ -10,7 +10,7 @@
 	export let styleColourId: string;
 
 	let errorMsg: string | null = null;
-
+	let deleting = false;
 	let editMode = false;
 
 	const handleEditClick = () => {
@@ -33,25 +33,29 @@
 				<td>
 					<div class="actionCell">
 						{humanize(standby.length)} yard{standby.length === 1 ? '' : 's'}
-						<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
-						<form
-							method="POST"
-							action="?/deleteStandby"
-							use:enhance={() => {
-								return async ({ result, update }) => {
-									if (result.type === 'failure') {
-										errorMsg = result.data?.error;
-									} else {
-										errorMsg = null;
-										await update();
-									}
-								};
-							}}
-						>
-							<input name="id" type="hidden" value={standby.id} />
-							<button class="delete"> ⊗ </button>
-							<InlineError {errorMsg} />
-						</form>
+						{#if !deleting}
+							<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
+							<form
+								method="POST"
+								action="?/deleteStandby"
+								use:enhance={() => {
+									deleting = true;
+									return async ({ result, update }) => {
+										if (result.type === 'failure') {
+											errorMsg = result.data?.error;
+										} else {
+											errorMsg = null;
+											await update();
+										}
+										deleting = false;
+									};
+								}}
+							>
+								<input name="id" type="hidden" value={standby.id} />
+								<button class="delete"> ⊗ </button>
+								<InlineError {errorMsg} />
+							</form>
+						{/if}
 					</div>
 				</td>
 			</tr>

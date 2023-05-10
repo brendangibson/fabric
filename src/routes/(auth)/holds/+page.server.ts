@@ -1,4 +1,5 @@
 import { addHold, deleteHold, updateHold } from '../../../db/actions';
+import { handleLoadError } from '../../../db/load';
 import type { THold, TStyleColour } from '../../../fabric';
 
 export async function load({ locals, parent }) {
@@ -30,8 +31,8 @@ export async function load({ locals, parent }) {
 		const payload = { holds: mainResult };
 
 		return payload;
-	} catch (error) {
-		console.error('error: ', error);
+	} catch (e) {
+		handleLoadError(`error getting holds for owner ${owner}`, e);
 	}
 }
 

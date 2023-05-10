@@ -16,13 +16,15 @@
 	export let styleColour: TStyleColour;
 	export let shipments: TShipment[];
 
-	const bigRolls = styleColour?.rolls?.filter(
-		(roll) => !roll.returned && calculateRemaining(roll) > 0.5
-	);
+	$: bigRolls = [
+		...(styleColour?.rolls?.filter((roll) => !roll.returned && calculateRemaining(roll) > 0.5) ??
+			[])
+	];
 
-	const smallRolls = styleColour?.rolls?.filter(
-		(roll) => !roll.returned && calculateRemaining(roll) <= 0.5
-	);
+	$: smallRolls = [
+		...(styleColour?.rolls?.filter((roll) => !roll.returned && calculateRemaining(roll) <= 0.5) ??
+			[])
+	];
 
 	$: sortedIncoming = [
 		...(styleColour.incoming
@@ -126,6 +128,7 @@
 	</AccessControl>
 
 	{#if smallRolls}
+		<div style="height: 3vh" />
 		<h3>Old Rolls</h3>
 		{#each smallRolls as roll}
 			<a href={`/roll/${roll.id}`} class="rollLink" class:returned={roll.returned}>

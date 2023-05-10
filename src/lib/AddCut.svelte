@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { Button, NumberInput, Select, SelectItem, TextInput } from 'carbon-components-svelte';
 	import { reasons } from '../dataFunctions/cuts';
+	import InlineError from './InlineError.svelte';
 
 	export let rollId: string;
 	export let remaining: number;
@@ -12,6 +13,7 @@
 	let notes = '';
 
 	let fetching = false;
+	let errorMsg: string | null = null;
 
 	let errors: Record<string, string | null> = {
 		length: null
@@ -38,13 +40,11 @@
 		}
 	};
 
-	const handleReasonChange = (e: Event) => (reason = (e.target as HTMLInputElement)?.value);
-
 	$: length = yards + inches / 36;
 
 	$: setErrors('length', length);
 
-	$: disabled = !(length + inches) || fetching;
+	$: disabled = !(length + inches > 0) || fetching;
 </script>
 
 <form
@@ -52,8 +52,13 @@
 	action="?/addCut"
 	use:enhance={() => {
 		fetching = true;
-		return async ({ update }) => {
-			await update();
+		return async ({ update, result }) => {
+			if (result.type === 'failure') {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
+				await update();
+			}
 			fetching = false;
 		};
 	}}
@@ -70,11 +75,13 @@
 			placeholder="yards"
 			invalid={Boolean(errors.length)}
 			invalidText={errors.length ?? undefined}
+			step={0.01}
+			helperText="yards"
 		/>
 
-		<NumberInput bind:value={inches} placeholder="inches" />
+		<NumberInput bind:value={inches} placeholder="inches" helperText="inches" />
 	</div>
-	<Select labelText="Reason" on:change={handleReasonChange} name="reason" selected={reason}>
+	<Select labelText="Reason" bind:selected={reason} name="reason">
 		{#each reasons as reason}
 			<SelectItem value={reason[0]} text={reason[1]} />
 		{/each}
@@ -88,6 +95,7 @@
 	/>
 
 	<Button type="submit" kind="secondary" {disabled}>Add</Button>
+	<InlineError {errorMsg} />
 </form>
 
 <style>

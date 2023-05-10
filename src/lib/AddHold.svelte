@@ -5,10 +5,14 @@
 		ButtonSet,
 		DatePicker,
 		DatePickerInput,
-		NumberInput
+		NumberInput,
+		TextInput
 	} from 'carbon-components-svelte';
 	import type { THold } from '../fabric';
 	import InlineError from './InlineError.svelte';
+	import AccessControl from './AccessControl.svelte';
+	import { getContext } from 'svelte';
+	import { addWeeks } from 'date-fns';
 
 	export let styleColourId: string;
 	export let hold: THold | undefined = undefined;
@@ -19,9 +23,11 @@
 		/*deliberate*/
 	};
 
-	$: editing = Boolean(hold);
-	$: length = editing ? hold?.length : 1;
-	$: expires = editing ? hold?.expires : undefined;
+	let editing = Boolean(hold);
+	let length = editing ? hold?.length : 1;
+	let owner = editing ? hold?.owner : (getContext('username') as string) ?? '';
+	let expires = editing ? hold?.expires : addWeeks(new Date(), 2).toISOString();
+	let notes = editing ? hold?.notes : '';
 	let errors: Record<string, string | null> = {
 		length: null,
 		expected: null
@@ -87,7 +93,21 @@
 		invalid={Boolean(errors.length)}
 		invalidText={errors.length ?? ''}
 		name="length"
+		step={0.01}
 	/>
+
+	<AccessControl>
+		<TextInput
+			labelText="Owner"
+			bind:value={owner}
+			invalid={Boolean(errors.owner)}
+			invalidText={errors.owner ?? ''}
+			name="owner"
+		/>
+		<div slot="else">
+			<input type="hidden" name="owner" value={owner} />
+		</div>
+	</AccessControl>
 	<DatePicker datePickerType="single" bind:value={expires}>
 		<DatePickerInput
 			labelText="Expires"
@@ -98,12 +118,20 @@
 		/>
 	</DatePicker>
 
+	<TextInput
+		labelText="Sidemark"
+		bind:value={notes}
+		invalid={Boolean(errors.notes)}
+		invalidText={errors.notes ?? ''}
+		name="notes"
+	/>
+
 	<ButtonSet>
 		<Button type="submit" kind="secondary" {disabled}
 			>{#if editing}Update{:else}Add{/if}</Button
 		>
 		{#if editing}
-			<Button type="tertiary" on:click={onCancel}>Cancel</Button>
+			<Button type="ghost" on:click={onCancel}>Cancel</Button>
 		{/if}
 	</ButtonSet>
 

@@ -1,4 +1,5 @@
 import { addHold } from '../../../db/actions';
+import { handleLoadError } from '../../../db/load';
 import type { TStyleColour } from '../../../fabric';
 
 export async function load({ locals }) {
@@ -32,8 +33,8 @@ export async function load({ locals }) {
 		const payload = { stylesColours: (await mainPromise)?.rows };
 
 		return payload;
-	} catch (error) {
-		console.error('error: ', error);
+	} catch (e) {
+		handleLoadError('error getting summary', e);
 	}
 }
 

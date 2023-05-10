@@ -87,7 +87,7 @@
 			>{#if editing}Update{:else}Add{/if}</Button
 		>
 		{#if editing}
-			<Button kind="tertiary" on:click={onCancel}>Cancel</Button>
+			<Button kind="ghost" on:click={onCancel}>Cancel</Button>
 		{/if}
 	</ButtonSet>
 	<InlineError {errorMsg} />

@@ -10,7 +10,7 @@
 		{#each stylesColours as styleColour}
 			<a href={`/stylecolour/${styleColour.id}`}>
 				<Swatch src={styleColour.swatchUrl} />
-				<span>{styleColour.style} {styleColour.colour}</span>
+				<span class="label">{styleColour.style} {styleColour.colour}</span>
 			</a>
 		{/each}
 	{/if}
@@ -29,5 +29,9 @@
 		display: flex;
 		align-items: center;
 		flex-direction: column;
+	}
+
+	.label {
+		line-height: 200%;
 	}
 </style>

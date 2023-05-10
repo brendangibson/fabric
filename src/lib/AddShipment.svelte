@@ -7,13 +7,16 @@
 		NumberInput,
 		TextInput
 	} from 'carbon-components-svelte';
+	import { format } from 'date-fns';
+	import InlineError from './InlineError.svelte';
 
-	let name: string;
+	let name: string = format(new Date(), 'MMMM d yyyy');
 	let dateSent: string;
 	let dateReceived: string;
-	let glenRavenId: number;
+	let glenRavenId = 99999;
 
 	let fetching = false;
+	let errorMsg: string | null = null;
 
 	let errors: Record<string, string | null> = {
 		length: null
@@ -42,8 +45,13 @@
 	action="?/addShipment"
 	use:enhance={() => {
 		fetching = true;
-		return async ({ update }) => {
-			await update();
+		return async ({ update, result }) => {
+			if (result.type === 'failure') {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
+				await update();
+			}
 			fetching = false;
 		};
 	}}
@@ -58,15 +66,11 @@
 		name="name"
 	/>
 
-	<DatePicker datePickerType="single" bind:value={dateSent}>
-		<DatePickerInput
-			labelText="Date Sent"
-			placeholder="print date from packing slip"
-			name="dateSent"
-		/>
+	<DatePicker datePickerType="single" bind:value={dateSent} short={false}>
+		<DatePickerInput labelText="Date Sent" placeholder="packing slip print date" name="dateSent" />
 	</DatePicker>
 
-	<DatePicker datePickerType="single" bind:value={dateReceived}>
+	<DatePicker datePickerType="single" bind:value={dateReceived} short={true}>
 		<DatePickerInput labelText="Date Received" name="dateReceived" />
 	</DatePicker>
 
@@ -75,9 +79,11 @@
 		bind:value={glenRavenId}
 		placeholder="from packing slip"
 		name="glenRavenId"
+		hideSteppers
 	/>
 
 	<Button type="submit" kind="secondary" {disabled}>Add</Button>
+	<InlineError {errorMsg} />
 </form>
 
 <style>

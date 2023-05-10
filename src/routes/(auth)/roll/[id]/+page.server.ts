@@ -1,6 +1,6 @@
-import { fail } from '@sveltejs/kit';
-import type { QueryError } from '../../../../db';
 import type { TCut, TRoll, TStyleColour } from '../../../../fabric';
+import { handleActionError } from '../../../../db/actions';
+import { handleLoadError } from '../../../../db/load';
 
 export async function load({ locals, params }) {
 	const { db } = locals;
@@ -29,10 +29,8 @@ export async function load({ locals, params }) {
 		};
 
 		return payload;
-	} catch (error) {
-		return fail(422, {
-			error: (error as QueryError)?.message
-		});
+	} catch (e) {
+		handleLoadError(`error getting rolls for ${id}`, e);
 	}
 }
 
@@ -50,12 +48,11 @@ export const actions = {
 				`INSERT INTO cuts("rollId", length, reason, notes) VALUES ($1, $2, $3, $4)`,
 				[id, length, reason, notes]
 			);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows updated when adding cut to ${id}`);
+			}
 		} catch (error) {
-			console.error('error adding cut: ', id, error, (error as QueryError)?.message);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error adding cut to ${id}`, error);
 		}
 	},
 
@@ -66,12 +63,11 @@ export const actions = {
 
 		try {
 			const result = await db.query(`UPDATE rolls SET returned = true WHERE id = $1`, [id]);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows updated when returning roll: ${id}`);
+			}
 		} catch (error) {
-			console.error('error returning roll: ', id, error, (error as QueryError)?.message);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error returning roll: ${id}`, error);
 		}
 	},
 	unReturnRoll: async (event) => {
@@ -81,12 +77,11 @@ export const actions = {
 
 		try {
 			const result = await db.query(`UPDATE rolls SET returned = false WHERE id = $1`, [id]);
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows updated when unreturning roll: ${id}`);
+			}
 		} catch (error) {
-			console.error('error unreturning roll: ', id, error, (error as QueryError)?.message);
-			return fail(422, {
-				description: data.get('description'),
-				error: (error as QueryError)?.message
-			});
+			return handleActionError(`error unreturning roll: ${id}`, error);
 		}
 	}
 };

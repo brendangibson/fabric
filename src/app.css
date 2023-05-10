@@ -33,3 +33,21 @@ button {
 	background: none;
 	cursor: pointer;
 }
+
+.errorMsg {
+	color: var(--error);
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(0.7);
+	}
+
+	50% {
+		transform: scale(1);
+	}
+
+	100% {
+		transform: scale(0.7);
+	}
+}

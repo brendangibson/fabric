@@ -36,6 +36,7 @@
 <style>
 	.headerWrapper {
 		--height: 8vh;
+		margin-bottom: 4vh;
 	}
 
 	header {
