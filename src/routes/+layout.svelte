@@ -1,5 +1,5 @@
 <script lang="ts">
-	import 'carbon-components-svelte/css/white.css';
+	import '../white.css';
 	import '../app.css';
 	import { dev } from '$app/environment';
 	import { inject } from '@vercel/analytics';
