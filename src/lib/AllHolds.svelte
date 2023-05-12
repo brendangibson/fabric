@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { THold } from '../fabric';
 	import Hold from './Hold.svelte';
+	import Swatch from './Swatch.svelte';
 
 	export let holds: THold[];
 
@@ -21,12 +22,9 @@
 					{#each pendingHolds as hold}
 						<div class="hold">
 							<div class="title">
-								<img
-									src={hold.styleColour?.swatchUrl}
-									height="64"
-									width="64"
-									alt={hold.styleColour?.style + ' ' + hold.styleColour?.colour}
-								/>
+								<div class="swatch">
+									<Swatch src={hold.styleColour?.swatchUrl} />
+								</div>
 								{hold.styleColour?.style}
 								{hold.styleColour?.colour}
 							</div>
@@ -47,12 +45,9 @@
 					{#each approvedHolds as hold}
 						<div class="hold">
 							<div class="title">
-								<img
-									src={hold.styleColour?.swatchUrl}
-									height="64"
-									width="64"
-									alt={hold.styleColour?.style + ' ' + hold.styleColour?.colour}
-								/>
+								<div class="swatch">
+									<Swatch src={hold.styleColour?.swatchUrl} />
+								</div>
 								{hold.styleColour?.style}
 								{hold.styleColour?.colour}
 							</div>
@@ -90,5 +85,10 @@
 		align-items: center;
 		gap: 1vw;
 		margin-bottom: 1vh;
+	}
+
+	.swatch {
+		height: 6vw;
+		width: 6vw;
 	}
 </style>

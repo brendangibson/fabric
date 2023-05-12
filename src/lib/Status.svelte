@@ -2,6 +2,7 @@
 	import { Table } from 'carbon-components-svelte';
 	import type { TStyleColour } from '../fabric';
 	import { humanize } from '../dataFunctions/cuts';
+	import Swatch from './Swatch.svelte';
 
 	export let stylesColours: TStyleColour[];
 
@@ -70,12 +71,8 @@
 			{#each sortedStylesColours as styleColour}
 				<tr>
 					<td>
-						<a href={`/stylecolour/${styleColour.id}`}>
-							<img
-								class="swatch"
-								src={styleColour.swatchUrl}
-								alt={`${styleColour.style} ${styleColour.colour}`}
-							/>
+						<a href={`/stylecolour/${styleColour.id}`} class="swatch">
+							<Swatch src={styleColour.swatchUrl} />
 						</a>
 					</td>
 					<td>{`${styleColour.style} ${styleColour.colour}`}</td>
@@ -99,6 +96,7 @@
 	}
 
 	.swatch {
+		display: block;
 		height: 20vw;
 		width: 20vw;
 	}

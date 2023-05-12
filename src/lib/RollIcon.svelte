@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { humanize } from '../dataFunctions/cuts';
+	import { getUrl } from './Swatch.svelte';
 
 	export let originalLength: number;
 	export let swatchUrl: string;
 	export let remaining: number;
 	export let glenRavenId: string;
+
+	const url = getUrl(swatchUrl);
 
 	const coreHeight = 3;
 
@@ -19,7 +22,7 @@
 <div class="rollIcon">
 	<div
 		class="fabric"
-		style={`background-image: linear-gradient(to bottom, rgba(0,0,0,0.26) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0.32) 100%), url('${swatchUrl}'); height:${height}; width: calc(70% + ${
+		style={`background-image: linear-gradient(to bottom, rgba(0,0,0,0.26) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0.32) 100%), url('${url}'); height:${height}; width: calc(70% + ${
 			getHeight(remaining) / 2
 		}vw)
         `}
@@ -27,7 +30,7 @@
 		<div
 			class="end"
 			style={`background-image:
-					radial-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.1),rgba(0,0,0,0.5),rgba(0,0,0,0.1)), url('${swatchUrl}'); transform: translateX(-${
+					radial-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.1),rgba(0,0,0,0.5),rgba(0,0,0,0.1)), url('${url}'); transform: translateX(-${
 				getHeight(remaining) / 4
 			}vw);  height:${height}; width: ${endWidth}`}
 		>

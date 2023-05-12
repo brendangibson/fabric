@@ -1,8 +1,17 @@
-<script lang="ts">
-	export let src: string | undefined;
+<script lang="ts" context="module">
+	export const getUrl = (src: string | undefined) => {
+		const match = src?.match(/\/?(\w+)\.\w+$/);
+		return `/assets/webp/${match?.[1]}.webp`;
+	};
 </script>
 
-<div style={`background-image: url(${src})`} />
+<script lang="ts">
+	export let src: string | undefined;
+
+	const url = getUrl(src);
+</script>
+
+<div style={`background-image: url(${url})`} />
 
 <style>
 	div {
