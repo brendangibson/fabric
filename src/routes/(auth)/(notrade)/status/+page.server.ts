@@ -1,5 +1,5 @@
-import { handleLoadError } from '../../../db/load';
-import type { TStyleColour } from '../../../fabric';
+import { handleLoadError } from '../../../../db/load';
+import type { TStyleColour } from '../../../../fabric';
 
 export async function load({ locals }) {
 	const { db } = locals;

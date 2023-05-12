@@ -1,6 +1,6 @@
-import type { TShipment } from '../../../fabric';
-import { handleActionError } from '../../../db/actions';
-import { handleLoadError } from '../../../db/load';
+import type { TShipment } from '../../../../fabric';
+import { handleActionError } from '../../../../db/actions';
+import { handleLoadError } from '../../../../db/load';
 
 export async function load({ locals }) {
 	const { db } = locals;

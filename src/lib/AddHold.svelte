@@ -83,7 +83,7 @@
 	{/if}
 
 	<h4>
-		{#if editing}Update{:else}Add{/if} Hold
+		{#if editing}Update{:else}Add{/if} Reserve
 	</h4>
 
 	<NumberInput

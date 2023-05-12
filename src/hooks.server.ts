@@ -28,6 +28,7 @@ interface AuthToken {
 		id: string;
 		email: string;
 		username: string;
+		groups?: string[];
 	};
 }
 /**

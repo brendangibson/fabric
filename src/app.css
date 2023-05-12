@@ -13,6 +13,7 @@ h1 {
 	top: 0;
 	width: 100%;
 	z-index: -1;
+	line-height: 200%;
 }
 
 h3 {

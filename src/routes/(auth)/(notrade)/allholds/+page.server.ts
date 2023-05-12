@@ -1,6 +1,6 @@
-import { addHold, deleteHold, updateHold } from '../../../db/actions';
-import { handleLoadError } from '../../../db/load';
-import type { THold, TStyleColour } from '../../../fabric';
+import { addHold, approveHold, deleteHold, updateHold } from '../../../../db/actions';
+import { handleLoadError } from '../../../../db/load';
+import type { THold, TStyleColour } from '../../../../fabric';
 
 export async function load({ locals }) {
 	const { db } = locals;
@@ -36,6 +36,7 @@ export async function load({ locals }) {
 
 export const actions = {
 	addHold,
+	approveHold,
 	deleteHold,
 	updateHold
 };

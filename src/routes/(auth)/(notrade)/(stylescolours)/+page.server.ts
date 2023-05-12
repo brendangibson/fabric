@@ -1,4 +1,4 @@
-import { handleLoadError } from '../../db/load';
+import { handleLoadError } from '../../../../db/load';
 
 export async function load({ locals }) {
 	const { db } = locals;

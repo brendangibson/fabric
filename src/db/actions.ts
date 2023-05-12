@@ -2,6 +2,7 @@ import { fail, type RequestEvent } from '@sveltejs/kit';
 import type { QueryError } from '../db';
 import type { RouteParams } from '../routes/$types';
 import { addWeeks } from 'date-fns';
+import type { TSession } from '../app';
 
 export const addHold = async (event: RequestEvent<RouteParams>) => {
 	const data = await event.request.formData();
@@ -11,17 +12,38 @@ export const addHold = async (event: RequestEvent<RouteParams>) => {
 	const owner = data.get('owner');
 	const expires = data.get('expires');
 	const notes = data.get('notes');
+	const pending = Boolean(
+		((await event.locals.getSession()) as TSession | null)?.user?.groups?.includes('trade')
+	);
+
+	console.log('pending: ', pending);
 
 	try {
 		const result = await db.query(
-			`INSERT INTO holds("styleColourId", length, owner, expires, notes) VALUES ($1, $2, $3, $4, $5)`,
-			[id, length, owner, expires, notes]
+			`INSERT INTO holds("styleColourId", length, owner, expires, notes, pending) VALUES ($1, $2, $3, $4, $5, $6)`,
+			[id, length, owner, expires, notes, pending]
 		);
 		if (result.rowCount !== 1) {
 			return handleActionError(`no rows inserted when adding hold to ${id}`);
 		}
 	} catch (error) {
 		return handleActionError(`error adding hold to ${id}`, error);
+	}
+};
+
+export const approveHold = async (event: RequestEvent<RouteParams>) => {
+	const data = await event.request.formData();
+	const { db } = event.locals;
+	const id = data.get('id');
+
+	try {
+		const result = await db.query(`UPDATE holds SET pending=false WHERE id = $1`, [id]);
+		if (result.rowCount !== 1) {
+			console.error('result: ', result);
+			return handleActionError(`no rows updated when approving hold: ${id}`);
+		}
+	} catch (error) {
+		return handleActionError(`error deleting incoming: ${id}`, error);
 	}
 };
 
@@ -66,7 +88,7 @@ export const updateHold = async (event: RequestEvent<RouteParams>) => {
 };
 
 export const handleActionError = (description: string, error?: unknown) => {
-	const errorText = (error as QueryError)?.message;
+	const errorText = (error as QueryError)?.message ?? '';
 	const errorMsg = description + (errorText ? ': ' + (error as QueryError)?.message : '');
 	console.error(errorMsg, error);
 	return fail(422, {

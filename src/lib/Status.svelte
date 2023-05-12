@@ -60,7 +60,7 @@
 			<th on:click={() => setSortBy('remaining')}>Remaining (yds)</th>
 			<th on:click={() => setSortBy('incoming')}>Incoming (yds)</th>
 			<th on:click={() => setSortBy('standby')}>Standby (yds)</th>
-			<th on:click={() => setSortBy('holds')}>Holds (yds)</th>
+			<th on:click={() => setSortBy('holds')}>Reserved (yds)</th>
 			<th on:click={() => setSortBy('rate')}>Daily Rate</th>
 			<th on:click={() => setSortBy('daysRemaining')}>Days remaining</th>
 		</tr>

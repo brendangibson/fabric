@@ -14,7 +14,9 @@
 	export let styleColour: TStyleColour;
 
 	let editMode = false;
-	let errorMsg: string | null = null;
+	let deleteErrorMsg: string | null = null;
+	let pendingErrorMsg: string | null = null;
+
 	let approveButtonDisabled = false;
 	let deleting = false;
 
@@ -58,9 +60,9 @@
 									deleting = true;
 									return async ({ result, update }) => {
 										if (result.type === 'failure') {
-											errorMsg = result.data?.error;
+											deleteErrorMsg = result.data?.error;
 										} else {
-											errorMsg = null;
+											deleteErrorMsg = null;
 											await update();
 										}
 										deleting = false;
@@ -70,7 +72,7 @@
 								<input name="id" type="hidden" value={hold.id} />
 
 								<button class="delete"> ⊗ </button>
-								<InlineError {errorMsg} />
+								<InlineError errorMsg={deleteErrorMsg} />
 							</form>
 						{/if}
 					</div>
@@ -113,37 +115,39 @@
 					</td>
 				</tr>
 			{/if}
-			{#if hold.pending}
-				<tr>
-					<td>Pending</td>
-					<td
-						><form
-							method="POST"
-							action="?/approveHold"
-							use:enhance={() => {
-								approveButtonDisabled = true;
+			<AccessControl>
+				{#if hold.pending}
+					<tr>
+						<td>Pending</td>
+						<td
+							><form
+								method="POST"
+								action="?/approveHold"
+								use:enhance={() => {
+									approveButtonDisabled = true;
 
-								return async ({ result, update }) => {
-									// `result` is an `ActionResult` object
-									if (result.type === 'failure') {
-										errorMsg = result.data?.error;
-									} else {
-										errorMsg = null;
-										await update();
-									}
-									approveButtonDisabled = false;
-								};
-							}}
-						>
-							<input type="hidden" name="id" value={styleColourId} />
-							<Button type="submit" kind="secondary" disabled={approveButtonDisabled}
-								>Approve</Button
+									return async ({ result, update }) => {
+										// `result` is an `ActionResult` object
+										if (result.type === 'failure') {
+											pendingErrorMsg = result.data?.error;
+										} else {
+											pendingErrorMsg = null;
+											await update();
+										}
+										approveButtonDisabled = false;
+									};
+								}}
 							>
-						</form>
-						<InlineError {errorMsg} />
-					</td>
-				</tr>
-			{/if}
+								<input type="hidden" name="id" value={hold.id} />
+								<Button type="submit" kind="secondary" disabled={approveButtonDisabled}
+									>Approve</Button
+								>
+							</form>
+							<InlineError errorMsg={pendingErrorMsg} />
+						</td>
+					</tr>
+				{/if}
+			</AccessControl>
 		</tbody>
 	</Table>
 {/if}

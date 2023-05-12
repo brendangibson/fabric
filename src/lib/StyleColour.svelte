@@ -111,7 +111,7 @@
 	<div class="spacer" />
 
 	{#if styleColour.holds?.length}
-		<h3>Fabric on Hold</h3>
+		<h3>Reserved Fabric</h3>
 
 		{#each styleColour.holds as hold}
 			<Hold {hold} styleColourId={styleColour.id} {styleColour} />

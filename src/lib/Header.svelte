@@ -2,9 +2,12 @@
 	import { signOut } from '@auth/sveltekit/client';
 	import { OverflowMenu, OverflowMenuItem } from 'carbon-components-svelte';
 	import AccessControl from './AccessControl.svelte';
+	import { goto } from '$app/navigation';
 
-	const onLogout = () => () => {
-		signOut();
+	const onLogout = () => async () => {
+		goto('/auth/login');
+
+		await signOut();
 		localStorage.clear();
 	};
 </script>
@@ -23,9 +26,9 @@
 			</AccessControl>
 			<OverflowMenuItem href="/summary">Summary</OverflowMenuItem>
 			<AccessControl>
-				<OverflowMenuItem href="/allholds">Holds</OverflowMenuItem>
+				<OverflowMenuItem href="/allholds">Reserves</OverflowMenuItem>
 
-				<OverflowMenuItem slot="else" href="/holds">Holds</OverflowMenuItem>
+				<OverflowMenuItem slot="else" href="/holds">Reserves</OverflowMenuItem>
 			</AccessControl>
 			<OverflowMenuItem danger on:click={onLogout()}>Log out</OverflowMenuItem>
 		</OverflowMenu>
