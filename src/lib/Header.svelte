@@ -15,7 +15,7 @@
 <div class="headerWrapper">
 	<header>
 		<a href="/">
-			<img src="/bigLogo.png" alt="*" />
+			<img src="/bigLogo.webp" alt="*" />
 		</a>
 		<h1>Sien + Co</h1>
 		<OverflowMenu flipped>
