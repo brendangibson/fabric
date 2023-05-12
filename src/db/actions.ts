@@ -16,8 +16,6 @@ export const addHold = async (event: RequestEvent<RouteParams>) => {
 		((await event.locals.getSession()) as TSession | null)?.user?.groups?.includes('trade')
 	);
 
-	console.log('pending: ', pending);
-
 	try {
 		const result = await db.query(
 			`INSERT INTO holds("styleColourId", length, owner, expires, notes, pending) VALUES ($1, $2, $3, $4, $5, $6)`,

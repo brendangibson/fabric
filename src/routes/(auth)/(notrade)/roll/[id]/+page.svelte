@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Roll from '$lib/Roll.svelte';
 	import { ToastNotification } from 'carbon-components-svelte';
-	import type { TRoll } from '../../../../fabric';
+	import type { TRoll } from '../../../../../fabric';
 
 	export let data: {
 		roll?: TRoll;

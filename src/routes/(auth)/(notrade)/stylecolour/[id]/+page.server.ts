@@ -1,6 +1,6 @@
-import type { TCut, TRoll, TStyleColour } from '../../../../fabric';
-import { addHold, deleteHold, handleActionError, updateHold } from '../../../../db/actions';
-import { handleLoadError } from '../../../../db/load';
+import type { TCut, TRoll, TStyleColour } from '../../../../../fabric';
+import { addHold, deleteHold, handleActionError, updateHold } from '../../../../../db/actions';
+import { handleLoadError } from '../../../../../db/load';
 
 export async function load({ locals, params }) {
 	const { db } = locals;

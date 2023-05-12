@@ -1,7 +1,7 @@
 <script lang="ts">
 	import StyleColour from '$lib/StyleColour.svelte';
 	import { ToastNotification } from 'carbon-components-svelte';
-	import type { TShipment, TStyleColour } from '../../../../fabric';
+	import type { TShipment, TStyleColour } from '../../../../../fabric';
 
 	export let data: {
 		styleColour?: TStyleColour;
