@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Popover } from 'carbon-components-svelte';
+	import { clickOutside } from '../use/clickOutside';
 	import DimensionIcon from './DimensionIcon.svelte';
 
 	export let weight: number, length: number, thickness: number;
@@ -8,16 +8,18 @@
 
 	const coreRadius = 1.25;
 
-	const diameter = 2 * Math.sqrt((length * 36 * thickness) / Math.PI + coreRadius * coreRadius);
+	const diameter = 2 * Math.sqrt((length * 36 * thickness) / Math.PI + 2 * coreRadius);
 </script>
 
 <div class="dimensionsWrapper">
 	<button on:click|preventDefault={() => (open = !open)}>ⓘ</button>
-	<Popover bind:open>
-		<div class="dimensions">
-			<DimensionIcon {length} {diameter} weight={length * weight} />
+	{#if open}
+		<div class="popover" use:clickOutside on:outclick={() => (open = false)}>
+			<div class="dimensions">
+				<DimensionIcon {diameter} weight={length * weight} />
+			</div>
 		</div>
-	</Popover>
+	{/if}
 </div>
 
 <style>
@@ -26,8 +28,17 @@
 	}
 
 	.dimensions {
-		padding: 10%;
-		height: 150px;
-		min-width: 60vw;
+		height: 115px;
+		box-sizing: content-box;
+	}
+
+	.popover {
+		position: absolute;
+		bottom: 100%;
+		left: 0;
+		background-color: var(--white);
+		border: 1px solid grey;
+		padding: 3vh 3vw;
+		width: 40vw;
 	}
 </style>

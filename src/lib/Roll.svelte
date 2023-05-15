@@ -156,5 +156,6 @@
 	.length {
 		display: flex;
 		font-weight: bold;
+		align-items: baseline;
 	}
 </style>

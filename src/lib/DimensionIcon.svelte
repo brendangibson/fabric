@@ -1,7 +1,6 @@
 <script lang="ts">
 	export let diameter: number;
 	export let weight: number;
-	export let length: number;
 </script>
 
 <div class="dimensionIcon">
@@ -18,11 +17,9 @@
 		{#if weight}
 			<div class="weight">{weight.toFixed(1)} lbs</div>
 		{/if}
-		{#if length}
-			<div class="length">
-				in <span class="horizArrows">↔</span>
-			</div>
-		{/if}
+		<div class="length">
+			54 in <span class="horizArrows">↔</span>
+		</div>
 	</div>
 	<div class="rightEnd" />
 </div>
@@ -32,6 +29,7 @@
 		--height: 100px;
 		position: relative;
 		width: 100%;
+		height: var(--height);
 	}
 
 	.leftEnd {
@@ -42,7 +40,7 @@
 		width: calc(var(--height) / 2);
 		transform: translateX(-50%);
 		left: 0;
-		z-index: 1;
+		z-index: 2;
 	}
 
 	.core {
@@ -66,6 +64,7 @@
 		border-bottom: 1px dashed black;
 		background: white;
 		height: var(--height);
+		z-index: 1;
 	}
 
 	.rightEnd {
@@ -76,7 +75,7 @@
 		width: calc(var(--height) / 2);
 		transform: translateX(50%);
 		right: 0;
-		z-index: -1;
+		z-index: 0;
 	}
 
 	.diameter {
