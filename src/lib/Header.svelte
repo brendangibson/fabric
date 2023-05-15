@@ -14,7 +14,7 @@
 
 <div class="headerWrapper">
 	<header>
-		<a href="/">
+		<a href="/" class="imageWrapper">
 			<img src="/bigLogo.webp" alt="*" />
 		</a>
 		<h1>Sien + Co</h1>
@@ -51,11 +51,18 @@
 		border-bottom: 1px solid var(--grey-600);
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
+	}
+
+	.imageWrapper {
+		display: flex;
+		align-items: center;
+		width: var(--height);
+		height: var(--height);
 	}
 
 	img {
-		width: var(--height);
-		height: var(--height);
+		height: 80%;
 	}
 
 	h1 {

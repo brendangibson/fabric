@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { TSession } from '../../../app';
 
-export const load = async ({ locals, url }) => {
+export const load = async ({ locals }) => {
 	// Get the session from the locals
 	const session = (await locals?.getSession()) as TSession | null;
 
