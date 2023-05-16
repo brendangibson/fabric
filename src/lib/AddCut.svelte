@@ -7,7 +7,7 @@
 	export let rollId: string;
 	export let remaining: number;
 
-	let yards = 1;
+	let yards = 0;
 	let inches = 0;
 	let reason = 'otherOrder';
 	let notes = '';
@@ -22,7 +22,6 @@
 	const setErrors = (index: string, value: number) => {
 		switch (index) {
 			case 'length':
-				console.log('value: ', value);
 				if (value === null || value === undefined || isNaN(value)) {
 					errors[index] = 'Enter the number of yards';
 				} else {
