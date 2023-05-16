@@ -154,6 +154,12 @@
 		grid-gap: 5vw;
 	}
 
+	@media (min-width: 960px) {
+		.top {
+			grid-template-columns: 20% auto;
+		}
+	}
+
 	.labelWrapper {
 		display: inline-block;
 	}

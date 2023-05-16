@@ -8,7 +8,7 @@ await imagemin(['static/assets/*.{jpg,png}'], {
 
 await imagemin(['static/bigLogo.png'], {
 	destination: 'static',
-	plugins: [imageminWebp({ quality: 50 })]
+	plugins: [imageminWebp({ quality: 75 })]
 });
 
 console.log('Images optimized');

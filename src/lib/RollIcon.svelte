@@ -61,7 +61,7 @@
 		display: inline-block;
 		text-align: center;
 		background-repeat: repeat;
-		background-size: cover;
+		background-size: contain;
 		position: relative;
 	}
 
