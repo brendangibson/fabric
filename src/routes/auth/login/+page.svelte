@@ -46,7 +46,7 @@
 			<TextInput
 				labelText="Password"
 				name="password"
-				placeholder="Upper and lower cases, a special char and a num"
+				placeholder="Upper, lower cases, a special char, and a num"
 				type="password"
 			/>
 			<Button type="submit" kind="secondary" disabled={fetching}>Sign In</Button>

@@ -7,8 +7,10 @@
 
 	export let styleColourId: string;
 	export let shipments: TShipment[];
+
+	const placeholderGlenRavenId = 999999;
 	let length = 1;
-	let glenRavenId = 999999;
+	let glenRavenId = placeholderGlenRavenId;
 	let shipmentId = shipments[0].id;
 	let notes = '';
 
@@ -22,8 +24,7 @@
 	const setErrors = (index: string, value: number) => {
 		switch (index) {
 			case 'length':
-				if (value === undefined || value === null) return;
-				if (isNaN(value)) {
+				if (value === undefined || value === null || isNaN(value)) {
 					errors[index] = 'Enter the number of yards';
 				} else {
 					if (value <= 0) {
@@ -47,7 +48,13 @@
 	$: setErrors('length', length);
 	$: setErrors('glenRavenId', glenRavenId);
 
-	$: disabled = !(Boolean(length) && Boolean(glenRavenId) && Boolean(shipmentId)) || fetching;
+	$: disabled =
+		!(
+			Boolean(length) &&
+			Boolean(glenRavenId) &&
+			glenRavenId !== placeholderGlenRavenId &&
+			Boolean(shipmentId)
+		) || fetching;
 </script>
 
 <form

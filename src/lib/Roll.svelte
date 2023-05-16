@@ -9,6 +9,7 @@
 	import type { TRoll } from '../fabric';
 	import { enhance } from '$app/forms';
 	import InlineError from './InlineError.svelte';
+	import { calculateRemaining } from '../dataFunctions/rolls';
 
 	export let roll: TRoll;
 
@@ -16,13 +17,11 @@
 	let errorMsg: string | null = null;
 
 	const label = `${roll.styleColour?.style} ${roll.styleColour?.colour}`;
-	$: remaining =
-		roll.originalLength ??
-		0 - roll.cuts.reduce((accumulator, currentValue) => accumulator + currentValue.length, 0);
+	$: remaining = calculateRemaining(roll);
 
 	$: sortedCuts = [
 		...(roll?.cuts?.sort((a, b) =>
-			new Date(a.timestamp).getTime() < new Date(b.timestamp).getTime() ? -1 : 1
+			new Date(a.timestamp).getTime() < new Date(b.timestamp).getTime() ? 1 : -1
 		) ?? [])
 	];
 </script>
@@ -131,6 +130,8 @@
 			method="POST"
 			action={roll.returned ? '?/unReturnRoll' : '?/returnRoll'}
 			use:enhance={() => {
+				fetching = true;
+
 				return async ({ result, update }) => {
 					if (result.type === 'failure') {
 						errorMsg = result.data?.error;
@@ -138,6 +139,7 @@
 						errorMsg = null;
 						await update();
 					}
+					fetching = false;
 				};
 			}}
 		>

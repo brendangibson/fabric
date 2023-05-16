@@ -26,7 +26,7 @@
 
 <style>
 	.dimensionIcon {
-		--height: 100px;
+		--height: 10vw;
 		position: relative;
 		width: 100%;
 		height: var(--height);

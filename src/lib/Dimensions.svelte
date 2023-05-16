@@ -28,7 +28,7 @@
 	}
 
 	.dimensions {
-		height: 115px;
+		height: 11vw;
 		box-sizing: content-box;
 	}
 

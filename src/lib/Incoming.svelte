@@ -29,7 +29,7 @@
 	<Table>
 		<tbody>
 			<tr>
-				<td>Length</td>
+				<td><strong>Length</strong></td>
 				<td>
 					<div class="actionCell">
 						{humanize(incoming.length)} yard{incoming.length === 1 ? '' : 's'}
@@ -86,6 +86,7 @@
 <style>
 	.actionCell {
 		display: flex;
+		font-weight: bold;
 	}
 	.delete {
 		display: inline-block;

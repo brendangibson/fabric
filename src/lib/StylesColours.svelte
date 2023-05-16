@@ -32,6 +32,6 @@
 	}
 
 	.label {
-		line-height: 200%;
+		margin-top: 1vh;
 	}
 </style>

@@ -22,7 +22,8 @@
 	const setErrors = (index: string, value: number) => {
 		switch (index) {
 			case 'length':
-				if (isNaN(value)) {
+				console.log('value: ', value);
+				if (value === null || value === undefined || isNaN(value)) {
 					errors[index] = 'Enter the number of yards';
 				} else {
 					if (value <= 0) {
@@ -74,7 +75,7 @@
 			bind:value={yards}
 			placeholder="yards"
 			invalid={Boolean(errors.length)}
-			invalidText={errors.length ?? undefined}
+			invalidText={errors.length ?? ''}
 			step={0.01}
 			helperText="yards"
 		/>

@@ -156,6 +156,7 @@
 	.actionCell {
 		display: flex;
 		font-weight: bold;
+		align-items: baseline;
 	}
 	.delete {
 		display: inline-block;

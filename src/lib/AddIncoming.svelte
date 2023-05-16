@@ -34,8 +34,8 @@
 	const setErrors = (index: string, value: number | undefined) => {
 		switch (index) {
 			case 'length':
-				if (value === undefined || value === null) return;
-				if (isNaN(value)) {
+				console.log('value: ', value);
+				if (value === undefined || value === null || isNaN(value)) {
 					errors[index] = 'Enter the number of yards';
 				} else {
 					if (value <= 0) {
@@ -88,7 +88,7 @@
 		bind:value={length}
 		placeholder="yards"
 		invalid={Boolean(errors.length)}
-		invalidText={errors.length ?? undefined}
+		invalidText={errors.length ?? ''}
 		name="length"
 	/>
 	<DatePicker datePickerType="single" bind:value={expected}>

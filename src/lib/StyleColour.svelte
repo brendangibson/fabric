@@ -80,9 +80,8 @@
 				/>
 			</a>
 		{/each}
+		<div class="spacer" />
 	{/if}
-
-	<div class="spacer" />
 
 	{#if sortedIncoming?.length}
 		<h3>Incoming Fabric</h3>
@@ -90,13 +89,13 @@
 		{#each sortedIncoming as incoming}
 			<Incoming {incoming} />
 		{/each}
+		<div class="spacer" />
 	{/if}
-	<div class="spacer" />
 
 	<AccessControl>
 		<AddIncoming styleColourId={styleColour.id} />
+		<div class="spacer" />
 	</AccessControl>
-	<div class="spacer" />
 
 	{#if styleColour.standby?.length}
 		<h3>Fabric on Standby</h3>
@@ -104,11 +103,13 @@
 		{#each styleColour.standby as standby}
 			<Standby {standby} styleColourId={styleColour.id} />
 		{/each}
+		<div class="spacer" />
 	{/if}
+
 	<AccessControl>
 		<AddStandby styleColourId={styleColour.id} />
+		<div class="spacer" />
 	</AccessControl>
-	<div class="spacer" />
 
 	{#if styleColour.holds?.length}
 		<h3>Reserved Fabric</h3>
@@ -116,15 +117,17 @@
 		{#each styleColour.holds as hold}
 			<Hold {hold} styleColourId={styleColour.id} {styleColour} />
 		{/each}
+		<div class="spacer" />
 	{/if}
 
 	<AccessControl>
 		<AddHold styleColourId={styleColour.id} />
+		<div class="spacer" />
 	</AccessControl>
-	<div class="spacer" />
 
 	<AccessControl>
 		<AddRoll styleColourId={styleColour.id} {shipments} />
+		<div class="spacer" />
 	</AccessControl>
 
 	{#if smallRolls}
