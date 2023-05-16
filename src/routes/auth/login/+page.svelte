@@ -18,7 +18,7 @@
 		try {
 			console.error('handleSubmit');
 			fetching = true;
-			const signinResult = await signIn('credentials', {
+			const signinResult = signIn('credentials', {
 				username: data.get('email'),
 				password: data.get('password'),
 				callbackUrl: $page.url.searchParams.get('callbackUrl')
@@ -28,7 +28,7 @@
 			// TODO: this error message is not showing - probably due to reload
 			console.error('error signing in: ', error);
 			errorMsg = error as string;
-			await invalidateAll();
+			// await invalidateAll();
 			fetching = false;
 		}
 	};
