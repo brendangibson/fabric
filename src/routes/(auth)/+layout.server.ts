@@ -6,6 +6,8 @@ export const load = async ({ locals, url }) => {
 	// Get the session from the locals
 	const session = (await locals?.getSession()) as TSession | null;
 
+	console.error('load session: ', session);
+
 	// If the user is not authenticated, redirect to the login page
 	if (!session?.user?.id || !session?.accessToken) {
 		throw redirect(307, `/auth/login?callbackUrl=${url.pathname}`);

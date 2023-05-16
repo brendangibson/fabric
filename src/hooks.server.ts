@@ -78,6 +78,7 @@ const authHandler = SvelteKitAuth({
 				password: { label: 'Password', type: 'password' }
 			},
 			async authorize(credentials) {
+				console.error('authorize credentials: ', credentials);
 				if (!credentials) return null;
 				try {
 					const response = await getSession(
@@ -109,6 +110,7 @@ const authHandler = SvelteKitAuth({
 		 */
 		// eslint
 		async jwt({ token, user }): Promise<any> {
+			console.error('jwt token: ', token, ' user: ', user);
 			// Initial sign in; we have plugged tokens and expiry date into the user object in the authorize callback; object
 			// returned here will be saved in the JWT and will be available in the session callback as well as this callback
 			// on next requests
@@ -140,6 +142,7 @@ const authHandler = SvelteKitAuth({
 		 * @returns - Promise with the result of the session
 		 */
 		async session({ session, token }) {
+			console.error('session session: ', session, ' token: ', token);
 			(session as unknown as TSession).user = token.user as AuthUser;
 			(session as unknown as TSession).accessToken = token.accessToken as string;
 			(session as unknown as TSession).error = token.error as string;
