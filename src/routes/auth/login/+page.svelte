@@ -43,7 +43,7 @@
 			<source media="(min-width: 960px)" srcset="/textLogo.svg" height="40vh" />
 		</picture>
 		<img src="/textLogo.svg" alt="Sien+Co" />
-		<form name="login" method="POST" on:submit|preventDefault={handleSubmit}>
+		<form name="login" on:submit|preventDefault={handleSubmit}>
 			<TextInput labelText="Username" name="email" type="text" placeholder="username" />
 			<TextInput
 				labelText="Password"

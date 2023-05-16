@@ -66,8 +66,6 @@ const createTokenFromUser = (user: AuthUser): AuthToken => {
 	return token;
 };
 
-console.error('AUTH_SECRET: ', AUTH_SECRET);
-
 const authHandler = SvelteKitAuth({
 	secret: AUTH_SECRET,
 	providers: [
