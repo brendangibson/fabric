@@ -5,9 +5,15 @@
 	import { Button, TextInput } from 'carbon-components-svelte';
 	import Loading from '$lib/Loading.svelte';
 	import InlineError from '$lib/InlineError.svelte';
+	import { onMount } from 'svelte';
 
 	let errorMsg = '';
 	let fetching = false;
+
+	onMount(async () => {
+		// Doing this to ensure it has been generated
+		await fetch('/auth/csrf');
+	});
 
 	const handleSubmit = async (event: SubmitEvent) => {
 		if (!event?.target) {
@@ -28,7 +34,7 @@
 			// TODO: this error message is not showing - probably due to reload
 			console.error('error signing in: ', error);
 			errorMsg = error as string;
-			// await invalidateAll();
+			await invalidateAll();
 			fetching = false;
 		}
 	};
