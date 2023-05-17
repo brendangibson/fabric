@@ -54,7 +54,7 @@
 			<TextInput
 				labelText="Password"
 				name="password"
-				placeholder="Upper, lower cases, a special char, and a num"
+				placeholder="Upper & lower cases, special char, num"
 				type="password"
 			/>
 			<Button type="submit" kind="secondary" disabled={fetching}>Sign In</Button>
@@ -81,12 +81,20 @@
 			margin: 3vw;
 			width: 80vw;
 		}
+		form {
+			width: 80vw;
+			margin: 0 3vw;
+		}
 	}
 
 	@media (min-width: 960px) {
 		img {
 			margin: 3vw;
-			height: 40vh;
+			width: 30vw;
+		}
+		form {
+			width: 30vw;
+			margin: 0 3vw;
 		}
 	}
 </style>
