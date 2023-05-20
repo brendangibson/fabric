@@ -10,6 +10,20 @@
 	let errorMsg = '';
 	let fetching = false;
 
+	const error = $page.url.searchParams.get('error');
+
+	$: {
+		if (error) {
+			switch(error) {
+			case 'CredentialsSignin' :
+				errorMsg = 'Username or password not accepted'
+				break;
+			default:
+				errorMsg = 'An error occurred while signing in'
+			}
+		}
+	}
+
 	onMount(async () => {
 		// Doing this to ensure it has been generated
 		await fetch('/auth/csrf');
@@ -20,6 +34,7 @@
 			errorMsg = 'Submit did not pass event target';
 			return;
 		}
+		errorMsg='';
 		const data = new FormData(event.target as HTMLFormElement);
 		try {
 			console.error('handleSubmit');
@@ -58,8 +73,8 @@
 				type="password"
 			/>
 			<Button type="submit" kind="secondary" disabled={fetching}>Sign In</Button>
+			<InlineError {errorMsg} />
 		</form>
-		<InlineError {errorMsg} />
 	{/if}
 </main>
 
@@ -83,7 +98,7 @@
 		}
 		form {
 			width: 80vw;
-			margin: 0 3vw;
+			margin: 0 3vw 5vh 0;
 		}
 	}
 
@@ -94,7 +109,7 @@
 		}
 		form {
 			width: 30vw;
-			margin: 0 3vw;
+			margin: 0 3vw 5vh 0;
 		}
 	}
 </style>
