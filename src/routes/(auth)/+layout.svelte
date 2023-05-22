@@ -4,8 +4,8 @@
 
 	export let data;
 
-	$: setContext('isTrade', data?.session?.user?.groups?.includes('trade'));
-	$: setContext('username', data?.session?.user?.username);
+	$: setContext('isTrade', data?.user?.level === 'trade');
+	$: setContext('username', data?.user?.username ?? data?.user?.email);
 </script>
 
 <main class="fabricApp">

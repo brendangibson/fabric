@@ -15,10 +15,12 @@ import {
 // Import the secret key from the environment variables
 import { AUTH_SECRET } from '$env/static/private';
 import { sequence } from '@sveltejs/kit/hooks';
-import { createPool } from '@vercel/postgres';
+import { createPool, db } from '@vercel/postgres';
 import { POSTGRES_URL } from '$env/static/private';
 import type { AuthUser, TSession } from './app';
 import type { Handle } from '@sveltejs/kit';
+import type { User } from '@auth/core/types';
+import GoogleProvider from '@auth/core/providers/google'
 
 interface AuthToken {
 	accessToken: string;
@@ -45,7 +47,6 @@ const extractUserFromSession = (session: CognitoUserSessionType): AuthUser => {
 		accessToken: session.getAccessToken().getJwtToken(),
 		accessTokenExpires: session.getAccessToken().getExpiration(),
 		refreshToken: session.getRefreshToken().getToken(),
-		groups: session.getIdToken().decodePayload()['cognito:groups']
 	};
 };
 /**
@@ -60,7 +61,6 @@ const createTokenFromUser = (user: AuthUser): AuthToken => {
 			id: user.id,
 			email: user.email,
 			username: user.username,
-			groups: user.groups
 		}
 	};
 	return token;
@@ -78,7 +78,6 @@ const authHandler = SvelteKitAuth({
 				password: { label: 'Password', type: 'password' }
 			},
 			async authorize(credentials) {
-				console.error('authorize credentials: ', credentials);
 				if (!credentials) return null;
 				try {
 					const response = await getSession(
@@ -110,7 +109,6 @@ const authHandler = SvelteKitAuth({
 		 */
 		// eslint
 		async jwt({ token, user }): Promise<any> {
-			console.error('jwt token: ', token, ' user: ', user);
 			// Initial sign in; we have plugged tokens and expiry date into the user object in the authorize callback; object
 			// returned here will be saved in the JWT and will be available in the session callback as well as this callback
 			// on next requests
@@ -142,8 +140,12 @@ const authHandler = SvelteKitAuth({
 		 * @returns - Promise with the result of the session
 		 */
 		async session({ session, token }) {
-			console.error('session session: ', session, ' token: ', token);
-			(session as unknown as TSession).user = token.user as AuthUser;
+
+			const client = createPool({ connectionString: POSTGRES_URL });
+			const id = (token?.user as User)?.email
+			const userResponse = await client.query(`SELECT * FROM users WHERE email = $1`,[id]);
+			session.user = userResponse?.rows?.[0];
+
 			(session as unknown as TSession).accessToken = token.accessToken as string;
 			(session as unknown as TSession).error = token.error as string;
 			return session;
@@ -157,4 +159,4 @@ const dbHandler: Handle = async ({ event, resolve }) => {
 	return response;
 };
 
-export const handle = sequence(authHandler, dbHandler);
+export const handle = sequence(dbHandler, authHandler);

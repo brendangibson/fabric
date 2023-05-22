@@ -27,13 +27,14 @@ type AuthUser = {
 	accessToken: string;
 	accessTokenExpires: number;
 	refreshToken: string;
-	groups?: string[];
+	level?: 'admin'|'editor'|'trade'
 };
 
 type User = {
 	id: string;
 	username: string;
-	groups?: string[];
+	email: string;
+	level: 'admin' | 'editor' | 'trade'
 };
 
 type TSession = {

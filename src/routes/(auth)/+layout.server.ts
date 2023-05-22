@@ -3,23 +3,25 @@ import type { TSession } from '../../app';
 
 // import { getAccount } from '$lib/domain/auth/api/getAccount';
 export const load = async ({ locals, url }) => {
+
+	const {db} = locals;
 	// Get the session from the locals
 	const session = (await locals?.getSession()) as TSession | null;
 
-	console.error('load session: ', session);
-
 	// If the user is not authenticated, redirect to the login page
 	if (!session?.user?.id || !session?.accessToken) {
+		console.error('no id or access token found: ', session)
 		throw redirect(307, `/auth/login?callbackUrl=${url.pathname}`);
 	}
 	// Get the account details at the root layout level so that we can use it in the sub layouts
-	//   const account = await getAccount(session?.user?.id, session?.accessToken);
-	// If the account is not found, redirect to the login page
-	//   if (!account) {
-	//     throw redirect(307, '/auth/login');
-	//   }
+	if (!session.user) {
+		console.error('no matching user found: ', session)
+		throw redirect(307, `/auth/login?callbackUrl=${url.pathname}&error=CredentialsSignin`);
+	}
+
 	// On success, we can send the session and account data to the sub layouts
 	return {
-		session
+		session,
+		user: session.user
 	};
 };

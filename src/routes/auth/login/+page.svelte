@@ -37,14 +37,12 @@
 		errorMsg='';
 		const data = new FormData(event.target as HTMLFormElement);
 		try {
-			console.error('handleSubmit');
 			fetching = true;
 			const signinResult = signIn('credentials', {
 				username: data.get('email'),
 				password: data.get('password'),
 				callbackUrl: $page.url.searchParams.get('callbackUrl')
 			});
-			console.error('signinResult: ', signinResult);
 		} catch (error) {
 			// TODO: this error message is not showing - probably due to reload
 			console.error('error signing in: ', error);
@@ -73,6 +71,8 @@
 				type="password"
 			/>
 			<Button type="submit" kind="secondary" disabled={fetching}>Sign In</Button>
+			
+
 			<InlineError {errorMsg} />
 		</form>
 	{/if}

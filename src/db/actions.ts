@@ -13,7 +13,7 @@ export const addHold = async (event: RequestEvent<RouteParams>) => {
 	const expires = data.get('expires');
 	const notes = data.get('notes');
 	const pending = Boolean(
-		((await event.locals.getSession()) as TSession | null)?.user?.groups?.includes('trade')
+		((await event.locals.getSession()) as TSession | null)?.user?.level === 'trade'
 	);
 
 	try {
