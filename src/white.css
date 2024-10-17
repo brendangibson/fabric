@@ -3748,7 +3748,7 @@ li.bx--accordion__item--disabled:last-of-type {
 	letter-spacing: 0.16px;
 	position: relative;
 	display: inline-flex;
-	max-width: 20rem;
+	/* max-width: 20rem; */
 	min-height: 3rem;
 	flex-shrink: 0;
 	align-items: center;
