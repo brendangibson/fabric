@@ -36,3 +36,23 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+## Data
+
+### Adding a new style
+
+`INSERT INTO styles (id, name, weight, thickness) VALUES (gen_random_uuid (), 'Bob', 2.2, 0.08);`
+
+### Adding a new colour
+
+`INSERT INTO colours (id, name) VALUES (gen_random_uuid (), 'Hepzibah');`
+
+### Adding a new style colour
+
+* Get the colour ID from the `colours` table
+* Get the style ID from the `styles` table
+
+`INSERT INTO stylescolours (id, "colourId", "styleId", "swatchUrl", "glenRavenName", sku) VALUES (gen_random_uuid (),'05645d5e-af1f-4b57-bc28-a3767c7a0495', '6a90774c-f3bd-427a-962a-fb27680db799', 'https://sienandco.space/assets/pocustone.jpg', null, 'POCSTOFAB' );`
+
+
+
