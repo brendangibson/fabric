@@ -1,12 +1,11 @@
 import { addHold } from '../../../db/actions';
 import { handleLoadError } from '../../../db/load';
-import type { TStyleColour } from '../../../fabric';
+import type { PageServerLoad } from './$types';
 
-export async function load({ locals }) {
+export const load: PageServerLoad = async ({ locals }) => {
 	const { db } = locals;
 	try {
-		const mainPromise = db.query<TStyleColour[]>(
-			`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour,
+		const mainPromise = db.sql`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour,
             (SELECT SUM(c.length)/ extract( day from NOW() - greatest(min(c.timestamp),NOW() - INTERVAL '30000 DAY'))
                 FROM rolls r, cuts c 
                 WHERE c."rollId" = r.id AND c.timestamp >  NOW() - INTERVAL '30000 DAY' AND r."styleColourId" = sc.id) as rate,
@@ -27,8 +26,7 @@ export async function load({ locals }) {
             (SELECT COALESCE(SUM(length),0) FROM standby WHERE "styleColourId" = sc.id) AS "standbyLength"
         FROM stylescolours sc, styles s, colours c 
         WHERE sc."colourId" = c.id and sc."styleId" = s.id 
-        ORDER BY style, colour`
-		);
+        ORDER BY style, colour`;
 
 		const payload = { stylesColours: (await mainPromise)?.rows };
 
@@ -36,7 +34,7 @@ export async function load({ locals }) {
 	} catch (e) {
 		handleLoadError('error getting summary', e);
 	}
-}
+};
 
 export const actions = {
 	addHold

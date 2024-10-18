@@ -30,11 +30,11 @@
 		...(styleColour.incoming
 			? styleColour.incoming.sort(
 					(a, b) => new Date(a.expected).getTime() - new Date(b.expected).getTime()
-			  )
+				)
 			: [])
 	];
 
-	$: console.log('styleColour', styleColour)
+	$: console.log('styleColour', styleColour);
 </script>
 
 <div>
@@ -53,12 +53,16 @@
 			{/if}
 			{#if styleColour.incomingLength}
 				<div class="incoming">
-					{humanize(styleColour.incomingLength)} yard{styleColour.incomingLength === 1 ? ' on its way' : 's on their way'}
+					{humanize(styleColour.incomingLength)} yard{styleColour.incomingLength === 1
+						? ' on its way'
+						: 's on their way'}
 				</div>
 			{/if}
 			{#if styleColour.standbyLength}
 				<div class="incoming">
-					{humanize(styleColour.standbyLength)} yard{styleColour.standbyLength === 1 ? ' on standby' : 's on standby'}
+					{humanize(styleColour.standbyLength)} yard{styleColour.standbyLength === 1
+						? ' on standby'
+						: 's on standby'}
 				</div>
 			{/if}
 			{#if styleColour.glenRavenName}

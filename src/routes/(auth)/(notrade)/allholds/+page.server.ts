@@ -1,26 +1,24 @@
+import type { QueryResultRow } from '@vercel/postgres';
 import { addHold, approveHold, deleteHold, updateHold } from '../../../../db/actions';
 import { handleLoadError } from '../../../../db/load';
 import type { THold, TStyleColour } from '../../../../fabric';
+import type { PageServerLoad } from './$types';
 
-export async function load({ locals }) {
+export const load: PageServerLoad = async ({ locals }) => {
 	const { db } = locals;
 
 	try {
-		const mainPromise = db.query<THold>(
-			`SELECT h.*, sc."swatchUrl", s.name AS style, c.name As colour
+		const mainPromise: QueryResultRow<THold> = db.sql`SELECT h.*, sc."swatchUrl", s.name AS style, c.name As colour
             FROM holds h, stylescolours sc, styles s, colours c 
-            WHERE h.expires > NOW() AND h."styleColourId" = sc.id AND s.id = sc."styleId" AND c.id = sc."colourId"`
-		);
+            WHERE h.expires > NOW() AND h."styleColourId" = sc.id AND s.id = sc."styleId" AND c.id = sc."colourId"`;
 
-		const styleColourPromise = db.query<TStyleColour>(
-			`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour 
+		const styleColourPromise: QueryResultRow<TStyleColour> = db.sql`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour 
 			FROM stylescolours sc, styles s, colours c 
 			WHERE sc."colourId" = c.id and sc."styleId" = s.id 
-			ORDER BY style, colour`
-		);
+			ORDER BY style, colour`;
 
-		const styleColourResult = (await styleColourPromise)?.rows;
-		const mainResult = (await mainPromise)?.rows?.map((hold) => ({
+		const styleColourResult = (await styleColourPromise)?.rows as TStyleColour[];
+		const mainResult = ((await mainPromise)?.rows as THold[])?.map((hold) => ({
 			...hold,
 			styleColour: styleColourResult.find((sc) => sc.id === hold.styleColourId)
 		}));
@@ -32,7 +30,7 @@ export async function load({ locals }) {
 		// TODO: why does this crash the server?
 		handleLoadError('error getting holds', e);
 	}
-}
+};
 
 export const actions = {
 	addHold,

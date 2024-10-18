@@ -7,20 +7,19 @@ import type { TSession } from '../app';
 export const addHold = async (event: RequestEvent<RouteParams>) => {
 	const data = await event.request.formData();
 	const { db } = event.locals;
-	const id = data.get('id');
-	const length = data.get('length');
-	const owner = data.get('owner');
-	const expires = data.get('expires');
-	const notes = data.get('notes');
+	const id = data.get('id')?.valueOf() as string;
+	const length = data.get('length')?.valueOf() as string;
+	const owner = data.get('owner')?.valueOf() as string;
+	const expires = data.get('expires')?.valueOf() as string;
+	const notes = data.get('notes')?.valueOf() as string;
 	const pending = Boolean(
 		((await event.locals.getSession()) as TSession | null)?.user?.level === 'trade'
 	);
 
 	try {
-		const result = await db.query(
-			`INSERT INTO holds("styleColourId", length, owner, expires, notes, pending) VALUES ($1, $2, $3, $4, $5, $6)`,
-			[id, length, owner, expires, notes, pending]
-		);
+		const result =
+			await db.sql`INSERT INTO holds("styleColourId", length, owner, expires, notes, pending) VALUES (${id}, ${length}, ${owner}, ${expires}, ${notes}, ${pending})`;
+
 		if (result.rowCount !== 1) {
 			return handleActionError(`no rows inserted when adding hold to ${id}`);
 		}
@@ -32,10 +31,10 @@ export const addHold = async (event: RequestEvent<RouteParams>) => {
 export const approveHold = async (event: RequestEvent<RouteParams>) => {
 	const data = await event.request.formData();
 	const { db } = event.locals;
-	const id = data.get('id');
+	const id = data.get('id')?.valueOf() as string;
 
 	try {
-		const result = await db.query(`UPDATE holds SET pending=false WHERE id = $1`, [id]);
+		const result = await db.sql`UPDATE holds SET pending=false WHERE id = ${id}`;
 		if (result.rowCount !== 1) {
 			console.error('result: ', result);
 			return handleActionError(`no rows updated when approving hold: ${id}`);
@@ -48,9 +47,9 @@ export const approveHold = async (event: RequestEvent<RouteParams>) => {
 export const deleteHold = async (event: RequestEvent<RouteParams>) => {
 	const data = await event.request.formData();
 	const { db } = event.locals;
-	const id = data.get('id');
+	const id = data.get('id')?.valueOf() as string;
 	try {
-		const result = await db.query(`DELETE FROM holds WHERE id = $1`, [id]);
+		const result = await db.sql`DELETE FROM holds WHERE id = ${id}`;
 		if (result.rowCount !== 1) {
 			return handleActionError(`no rows inserted when deleting hold: ${id}`);
 		}
@@ -62,10 +61,10 @@ export const deleteHold = async (event: RequestEvent<RouteParams>) => {
 export const updateHold = async (event: RequestEvent<RouteParams>) => {
 	const data = await event.request.formData();
 	const { db } = event.locals;
-	const id = data.get('id');
-	const length = data.get('length');
-	const owner = data.get('owner');
-	const notes = data.get('notes');
+	const id = data.get('id')?.valueOf() as string;
+	const length = data.get('length')?.valueOf() as string;
+	const owner = data.get('owner')?.valueOf() as string;
+	const notes = data.get('notes')?.valueOf() as string;
 
 	const expires =
 		data.get('expires') !== null
@@ -73,10 +72,8 @@ export const updateHold = async (event: RequestEvent<RouteParams>) => {
 			: addWeeks(new Date(), 2).toISOString();
 
 	try {
-		const result = await db.query(
-			`UPDATE holds SET(length, expires, owner, notes) = ($2, $3, $4, $5) WHERE id = $1`,
-			[id, length, expires, owner, notes]
-		);
+		const result =
+			await db.sql`UPDATE holds SET(length, expires, owner, notes) = (${length}, ${expires}, ${owner}, ${notes}) WHERE id = ${id}`;
 		if (result.rowCount !== 1) {
 			return handleActionError(`no rows inserted when updating hold: ${id}`);
 		}

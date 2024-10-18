@@ -1,79 +1,56 @@
-import type { TCut, TRoll, TStyleColour } from '../../../../../fabric';
+import type { TCut, TRoll, TShipment, TStyleColour } from '../../../../../fabric';
 import { addHold, deleteHold, handleActionError, updateHold } from '../../../../../db/actions';
 import { handleLoadError } from '../../../../../db/load';
+import type { QueryResultRow } from '@vercel/postgres';
+import type { LayoutServerLoad } from '../../$types';
 
-export async function load({ locals, params }) {
+export const load: LayoutServerLoad = async ({ locals, params }) => {
 	const { db } = locals;
 	const id = params.id;
 	try {
-		const mainPromise = db.query<TStyleColour>(
-			`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour, "glenRavenName",
+		const mainPromise: QueryResultRow<TStyleColour> = db.sql`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour, "glenRavenName",
 			s.weight, s.thickness
 			FROM stylescolours sc, styles s, colours c 
-			WHERE sc."colourId" = c.id and sc."styleId" = s.id AND sc.id=$1`,
-			[id]
-		);
+			WHERE sc."colourId" = c.id and sc."styleId" = s.id AND sc.id=${id}`;
 
-		const remainingPromise = db.query<{ remaining: number }>(
-			`SELECT COALESCE(
+		const remainingPromise: QueryResultRow<{ remaining: number }> = db.sql`SELECT COALESCE(
 				(
 					SELECT SUM(CASE WHEN i.length > 1 THEN i.length ELSE 0 END)
 					FROM (SELECT r."originalLength" - COALESCE(SUM(c.length),0) AS length, r."styleColourId" AS csi, r."originalLength" FROM rolls r
 					LEFT JOIN cuts c ON r.id = c."rollId"
 					WHERE NOT r.returned GROUP BY r.id
 				) AS i
-				WHERE i.csi = $1
+				WHERE i.csi = ${id}
 				GROUP BY i.csi
 			),0)
-			AS remaining`,
-			[id]
-		);
+			AS remaining`;
 
-		const holdsLengthPromise = db.query<{ holdsLength: number }>(
-			`SELECT COALESCE(SUM(length),0) AS holdsLength FROM holds WHERE "styleColourId" = $1 AND expires > NOW()`,
-			[id]
-		);
+		const holdsLengthPromise: QueryResultRow<{ holdsLength: number }> =
+			db.sql`SELECT COALESCE(SUM(length),0) AS holdsLength FROM holds WHERE "styleColourId" = ${id} AND expires > NOW()`;
 
-		const incomingLengthPromise = db.query(
-			`SELECT COALESCE(SUM(length),0) AS "incomingLength" FROM incoming WHERE "styleColourId" = $1`,
-			[id]
-		);
+		const incomingLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS "incomingLength" FROM incoming WHERE "styleColourId" = ${id}`;
 
-		const standbyLengthPromise = db.query<{ standbyLength: number }>(
-			`SELECT COALESCE(SUM(length),0) AS standbyLength FROM standby WHERE "styleColourId" = $1`,
-			[id]
-		);
+		const standbyLengthPromise: QueryResultRow<{ standbyLength: number }> =
+			db.sql`SELECT COALESCE(SUM(length),0) AS standbyLength FROM standby WHERE "styleColourId" = ${id}`;
 
-		const rollsPromise = db.query<TRoll>(
-			`SELECT id, "glenRavenId", "originalLength", returned FROM rolls WHERE "styleColourId" = $1`,
-			[id]
-		);
+		const rollsPromise: QueryResultRow<TRoll> = db.sql`SELECT id, "glenRavenId", "originalLength", returned FROM rolls WHERE "styleColourId" = ${id}`;
 
-		const cutsPromise = db.query<TCut>(
-			`SELECT length, "rollId" FROM cuts c, rolls r WHERE c."rollId" = r.id AND r."styleColourId" = $1`,
-			[id]
-		);
+		const cutsPromise: QueryResultRow<TCut> = db.sql`SELECT length, "rollId" FROM cuts c, rolls r WHERE c."rollId" = r.id AND r."styleColourId" = ${id}`;
 
-		const incomingPromise = db.query<TCut>(`SELECT * FROM incoming WHERE  "styleColourId" = $1`, [
-			id
-		]);
+		const incomingPromise: QueryResultRow<TCut> = db.sql`SELECT * FROM incoming WHERE  "styleColourId" = ${id}`;
 
-		const holdsPromise = db.query<TCut>(`SELECT * FROM holds WHERE  "styleColourId" = $1`, [id]);
+		const holdsPromise: QueryResultRow<TCut> = db.sql`SELECT * FROM holds WHERE  "styleColourId" = ${id}`;
 
-		const standbyPromise = db.query<TCut>(`SELECT * FROM standby WHERE  "styleColourId" = $1`, [
-			id
-		]);
+		const standbyPromise: QueryResultRow<TCut> = db.sql`SELECT * FROM standby WHERE  "styleColourId" = ${id}`;
 
-		const shipmentsPromise = db.query<TStyleColour>(
-			`SELECT id, name FROM shipments ORDER BY "dateReceived" DESC LIMIT 10`
-		);
+		const shipmentsPromise: QueryResultRow<TShipment> = db.sql`SELECT id, name FROM shipments ORDER BY "dateReceived" DESC LIMIT 10`;
 
 		const mainResult = await mainPromise;
 		const remainingResult = await remainingPromise;
 		const holdsLengthResult = await holdsLengthPromise;
 
-		const cutsResult = (await cutsPromise).rows;
-		const rollsResult = (await rollsPromise).rows;
+		const cutsResult = (await cutsPromise).rows as TCut[];
+		const rollsResult = (await rollsPromise).rows as TRoll[];
 
 		const rolls = rollsResult.map((roll) => {
 			return {
@@ -99,25 +76,23 @@ export async function load({ locals, params }) {
 	} catch (e) {
 		handleLoadError(`error getting stylecolour ${id}`, e);
 	}
-}
+};
 
 export const actions = {
 	addHold,
 	addIncoming: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
-		const id = data.get('id');
-		const length = data.get('length');
+		const id = data.get('id')?.valueOf() as string;
+		const length = data.get('length')?.valueOf() as string;
 		const expected =
 			data.get('expected') !== null
 				? new Date(data.get('expected') as string).toISOString()
 				: new Date().toISOString();
 
 		try {
-			const result = await db.query(
-				`INSERT INTO incoming("styleColourId", length, expected) VALUES ($1, $2, $3)`,
-				[id, length, expected]
-			);
+			const result =
+				await db.sql`INSERT INTO incoming("styleColourId", length, expected) VALUES (${id}, ${length}, ${expected})`;
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when adding incoming to ${id}`);
 			}
@@ -128,17 +103,15 @@ export const actions = {
 	addRoll: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
-		const id = data.get('id');
-		const length = data.get('length');
-		const glenRavenId = data.get('glenRavenId');
-		const shipmentId = data.get('shipmentId');
-		const notes = data.get('notes');
+		const id = data.get('id')?.valueOf() as string;
+		const length = data.get('length')?.valueOf() as string;
+		const glenRavenId = data.get('glenRavenId')?.valueOf() as string;
+		const shipmentId = data.get('shipmentId')?.valueOf() as string;
+		const notes = data.get('notes')?.valueOf() as string;
 
 		try {
-			const result = await db.query(
-				`INSERT INTO rolls("styleColourId", "originalLength", "glenRavenId", "shipmentId", notes) VALUES ($1, $2, $3, $4, $5)`,
-				[id, length, glenRavenId, shipmentId, notes]
-			);
+			const result =
+				await db.sql`INSERT INTO rolls("styleColourId", "originalLength", "glenRavenId", "shipmentId", notes) VALUES (${id}, ${length}, ${glenRavenId}, ${shipmentId}, ${notes})`;
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when adding roll to ${id}`);
 			}
@@ -149,14 +122,12 @@ export const actions = {
 	addStandby: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
-		const id = data.get('id');
-		const length = data.get('length');
+		const id = data.get('id')?.valueOf() as string;
+		const length = data.get('length')?.valueOf() as string;
 
 		try {
-			const result = await db.query(
-				`INSERT INTO standby("styleColourId", length) VALUES ($1, $2)`,
-				[id, length]
-			);
+			const result =
+				await db.sql`INSERT INTO standby("styleColourId", length) VALUES (${id}, ${length})`;
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when adding standby to ${id}`);
 			}
@@ -167,10 +138,10 @@ export const actions = {
 	approveHold: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
-		const id = data.get('id');
+		const id = data.get('id')?.valueOf() as string;
 
 		try {
-			const result = await db.query(`UPDATE holds SET pending=false WHERE id = $1`, [id]);
+			const result = await db.sql`UPDATE holds SET pending=false WHERE id = ${id}`;
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when approving hold: ${id}`);
 			}
@@ -182,9 +153,9 @@ export const actions = {
 	deleteIncoming: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
-		const id = data.get('id');
+		const id = data.get('id')?.valueOf() as string;
 		try {
-			const result = await db.query(`DELETE FROM incoming WHERE id = $1`, [id]);
+			const result = await db.sql`DELETE FROM incoming WHERE id = ${id}`;
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when deleting incoming: ${id}`);
 			}
@@ -195,9 +166,9 @@ export const actions = {
 	deleteStandby: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
-		const id = data.get('id');
+		const id = data.get('id')?.valueOf() as string;
 		try {
-			const result = await db.query(`DELETE FROM standby WHERE id = $1`, [id]);
+			const result = await db.sql`DELETE FROM standby WHERE id = ${id}`;
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when deleting standby: ${id}`);
 			}
@@ -209,18 +180,17 @@ export const actions = {
 	updateIncoming: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
-		const id = data.get('id');
-		const length = data.get('length');
+		const id = data.get('id')?.valueOf() as string;
+		const length = data.get('length')?.valueOf() as string;
 		const expected =
 			data.get('expected') !== null
 				? new Date(data.get('expected') as string).toISOString()
 				: new Date().toISOString();
 
 		try {
-			const result = await db.query(
-				`UPDATE incoming SET(length, expected) = ($2, $3) WHERE id = $1`,
-				[id, length, expected]
-			);
+			const result =
+				await db.sql`UPDATE incoming SET(length, expected) = (${length}, ${expected}) WHERE id = ${id}`;
+
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when incoming standby: ${id}`);
 			}
@@ -231,11 +201,11 @@ export const actions = {
 	updateStandby: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
-		const id = data.get('id');
-		const length = data.get('length');
+		const id = data.get('id')?.valueOf() as string;
+		const length = data.get('length')?.valueOf() as string;
 
 		try {
-			const result = await db.query(`UPDATE standby SET length = $2 WHERE id = $1`, [id, length]);
+			const result = await db.sql`UPDATE standby SET length = ${length} WHERE id = ${id}`;
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when updating standby: ${id}`);
 			}

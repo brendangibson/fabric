@@ -25,7 +25,7 @@
 
 	let editing = Boolean(hold);
 	let length = editing ? hold?.length : 1;
-	let owner = editing ? hold?.owner : (getContext('username') as string) ?? '';
+	let owner = editing ? hold?.owner : ((getContext('username') as string) ?? '');
 	let expires = editing ? hold?.expires : addWeeks(new Date(), 2).toISOString();
 	let notes = editing ? hold?.notes : '';
 	let errors: Record<string, string | null> = {

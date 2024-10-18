@@ -1,10 +1,8 @@
 import { redirect } from '@sveltejs/kit';
-import type { TSession } from '../../../app';
+import type { LayoutServerLoad } from './$types';
 
-export const load = async ({ locals, parent }) => {
+export const load: LayoutServerLoad = async ({ parent }) => {
+	const level = (await parent())?.user.level;
 
-	const level = (await parent())?.user.level
-
-	if (!level || level === 'trade') throw redirect(307, '/summary');
-
+	if (!level || level === 'trade') redirect(307, '/summary');
 };

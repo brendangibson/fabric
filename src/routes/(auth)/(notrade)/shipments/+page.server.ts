@@ -1,11 +1,13 @@
 import type { TShipment } from '../../../../fabric';
 import { handleActionError } from '../../../../db/actions';
 import { handleLoadError } from '../../../../db/load';
+import type { QueryResultRow } from '@vercel/postgres';
+import type { PageServerLoad } from './$types';
 
-export async function load({ locals }) {
+export const load: PageServerLoad = async ({ locals }) => {
 	const { db } = locals;
 	try {
-		const mainPromise = db.query<TShipment>(`SELECT * FROM shipments`);
+		const mainPromise: QueryResultRow<TShipment> = db.sql`SELECT * FROM shipments`;
 
 		const mainResult = await mainPromise;
 
@@ -17,24 +19,25 @@ export async function load({ locals }) {
 	} catch (e) {
 		handleLoadError('error getting shipments', e);
 	}
-}
+};
 
 export const actions = {
 	addShipment: async (event) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
-		const name = data.get('name');
-		const dateSent = data.get('dateSent') ? data.get('dateSent') : new Date().toISOString();
-		const dateReceived = data.get('dateReceived')
-			? data.get('dateReceived')
+		const name = data.get('name')?.valueOf() as string;
+		const dateSent = data.get('dateSent')
+			? (data.get('dateSent')?.valueOf() as string)
 			: new Date().toISOString();
-		const glenRavenId = data.get('glenRavenId');
+		const dateReceived = data.get('dateReceived')
+			? (data.get('dateReceived')?.valueOf() as string)
+			: new Date().toISOString();
+		const glenRavenId = data.get('glenRavenId')?.valueOf() as string;
 
 		try {
-			const result = await db.query(
-				`INSERT INTO shipments(name, "dateSent", "dateReceived", "glenRavenId") VALUES ($1, $2, $3, $4)`,
-				[name, dateSent, dateReceived, glenRavenId]
-			);
+			const result =
+				await db.sql`INSERT INTO shipments(name, "dateSent", "dateReceived", "glenRavenId") VALUES (${name}, ${dateSent}, ${dateReceived}, ${glenRavenId})`;
+
 			if (result.rowCount !== 1) {
 				return handleActionError('no rows inserted when adding shipment');
 			}

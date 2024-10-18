@@ -31,8 +31,8 @@
 			class="end"
 			style={`background-image:
 					radial-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.1),rgba(0,0,0,0.5),rgba(0,0,0,0.1)), url('${url}'); transform: translateX(-${
-				getHeight(remaining) / 4
-			}vw);  height:${height}; width: ${endWidth}`}
+						getHeight(remaining) / 4
+					}vw);  height:${height}; width: ${endWidth}`}
 		>
 			<div class="core" style={`height: ${coreHeight}vw; width: ${coreHeight / 2}vw`} />
 		</div>

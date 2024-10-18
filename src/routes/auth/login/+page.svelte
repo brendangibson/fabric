@@ -14,12 +14,12 @@
 
 	$: {
 		if (error) {
-			switch(error) {
-			case 'CredentialsSignin' :
-				errorMsg = 'Username or password not accepted'
-				break;
-			default:
-				errorMsg = 'An error occurred while signing in'
+			switch (error) {
+				case 'CredentialsSignin':
+					errorMsg = 'Username or password not accepted';
+					break;
+				default:
+					errorMsg = 'An error occurred while signing in';
 			}
 		}
 	}
@@ -34,11 +34,11 @@
 			errorMsg = 'Submit did not pass event target';
 			return;
 		}
-		errorMsg='';
+		errorMsg = '';
 		const data = new FormData(event.target as HTMLFormElement);
 		try {
 			fetching = true;
-			const signinResult = signIn('credentials', {
+			signIn('credentials', {
 				username: data.get('email'),
 				password: data.get('password'),
 				callbackUrl: $page.url.searchParams.get('callbackUrl')
@@ -71,7 +71,6 @@
 				type="password"
 			/>
 			<Button type="submit" kind="secondary" disabled={fetching}>Sign In</Button>
-			
 
 			<InlineError {errorMsg} />
 		</form>

@@ -48,10 +48,10 @@
 							return 0;
 					}
 				})
-		  ]
+			]
 		: [];
 
-	$: sortDirection, (sortedStylesColours = [...sortedStylesColours].reverse());
+	$: if (sortDirection) sortedStylesColours = [...sortedStylesColours].reverse();
 </script>
 
 <Table>
@@ -82,7 +82,9 @@
 					<td>{humanize(styleColour.holdsLength ?? 0)}</td>
 					<td>{humanize(styleColour.rate ?? 0)}</td>
 					<td>
-						{daysRemaining(styleColour)> 10000? 'Infinity' : humanize(daysRemaining(styleColour))}
+						{#if daysRemaining(styleColour) > 10000}Infinity{:else}
+							{humanize(daysRemaining(styleColour))}
+						{/if}
 					</td>
 				</tr>
 			{/each}

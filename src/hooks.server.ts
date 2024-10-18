@@ -15,12 +15,11 @@ import {
 // Import the secret key from the environment variables
 import { AUTH_SECRET } from '$env/static/private';
 import { sequence } from '@sveltejs/kit/hooks';
-import { createPool, db } from '@vercel/postgres';
+import { createPool } from '@vercel/postgres';
 import { POSTGRES_URL } from '$env/static/private';
 import type { AuthUser, TSession } from './app';
 import type { Handle } from '@sveltejs/kit';
 import type { User } from '@auth/core/types';
-import GoogleProvider from '@auth/core/providers/google'
 
 interface AuthToken {
 	accessToken: string;
@@ -46,7 +45,7 @@ const extractUserFromSession = (session: CognitoUserSessionType): AuthUser => {
 		username: session.getIdToken().decodePayload()['cognito:username'],
 		accessToken: session.getAccessToken().getJwtToken(),
 		accessTokenExpires: session.getAccessToken().getExpiration(),
-		refreshToken: session.getRefreshToken().getToken(),
+		refreshToken: session.getRefreshToken().getToken()
 	};
 };
 /**
@@ -60,7 +59,7 @@ const createTokenFromUser = (user: AuthUser): AuthToken => {
 		user: {
 			id: user.id,
 			email: user.email,
-			username: user.username,
+			username: user.username
 		}
 	};
 	return token;
@@ -107,7 +106,7 @@ const authHandler = SvelteKitAuth({
 		 * For subsequent requests we are refreshing the access token and creating a new token from the user object. If the refresh token has expired
 		 *
 		 */
-		// eslint
+		// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 		async jwt({ token, user }): Promise<any> {
 			// Initial sign in; we have plugged tokens and expiry date into the user object in the authorize callback; object
 			// returned here will be saved in the JWT and will be available in the session callback as well as this callback
@@ -140,10 +139,9 @@ const authHandler = SvelteKitAuth({
 		 * @returns - Promise with the result of the session
 		 */
 		async session({ session, token }) {
-
 			const client = createPool({ connectionString: POSTGRES_URL });
-			const id = (token?.user as User)?.email
-			const userResponse = await client.query(`SELECT * FROM users WHERE email = $1`,[id]);
+			const id = (token?.user as User)?.email;
+			const userResponse = await client.sql`SELECT * FROM users WHERE email = ${id}`;
 			session.user = userResponse?.rows?.[0];
 
 			(session as unknown as TSession).accessToken = token.accessToken as string;
@@ -159,4 +157,4 @@ const dbHandler: Handle = async ({ event, resolve }) => {
 	return response;
 };
 
-export const handle = sequence(dbHandler, authHandler);
+export const handle = sequence(dbHandler, authHandler.handle);

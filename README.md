@@ -49,10 +49,7 @@ You can preview the production build with `npm run preview`.
 
 ### Adding a new style colour
 
-* Get the colour ID from the `colours` table
-* Get the style ID from the `styles` table
+- Get the colour ID from the `colours` table
+- Get the style ID from the `styles` table
 
 `INSERT INTO stylescolours (id, "colourId", "styleId", "swatchUrl", "glenRavenName", sku) VALUES (gen_random_uuid (),'05645d5e-af1f-4b57-bc28-a3767c7a0495', '6a90774c-f3bd-427a-962a-fb27680db799', 'https://sienandco.space/assets/pocustone.jpg', null, 'POCSTOFAB' );`
-
-
-

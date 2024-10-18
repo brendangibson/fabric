@@ -27,14 +27,14 @@ type AuthUser = {
 	accessToken: string;
 	accessTokenExpires: number;
 	refreshToken: string;
-	level?: 'admin'|'editor'|'trade'
+	level?: 'admin' | 'editor' | 'trade';
 };
 
 type User = {
 	id: string;
 	username: string;
 	email: string;
-	level: 'admin' | 'editor' | 'trade'
+	level: 'admin' | 'editor' | 'trade';
 };
 
 type TSession = {
