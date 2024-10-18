@@ -35,7 +35,7 @@ export async function load({ locals, params }) {
 		);
 
 		const incomingLengthPromise = db.query(
-			`SELECT COALESCE(SUM(length),0) AS incomingLength FROM incoming WHERE "styleColourId" = $1`,
+			`SELECT COALESCE(SUM(length),0) AS "incomingLength" FROM incoming WHERE "styleColourId" = $1`,
 			[id]
 		);
 

@@ -14,7 +14,7 @@
 			(styleColour.incomingLength ?? 0) +
 			(styleColour.standbyLength ?? 0) -
 			(styleColour.holdsLength ?? 0)) /
-		(styleColour.rate ?? 1);
+		(styleColour.rate ?? 0.0001);
 
 	const setSortBy = (col: string) => {
 		if (sortBy === col) {
@@ -82,7 +82,7 @@
 					<td>{humanize(styleColour.holdsLength ?? 0)}</td>
 					<td>{humanize(styleColour.rate ?? 0)}</td>
 					<td>
-						{humanize(daysRemaining(styleColour))}
+						{daysRemaining(styleColour)> 10000? 'Infinity' : humanize(daysRemaining(styleColour))}
 					</td>
 				</tr>
 			{/each}
