@@ -26,8 +26,9 @@
 			<a
 				slot="else"
 				href={'https://www.sienandco.com/products/' +
-					styleColour.style?.toLowerCase().replace(/\s/,'-') + '-' +
-					styleColour.colour?.toLowerCase().replace(/\s/,'-') +
+					styleColour.style?.toLowerCase().replace(/\s/, '-') +
+					'-' +
+					styleColour.colour?.toLowerCase().replace(/\s/, '-') +
 					'-fabric'}
 				target="_blank"
 			>
