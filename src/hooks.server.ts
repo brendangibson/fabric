@@ -23,11 +23,13 @@ const handleSignOut: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+const publicPaths = ['/sign-in', '/public'];
+
 export const handle = sequence(
 	dbHandler,
 	handleClerk(CLERK_SECRET_KEY, {
 		debug: true,
-		protectedPaths: [(e) => e.url.pathname !== '/sign-in'],
+		protectedPaths: [(e) => publicPaths.every((path) => !e.url.pathname.startsWith(path))],
 		signInUrl: '/sign-in'
 	}),
 	handleSignOut
