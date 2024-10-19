@@ -1,0 +1,54 @@
+:root {
+	--error: red;
+	--grey-200: #222222;
+	--grey-600: #666666;
+	--hold: sienna;
+	--incoming: #58735f;
+	--white: #ffffff;
+}
+
+h1 {
+	text-align: center;
+	font-size: 4vh;
+	top: 0;
+	width: 100%;
+	z-index: -1;
+	line-height: 200%;
+}
+
+h3 {
+	margin-bottom: 1rem;
+}
+
+a {
+	color: var(--grey-200);
+	text-decoration: none;
+}
+
+a:hover {
+	color: var(--grey-600);
+}
+
+button {
+	border: none;
+	background: none;
+	cursor: pointer;
+}
+
+.errorMsg {
+	color: var(--error);
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(0.7);
+	}
+
+	50% {
+		transform: scale(1);
+	}
+
+	100% {
+		transform: scale(0.7);
+	}
+}

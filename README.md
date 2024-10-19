@@ -1,48 +1,60 @@
-### Adding a new style/colour
+# create-svelte
 
-1. Take a photo of the fabric
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
-on this machine:
+## Creating a project
 
-2. Put the photo in the `public/assets` directory
-3. `npm run build`
-4. `git add .`
-5. `git commit -m "Adding a new style"`
-6. `git push`
+If you're seeing this, you've probably already done this step. Congrats!
 
-ssh to the server
+```bash
+# create a new project in the current directory
+npm create svelte@latest
 
-7. `git pull`
+# create a new project in my-app
+npm create svelte@latest my-app
+```
 
-on AWS AppSync
+## Developing
 
-8. Login - go to Cognito>App client settings to get the id
-9. Run `GetColours` query. Store the colour id.
-10. Run `GetStyles` query. Store the style id
-11. `swatchUrl` should be set to `https://sienandco.space/assets/` + your new file from above
-12. Run `CreateStyleColour` mutation with the `colourId`, `styleId`, `glenRavenName`, and `swatchUrl`
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-### Run code locally
+```bash
+npm run dev
 
-1. `npm run start`
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
 
-### Build and deploy
+## Building
 
-1. `npm run build`
-2. Commit to git and push
+To create a production version of your app:
 
-### Connect to the database
+```bash
+npm run build
+```
 
-1. Get the URL of the Writer
-2. `mysql -h appsyncrdsinstance-rcy4ohoyyzhlvahtxrucs5oix4.clghn7faucwg.us-east-2.rds.amazonaws.com -u master -p`
-3. If that fails, you may have to update your IP for the security group for the Writer
-4. If that fails try rebooting the database in the AWS console
-5. `use myrds`
-6. `show tables;`
+You can preview the production build with `npm run preview`.
 
-### Add in a new style/colour
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
 
-1. Take a picture of the fabric. Put that image in `public/assets`. Build and deploy
-2. `INSERT INTO colours (id, name) VALUES (uuid(), 'New Colour Name');`
-3. `INSERT INTO styles (id, name) VALUES (UUID(), 'New Style Name');`
-4. `INSERT INTO stylesColours (id, colourId, styleId, swatchUrl, sku) VALUES (uuid(), 'New Colour Id', 'New Style ID', 'https://sienandco.space/assets/newimage.jpg', 'AAABBBFAB)`
+## Images
+
+- Put `.jpg` images in the `static/assets` directory
+- `npm run imagemin` to generate the optimized images
+
+## Data
+
+### Adding a new style
+
+`INSERT INTO styles (id, name, weight, thickness) VALUES (gen_random_uuid (), 'Bob', 2.2, 0.08);`
+
+### Adding a new colour
+
+`INSERT INTO colours (id, name) VALUES (gen_random_uuid (), 'Hepzibah');`
+
+### Adding a new style colour
+
+- Get the colour ID from the `colours` table
+- Get the style ID from the `styles` table
+
+`INSERT INTO stylescolours (id, "colourId", "styleId", "swatchUrl", "glenRavenName", sku) VALUES (gen_random_uuid (),'05645d5e-af1f-4b57-bc28-a3767c7a0495', '6a90774c-f3bd-427a-962a-fb27680db799', 'https://sienandco.space/assets/pocustone.jpg', null, 'POCSTOFAB' );`
