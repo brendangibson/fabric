@@ -1,8 +1,10 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { handleLoadError } from '../../../db/load';
 
-export const GET: RequestHandler = async ({ request, locals }) => {
-	if (request?.headers.get('origin') !== 'https://www.sienandco.com') {
+const ALLOWED_ORIGIN = 'https://www.sienandco.com';
+
+export const GET: RequestHandler = async ({ request, locals, setHeaders }) => {
+	if (request?.headers.get('origin') !== ALLOWED_ORIGIN) {
 		console.error('Do not accept requests from: ', request?.headers.get('origin'));
 		return new Response(new Blob(), { status: 401 });
 	}
@@ -27,7 +29,14 @@ export const GET: RequestHandler = async ({ request, locals }) => {
             (SELECT COALESCE(SUM(length),0) FROM standby WHERE "styleColourId" = sc.id) AS "standby"
         FROM stylescolours sc`;
 
-		return new Response(JSON.stringify({ data: { getRemaining: (await mainPromise)?.rows } }));
+		setHeaders({
+			'Access-Control-Allow-Origin': ALLOWED_ORIGIN
+		});
+
+		const response = new Response(
+			JSON.stringify({ data: { getRemaining: (await mainPromise)?.rows } })
+		);
+		return Response;
 	} catch (e) {
 		handleLoadError('error getting rolls', e);
 		return new Response(new Blob(), { status: 500 });
