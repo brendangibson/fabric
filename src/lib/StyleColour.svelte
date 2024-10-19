@@ -8,7 +8,7 @@
 	import AccessControl from './AccessControl.svelte';
 	import AddIncoming from './AddIncoming.svelte';
 	import AddStandby from './AddStandby.svelte';
-	import AddHold from './AddHold.svelte';
+	import AddHold from './AddHoldWrapper.svelte';
 	import AddRoll from './AddRoll.svelte';
 	import Hold from './Hold.svelte';
 	import Standby from './Standby.svelte';
@@ -34,7 +34,6 @@
 			: [])
 	];
 
-	$: console.log('styleColour', styleColour);
 </script>
 
 <div>

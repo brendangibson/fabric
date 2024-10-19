@@ -3,6 +3,7 @@ import { addHold, deleteHold, handleActionError, updateHold } from '../../../../
 import { handleLoadError } from '../../../../../db/load';
 import type { QueryResultRow } from '@vercel/postgres';
 import type { LayoutServerLoad } from '../../$types';
+import type { RequestEvent } from './$types.js';
 
 export const load: LayoutServerLoad = async ({ locals, params }) => {
 	const { db } = locals;
@@ -80,7 +81,7 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 
 export const actions = {
 	addHold,
-	addIncoming: async (event) => {
+	addIncoming: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
@@ -100,7 +101,7 @@ export const actions = {
 			return handleActionError(`error adding incomging to ${id}`, error);
 		}
 	},
-	addRoll: async (event) => {
+	addRoll: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
@@ -119,7 +120,7 @@ export const actions = {
 			return handleActionError(`error adding roll to ${id}`, error);
 		}
 	},
-	addStandby: async (event) => {
+	addStandby: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
@@ -135,7 +136,7 @@ export const actions = {
 			return handleActionError(`error adding standby to ${id}`, error);
 		}
 	},
-	approveHold: async (event) => {
+	approveHold: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
@@ -150,7 +151,7 @@ export const actions = {
 		}
 	},
 	deleteHold,
-	deleteIncoming: async (event) => {
+	deleteIncoming: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
@@ -163,7 +164,7 @@ export const actions = {
 			return handleActionError(`error deleting incoming: ${id}`, error);
 		}
 	},
-	deleteStandby: async (event) => {
+	deleteStandby: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
@@ -177,7 +178,7 @@ export const actions = {
 		}
 	},
 	updateHold,
-	updateIncoming: async (event) => {
+	updateIncoming: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
@@ -198,7 +199,7 @@ export const actions = {
 			return handleActionError(`error updating incoming: ${id}`, error);
 		}
 	},
-	updateStandby: async (event) => {
+	updateStandby: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;

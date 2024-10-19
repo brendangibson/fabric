@@ -16,6 +16,19 @@
 	const handleEditClick = () => {
 		editMode = true;
 	};
+
+	const handleEnhance = () => {
+		deleting = true;
+		return async ({ result, update }) => {
+			if (result.type === 'failure') {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
+				await update();
+			}
+			deleting = false;
+		};
+	};
 </script>
 
 {#if editMode}
@@ -35,22 +48,7 @@
 						{humanize(standby.length)} yard{standby.length === 1 ? '' : 's'}
 						{#if !deleting}
 							<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
-							<form
-								method="POST"
-								action="?/deleteStandby"
-								use:enhance={() => {
-									deleting = true;
-									return async ({ result, update }) => {
-										if (result.type === 'failure') {
-											errorMsg = result.data?.error;
-										} else {
-											errorMsg = null;
-											await update();
-										}
-										deleting = false;
-									};
-								}}
-							>
+							<form method="POST" action="?/deleteStandby" use:enhance={handleEnhance}>
 								<input name="id" type="hidden" value={standby.id} />
 								<button class="delete"> ⊗ </button>
 								<InlineError {errorMsg} />

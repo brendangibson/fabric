@@ -8,7 +8,12 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			db: VercelPool;
-			user: AuthUser;
+			session: {
+				userId: string;
+				claims: {
+					org_role: 'string';
+				};
+			};
 		}
 		// interface PageData {}
 		// interface Platform {}
@@ -19,28 +24,3 @@ declare global {
 		}
 	}
 }
-
-type AuthUser = {
-	id: string;
-	email: string;
-	username: string;
-	accessToken: string;
-	accessTokenExpires: number;
-	refreshToken: string;
-	level?: 'admin' | 'editor' | 'trade';
-};
-
-type User = {
-	id: string;
-	username: string;
-	email: string;
-	level: 'admin' | 'editor' | 'trade';
-};
-
-type TSession = {
-	user: User;
-	accessToken: string;
-	error: string;
-};
-
-export { TSession, AuthUser };

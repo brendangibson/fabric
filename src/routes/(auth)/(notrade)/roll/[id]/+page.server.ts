@@ -2,7 +2,7 @@ import type { TCut, TRoll, TStyleColour } from '../../../../../fabric';
 import { handleActionError } from '../../../../../db/actions';
 import { handleLoadError } from '../../../../../db/load';
 import type { QueryResultRow } from '@vercel/postgres';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, RequestEvent } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const { db } = locals;
@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions = {
-	addCut: async (event) => {
+	addCut: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
@@ -50,7 +50,7 @@ export const actions = {
 		}
 	},
 
-	returnRoll: async (event) => {
+	returnRoll: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
@@ -64,7 +64,7 @@ export const actions = {
 			return handleActionError(`error returning roll: ${id}`, error);
 		}
 	},
-	unReturnRoll: async (event) => {
+	unReturnRoll: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;

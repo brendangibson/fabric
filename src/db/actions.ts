@@ -2,7 +2,6 @@ import { fail, type RequestEvent } from '@sveltejs/kit';
 import type { QueryError } from '../db';
 import type { RouteParams } from '../routes/$types';
 import { addWeeks } from 'date-fns';
-import type { TSession } from '../app';
 
 export const addHold = async (event: RequestEvent<RouteParams>) => {
 	const data = await event.request.formData();
@@ -12,9 +11,7 @@ export const addHold = async (event: RequestEvent<RouteParams>) => {
 	const owner = data.get('owner')?.valueOf() as string;
 	const expires = data.get('expires')?.valueOf() as string;
 	const notes = data.get('notes')?.valueOf() as string;
-	const pending = Boolean(
-		((await event.locals.getSession()) as TSession | null)?.user?.level === 'trade'
-	);
+	const pending = event.locals.session.claims.org_role !== 'org:admin';
 
 	try {
 		const result =

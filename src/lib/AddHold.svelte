@@ -11,7 +11,6 @@
 	import type { THold } from '../fabric';
 	import InlineError from './InlineError.svelte';
 	import AccessControl from './AccessControl.svelte';
-	import { getContext } from 'svelte';
 	import { addWeeks } from 'date-fns';
 
 	export let styleColourId: string;
@@ -22,10 +21,11 @@
 	export let onSuccess = () => {
 		/*deliberate*/
 	};
+	export let username: string;
 
 	let editing = Boolean(hold);
 	let length = editing ? hold?.length : 1;
-	let owner = editing ? hold?.owner : ((getContext('username') as string) ?? '');
+	let owner = editing ? hold?.owner : username;
 	let expires = editing ? hold?.expires : addWeeks(new Date(), 2).toISOString();
 	let notes = editing ? hold?.notes : '';
 	let errors: Record<string, string | null> = {

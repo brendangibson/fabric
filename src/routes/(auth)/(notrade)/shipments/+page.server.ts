@@ -3,6 +3,7 @@ import { handleActionError } from '../../../../db/actions';
 import { handleLoadError } from '../../../../db/load';
 import type { QueryResultRow } from '@vercel/postgres';
 import type { PageServerLoad } from './$types';
+import type { RequestEvent } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { db } = locals;
@@ -22,7 +23,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions = {
-	addShipment: async (event) => {
+	addShipment: async (event: RequestEvent) => {
 		const data = await event.request.formData();
 		const { db } = event.locals;
 		const name = data.get('name')?.valueOf() as string;

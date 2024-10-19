@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-
-	$: isTrade = getContext('isTrade');
+	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
 </script>
 
-{#if !isTrade}
-	<slot />
-{:else}
-	<slot name="else" />
-{/if}
+<SignedIn let:user>
+	{#if user?.organizationMemberships?.[0]?.role === 'org:admin'}
+		<slot />
+	{:else}
+		<slot name="else" />
+	{/if}
+</SignedIn>

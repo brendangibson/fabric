@@ -9,7 +9,6 @@
 		error?: string;
 	};
 
-	$: console.log('data: ', data);
 </script>
 
 {#if data?.error}

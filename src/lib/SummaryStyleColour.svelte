@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from 'carbon-components-svelte';
 	import type { TStyleColour } from '../fabric';
-	import AddHold from './AddHold.svelte';
+	import AddHold from './AddHoldWrapper.svelte';
 	import { format } from 'date-fns';
 	import { humanize } from '../dataFunctions/cuts';
 	import Swatch from './Swatch.svelte';

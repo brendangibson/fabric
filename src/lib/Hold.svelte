@@ -6,7 +6,7 @@
 	import { enhance } from '$app/forms';
 	import AccessControl from './AccessControl.svelte';
 	import Dimensions from './Dimensions.svelte';
-	import AddHold from './AddHold.svelte';
+	import AddHold from './AddHoldWrapper.svelte';
 	import InlineError from './InlineError.svelte';
 
 	export let hold: THold;

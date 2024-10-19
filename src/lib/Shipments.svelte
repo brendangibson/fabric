@@ -8,11 +8,11 @@
 	export let shipments: TShipment[];
 
 	$: sortedShipments = shipments
-		? ([
+		? [
 				...shipments.sort((a, b) =>
 					new Date(a.dateReceived).getTime() < new Date(b.dateReceived).getTime() ? 1 : -1
 				)
-			] ?? [])
+			]
 		: [];
 </script>
 

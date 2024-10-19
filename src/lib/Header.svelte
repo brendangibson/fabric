@@ -1,15 +1,9 @@
 <script lang="ts">
-	import { signOut } from '@auth/sveltekit/client';
 	import { OverflowMenu, OverflowMenuItem } from 'carbon-components-svelte';
 	import AccessControl from './AccessControl.svelte';
 	import { goto } from '$app/navigation';
-
-	const onLogout = () => async () => {
-		goto('/auth/login');
-
-		await signOut();
-		localStorage.clear();
-	};
+	import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
+	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
 </script>
 
 <div class="headerWrapper">
@@ -20,6 +14,11 @@
 		<h1>Sien + Co</h1>
 		<OverflowMenu flipped>
 			<div class="menuButton" slot="menu">☰</div>
+			<SignedIn let:user>
+				<OverflowMenuItem disabled>
+					{user?.firstName ?? user?.username ?? user?.emailAddresses}
+				</OverflowMenuItem>
+			</SignedIn>
 			<AccessControl>
 				<OverflowMenuItem href="/shipments">Shipments</OverflowMenuItem>
 				<OverflowMenuItem href="/status">Status</OverflowMenuItem>
@@ -30,7 +29,13 @@
 
 				<OverflowMenuItem slot="else" href="/holds">Reserves</OverflowMenuItem>
 			</AccessControl>
-			<OverflowMenuItem danger on:click={onLogout()}>Log out</OverflowMenuItem>
+			<OverflowMenuItem danger
+				><SignOutButton
+					signOutCallback={() => {
+						goto('/sign-out');
+					}}
+				/></OverflowMenuItem
+			>
 		</OverflowMenu>
 	</header>
 	<div class="wrapper" />

@@ -3,10 +3,10 @@ import { handleLoadError } from '../../../db/load';
 import type { THold, TStyleColour } from '../../../fabric';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals, parent }) => {
-	const { db } = locals;
+export const load: PageServerLoad = async ({ locals }) => {
+	const { db, session } = locals;
 
-	const owner = (await parent())?.session?.user?.username;
+	const owner = session?.userId;
 
 	try {
 		const mainPromise: Promise<{ rows: THold[] }> =
