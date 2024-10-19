@@ -37,6 +37,11 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
 
+## Images
+
+- Put `.jpg` images in the `static/assets` directory
+- `npm run imagemin` to generate the optimized images
+
 ## Data
 
 ### Adding a new style

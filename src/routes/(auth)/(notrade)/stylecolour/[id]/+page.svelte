@@ -8,7 +8,6 @@
 		shipments?: TShipment[];
 		error?: string;
 	};
-
 </script>
 
 {#if data?.error}
