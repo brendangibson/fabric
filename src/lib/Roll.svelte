@@ -10,6 +10,7 @@
 	import { enhance } from '$app/forms';
 	import InlineError from './InlineError.svelte';
 	import { calculateRemaining } from '../dataFunctions/rolls';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	export let roll: TRoll;
 
@@ -17,6 +18,21 @@
 	let errorMsg: string | null = null;
 
 	const label = `${roll.styleColour?.style} ${roll.styleColour?.colour}`;
+
+	const handleEnhance: SubmitFunction = () => {
+		fetching = true;
+
+		return async ({ result, update }) => {
+			if (result.type === 'failure') {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
+				await update();
+			}
+			fetching = false;
+		};
+	};
+
 	$: remaining = calculateRemaining(roll);
 
 	$: sortedCuts = [
@@ -71,7 +87,7 @@
 	</AccessControl>
 	<div style="height: 3vh" />
 
-	<h1>Cuts</h1>
+	<h3>Cuts</h3>
 	{#if sortedCuts && sortedCuts.length}
 		<Table style=" tableLayout: fixed">
 			<tbody>
@@ -129,19 +145,7 @@
 		<form
 			method="POST"
 			action={roll.returned ? '?/unReturnRoll' : '?/returnRoll'}
-			use:enhance={() => {
-				fetching = true;
-
-				return async ({ result, update }) => {
-					if (result.type === 'failure') {
-						errorMsg = result.data?.error;
-					} else {
-						errorMsg = null;
-						await update();
-					}
-					fetching = false;
-				};
-			}}
+			use:enhance={handleEnhance}
 		>
 			<input type="hidden" name="id" value={roll.id} />
 			{#if roll.returned}

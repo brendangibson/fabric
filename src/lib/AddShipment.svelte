@@ -9,6 +9,7 @@
 	} from 'carbon-components-svelte';
 	import { format } from 'date-fns';
 	import InlineError from './InlineError.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	let name: string = format(new Date(), 'MMMM d yyyy');
 	let dateSent: string;
@@ -35,15 +36,7 @@
 		}
 	};
 
-	$: setErrors('name', name);
-
-	$: disabled = !name || fetching;
-</script>
-
-<form
-	method="POST"
-	action="?/addShipment"
-	use:enhance={() => {
+	const handleEnhance: SubmitFunction = () => {
 		fetching = true;
 		return async ({ update, result }) => {
 			if (result.type === 'failure') {
@@ -54,8 +47,14 @@
 			}
 			fetching = false;
 		};
-	}}
->
+	};
+
+	$: setErrors('name', name);
+
+	$: disabled = !name || fetching;
+</script>
+
+<form method="POST" action="?/addShipment" use:enhance={handleEnhance}>
 	<h4>Add Shipment</h4>
 
 	<TextInput

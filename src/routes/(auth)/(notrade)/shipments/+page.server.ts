@@ -1,14 +1,12 @@
-import type { TShipment } from '../../../../fabric';
 import { handleActionError } from '../../../../db/actions';
 import { handleLoadError } from '../../../../db/load';
-import type { QueryResultRow } from '@vercel/postgres';
 import type { PageServerLoad } from './$types';
 import type { RequestEvent } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { db } = locals;
 	try {
-		const mainPromise: QueryResultRow<TShipment> = db.sql`SELECT * FROM shipments`;
+		const mainPromise = db.sql`SELECT * FROM shipments`;
 
 		const mainResult = await mainPromise;
 

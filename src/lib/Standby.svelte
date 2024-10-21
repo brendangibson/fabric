@@ -5,6 +5,7 @@
 	import { enhance } from '$app/forms';
 	import AddStandby from './AddStandby.svelte';
 	import InlineError from './InlineError.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	export let standby: TStandby;
 	export let styleColourId: string;
@@ -17,7 +18,7 @@
 		editMode = true;
 	};
 
-	const handleEnhance = () => {
+	const handleEnhance: SubmitFunction = () => {
 		deleting = true;
 		return async ({ result, update }) => {
 			if (result.type === 'failure') {

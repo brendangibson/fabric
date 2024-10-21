@@ -6,6 +6,7 @@
 	import { enhance } from '$app/forms';
 	import AddIncoming from './AddIncoming.svelte';
 	import InlineError from './InlineError.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	export let incoming: TIncoming;
 	// export let styleColourId: string;
@@ -16,6 +17,19 @@
 
 	const handleEditClick = () => {
 		editMode = true;
+	};
+
+	const handleEnhance: SubmitFunction = () => {
+		deleting = true;
+		return async ({ result, update }) => {
+			if (result.type === 'failure') {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
+				await update();
+			}
+			deleting = false;
+		};
 	};
 </script>
 
@@ -35,22 +49,7 @@
 						{humanize(incoming.length)} yard{incoming.length === 1 ? '' : 's'}
 						{#if !deleting}
 							<button aria-label="Edit" on:click={handleEditClick} class="edit"> ✏️ </button>
-							<form
-								method="POST"
-								action="?/deleteIncoming"
-								use:enhance={() => {
-									deleting = true;
-									return async ({ result, update }) => {
-										if (result.type === 'failure') {
-											errorMsg = result.data?.error;
-										} else {
-											errorMsg = null;
-											await update();
-										}
-										deleting = false;
-									};
-								}}
-							>
+							<form method="POST" action="?/deleteIncoming" use:enhance={handleEnhance}>
 								<input name="id" type="hidden" value={incoming.id} />
 								<button class="delete"> ⊗ </button>
 								<InlineError {errorMsg} />

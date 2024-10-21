@@ -1,7 +1,6 @@
-import type { TCut, TRoll, TShipment, TStyleColour } from '../../../../../fabric';
+import type { TCut, TRoll } from '../../../../../fabric';
 import { addHold, deleteHold, handleActionError, updateHold } from '../../../../../db/actions';
 import { handleLoadError } from '../../../../../db/load';
-import type { QueryResultRow } from '@vercel/postgres';
 import type { LayoutServerLoad } from '../../$types';
 import type { RequestEvent } from './$types.js';
 
@@ -9,12 +8,12 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 	const { db } = locals;
 	const id = params.id;
 	try {
-		const mainPromise: QueryResultRow<TStyleColour> = db.sql`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour, "glenRavenName",
+		const mainPromise = db.sql`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour, "glenRavenName",
 			s.weight, s.thickness
 			FROM stylescolours sc, styles s, colours c 
 			WHERE sc."colourId" = c.id and sc."styleId" = s.id AND sc.id=${id}`;
 
-		const remainingPromise: QueryResultRow<{ remaining: number }> = db.sql`SELECT COALESCE(
+		const remainingPromise = db.sql`SELECT COALESCE(
 				(
 					SELECT SUM(CASE WHEN i.length > 1 THEN i.length ELSE 0 END)
 					FROM (SELECT r."originalLength" - COALESCE(SUM(c.length),0) AS length, r."styleColourId" AS csi, r."originalLength" FROM rolls r
@@ -26,25 +25,23 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 			),0)
 			AS remaining`;
 
-		const holdsLengthPromise: QueryResultRow<{ holdsLength: number }> =
-			db.sql`SELECT COALESCE(SUM(length),0) AS holdsLength FROM holds WHERE "styleColourId" = ${id} AND expires > NOW()`;
+		const holdsLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS holdsLength FROM holds WHERE "styleColourId" = ${id} AND expires > NOW()`;
 
 		const incomingLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS "incomingLength" FROM incoming WHERE "styleColourId" = ${id}`;
 
-		const standbyLengthPromise: QueryResultRow<{ standbyLength: number }> =
-			db.sql`SELECT COALESCE(SUM(length),0) AS standbyLength FROM standby WHERE "styleColourId" = ${id}`;
+		const standbyLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS standbyLength FROM standby WHERE "styleColourId" = ${id}`;
 
-		const rollsPromise: QueryResultRow<TRoll> = db.sql`SELECT id, "glenRavenId", "originalLength", returned FROM rolls WHERE "styleColourId" = ${id}`;
+		const rollsPromise = db.sql`SELECT id, "glenRavenId", "originalLength", returned FROM rolls WHERE "styleColourId" = ${id}`;
 
-		const cutsPromise: QueryResultRow<TCut> = db.sql`SELECT length, "rollId" FROM cuts c, rolls r WHERE c."rollId" = r.id AND r."styleColourId" = ${id}`;
+		const cutsPromise = db.sql`SELECT length, "rollId" FROM cuts c, rolls r WHERE c."rollId" = r.id AND r."styleColourId" = ${id}`;
 
-		const incomingPromise: QueryResultRow<TCut> = db.sql`SELECT * FROM incoming WHERE  "styleColourId" = ${id}`;
+		const incomingPromise = db.sql`SELECT * FROM incoming WHERE  "styleColourId" = ${id}`;
 
-		const holdsPromise: QueryResultRow<TCut> = db.sql`SELECT * FROM holds WHERE  "styleColourId" = ${id}`;
+		const holdsPromise = db.sql`SELECT * FROM holds WHERE  "styleColourId" = ${id}`;
 
-		const standbyPromise: QueryResultRow<TCut> = db.sql`SELECT * FROM standby WHERE  "styleColourId" = ${id}`;
+		const standbyPromise = db.sql`SELECT * FROM standby WHERE  "styleColourId" = ${id}`;
 
-		const shipmentsPromise: QueryResultRow<TShipment> = db.sql`SELECT id, name FROM shipments ORDER BY "dateReceived" DESC LIMIT 10`;
+		const shipmentsPromise = db.sql`SELECT id, name FROM shipments ORDER BY "dateReceived" DESC LIMIT 10`;
 
 		const mainResult = await mainPromise;
 		const remainingResult = await remainingPromise;

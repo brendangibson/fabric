@@ -33,9 +33,7 @@ export const GET: RequestHandler = async ({ request, locals, setHeaders }) => {
 			'Access-Control-Allow-Origin': ALLOWED_ORIGIN
 		});
 
-		return new Response(
-			JSON.stringify({ data: { getRemaining: (await mainPromise)?.rows } })
-		);
+		return new Response(JSON.stringify({ data: { getRemaining: (await mainPromise)?.rows } }));
 	} catch (e) {
 		handleLoadError('error getting rolls', e);
 		return new Response(new Blob(), { status: 500 });

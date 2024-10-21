@@ -8,6 +8,7 @@
 	import Dimensions from './Dimensions.svelte';
 	import AddHold from './AddHoldWrapper.svelte';
 	import InlineError from './InlineError.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	export let hold: THold;
 	export let styleColourId: string;
@@ -22,6 +23,36 @@
 
 	const handleEditClick = () => {
 		editMode = true;
+	};
+
+	const handleEnhance: SubmitFunction = () => {
+		approveButtonDisabled = true;
+
+		return async ({ result, update }) => {
+			// `result` is an `ActionResult` object
+			if (result.type === 'failure') {
+				pendingErrorMsg = result.data?.error;
+			} else {
+				pendingErrorMsg = null;
+				await update();
+			}
+			approveButtonDisabled = false;
+		};
+	};
+
+	const handleApproveEnhance: SubmitFunction = () => {
+		approveButtonDisabled = true;
+
+		return async ({ result, update }) => {
+			// `result` is an `ActionResult` object
+			if (result.type === 'failure') {
+				pendingErrorMsg = result.data?.error;
+			} else {
+				pendingErrorMsg = null;
+				await update();
+			}
+			approveButtonDisabled = false;
+		};
 	};
 </script>
 
@@ -53,22 +84,7 @@
 							<button aria-label="Edit" on:click|preventDefault={handleEditClick} class="edit">
 								✏️
 							</button>
-							<form
-								method="POST"
-								action="?/deleteHold"
-								use:enhance={() => {
-									deleting = true;
-									return async ({ result, update }) => {
-										if (result.type === 'failure') {
-											deleteErrorMsg = result.data?.error;
-										} else {
-											deleteErrorMsg = null;
-											await update();
-										}
-										deleting = false;
-									};
-								}}
-							>
+							<form method="POST" action="?/deleteHold" use:enhance={handleEnhance}>
 								<input name="id" type="hidden" value={hold.id} />
 
 								<button class="delete"> ⊗ </button>
@@ -120,24 +136,7 @@
 					<tr>
 						<td>Pending</td>
 						<td
-							><form
-								method="POST"
-								action="?/approveHold"
-								use:enhance={() => {
-									approveButtonDisabled = true;
-
-									return async ({ result, update }) => {
-										// `result` is an `ActionResult` object
-										if (result.type === 'failure') {
-											pendingErrorMsg = result.data?.error;
-										} else {
-											pendingErrorMsg = null;
-											await update();
-										}
-										approveButtonDisabled = false;
-									};
-								}}
-							>
+							><form method="POST" action="?/approveHold" use:enhance={handleApproveEnhance}>
 								<input type="hidden" name="id" value={hold.id} />
 								<Button type="submit" kind="secondary" disabled={approveButtonDisabled}
 									>Approve</Button
@@ -156,7 +155,7 @@
 	.actionCell {
 		display: flex;
 		font-weight: bold;
-		align-items: baseline;
+		align-items: center;
 	}
 	.delete {
 		display: inline-block;

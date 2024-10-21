@@ -3,6 +3,7 @@
 	import { Button, NumberInput, Select, SelectItem, TextInput } from 'carbon-components-svelte';
 	import { reasons } from '../dataFunctions/cuts';
 	import InlineError from './InlineError.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	export let rollId: string;
 	export let remaining: number;
@@ -14,6 +15,7 @@
 
 	let fetching = false;
 	let errorMsg: string | null = null;
+	let tainted = false;
 
 	let errors: Record<string, string | null> = {
 		length: null
@@ -40,17 +42,11 @@
 		}
 	};
 
-	$: length = yards + inches / 36;
+	const handleChange = () => {
+		tainted = true;
+	};
 
-	$: setErrors('length', length);
-
-	$: disabled = !(length + inches > 0) || fetching;
-</script>
-
-<form
-	method="POST"
-	action="?/addCut"
-	use:enhance={() => {
+	const handleEnhance: SubmitFunction = () => {
 		fetching = true;
 		return async ({ update, result }) => {
 			if (result.type === 'failure') {
@@ -61,8 +57,16 @@
 			}
 			fetching = false;
 		};
-	}}
->
+	};
+
+	$: length = yards + inches / 36;
+
+	$: setErrors('length', length);
+
+	$: disabled = !(length + inches > 0) || fetching;
+</script>
+
+<form method="POST" action="?/addCut" use:enhance={handleEnhance}>
 	<input type="hidden" name="id" value={rollId} />
 	<input type="hidden" name="length" value={length} />
 
@@ -73,13 +77,19 @@
 			label="Length"
 			bind:value={yards}
 			placeholder="yards"
-			invalid={Boolean(errors.length)}
+			invalid={tainted && Boolean(errors.length)}
 			invalidText={errors.length ?? ''}
 			step={0.01}
 			helperText="yards"
+			on:change={handleChange}
 		/>
 
-		<NumberInput bind:value={inches} placeholder="inches" helperText="inches" />
+		<NumberInput
+			bind:value={inches}
+			placeholder="inches"
+			helperText="inches"
+			on:change={handleChange}
+		/>
 	</div>
 	<Select labelText="Reason" bind:selected={reason} name="reason">
 		{#each reasons as reason}
