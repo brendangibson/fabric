@@ -1,17 +1,15 @@
-import type { TCut, TRoll, TStyleColour } from '../../../../../fabric';
 import { handleActionError } from '../../../../../db/actions';
 import { handleLoadError } from '../../../../../db/load';
-import type { QueryResultRow } from '@vercel/postgres';
 import type { PageServerLoad, RequestEvent } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const { db } = locals;
 	const id = params.id;
 	try {
-		const mainPromise: QueryResultRow<TRoll> = db.sql`SELECT * FROM rolls r WHERE r.id=${id}`;
-		const styleColourPromise: QueryResultRow<TStyleColour> = db.sql`SELECT sc."swatchUrl", s.name AS style, c.name AS colour, s.weight, s.thickness  FROM stylescolours sc, rolls r, styles s, colours c  WHERE r.id=${id} AND r."styleColourId" = sc.id AND  sc."colourId" = c.id and sc."styleId" = s.id`;
+		const mainPromise = db.sql`SELECT * FROM rolls r WHERE r.id=${id}`;
+		const styleColourPromise = db.sql`SELECT sc."swatchUrl", s.name AS style, c.name AS colour, s.weight, s.thickness  FROM stylescolours sc, rolls r, styles s, colours c  WHERE r.id=${id} AND r."styleColourId" = sc.id AND  sc."colourId" = c.id and sc."styleId" = s.id`;
 
-		const cutsPromise: QueryResultRow<TCut> = db.sql`SELECT length, reason, notes, timestamp FROM cuts c WHERE c."rollId" =  ${id}`;
+		const cutsPromise = db.sql`SELECT length, reason, notes, timestamp FROM cuts c WHERE c."rollId" =  ${id}`;
 		const mainResult = await mainPromise;
 		const styleColourResult = await styleColourPromise;
 		const cutsResult = await cutsPromise;

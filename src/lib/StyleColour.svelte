@@ -12,6 +12,7 @@
 	import AddRoll from './AddRoll.svelte';
 	import Hold from './Hold.svelte';
 	import Standby from './Standby.svelte';
+	import { Tile } from 'carbon-components-svelte';
 
 	export let styleColour: TStyleColour;
 	export let shipments: TShipment[];
@@ -85,52 +86,64 @@
 		<div class="spacer" />
 	{/if}
 
-	{#if sortedIncoming?.length}
+	<div class="lists">
 		<h3>Incoming Fabric</h3>
 
-		{#each sortedIncoming as incoming}
-			<Incoming {incoming} />
-		{/each}
-		<div class="spacer" />
-	{/if}
+		<Tile>
+			{#if sortedIncoming?.length}
+				<div class="itemList">
+					{#each sortedIncoming as incoming}
+						<Incoming {incoming} />
+					{/each}
+				</div>
+				<div class="spacer" />
+			{/if}
 
-	<AccessControl>
-		<AddIncoming styleColourId={styleColour.id} />
-		<div class="spacer" />
-	</AccessControl>
-
-	{#if styleColour.standby?.length}
+			<AccessControl>
+				<AddIncoming styleColourId={styleColour.id} />
+				<div class="spacer" />
+			</AccessControl>
+		</Tile>
 		<h3>Fabric on Standby</h3>
 
-		{#each styleColour.standby as standby}
-			<Standby {standby} styleColourId={styleColour.id} />
-		{/each}
-		<div class="spacer" />
-	{/if}
+		<Tile>
+			{#if styleColour.standby?.length}
+				<div class="itemList">
+					{#each styleColour.standby as standby}
+						<Standby {standby} styleColourId={styleColour.id} />
+					{/each}
+				</div>
+				<div class="spacer" />
+			{/if}
 
-	<AccessControl>
-		<AddStandby styleColourId={styleColour.id} />
-		<div class="spacer" />
-	</AccessControl>
-
-	{#if styleColour.holds?.length}
+			<AccessControl>
+				<AddStandby styleColourId={styleColour.id} />
+				<div class="spacer" />
+			</AccessControl>
+		</Tile>
 		<h3>Reserved Fabric</h3>
+		<Tile>
+			{#if styleColour.holds?.length}
+				<div class="itemList">
+					{#each styleColour.holds.sort((a, b) => new Date(b.expires).getTime() - new Date(a.expires).getTime()) as hold}
+						<Hold {hold} styleColourId={styleColour.id} {styleColour} />
+					{/each}
+				</div>
+				<div class="spacer" />
+			{/if}
 
-		{#each styleColour.holds as hold}
-			<Hold {hold} styleColourId={styleColour.id} {styleColour} />
-		{/each}
-		<div class="spacer" />
-	{/if}
-
-	<AccessControl>
-		<AddHold styleColourId={styleColour.id} />
-		<div class="spacer" />
-	</AccessControl>
-
-	<AccessControl>
-		<AddRoll styleColourId={styleColour.id} {shipments} />
-		<div class="spacer" />
-	</AccessControl>
+			<AccessControl>
+				<AddHold styleColourId={styleColour.id} />
+				<div class="spacer" />
+			</AccessControl>
+		</Tile>
+		<Tile>
+			<AccessControl>
+				<AddRoll styleColourId={styleColour.id} {shipments} />
+				<div class="spacer" />
+			</AccessControl>
+		</Tile>
+	</div>
 
 	{#if smallRolls}
 		<div style="height: 3vh" />
@@ -149,6 +162,10 @@
 </div>
 
 <style>
+	h3 {
+		margin-bottom: 0;
+	}
+
 	.top {
 		padding: 5vw 0 5vw 0;
 		display: grid;
@@ -170,6 +187,12 @@
 		font-size: 6vw;
 		display: inline-block;
 		vertical-align: top;
+	}
+
+	.lists {
+		display: flex;
+		flex-direction: column;
+		gap: 3vh;
 	}
 
 	.hold {

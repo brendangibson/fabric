@@ -3,6 +3,7 @@
 	import { Button, ButtonSet, NumberInput } from 'carbon-components-svelte';
 	import type { TStandby } from '../fabric';
 	import InlineError from './InlineError.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	export let styleColourId: string;
 	export let standby: TStandby | undefined = undefined;
@@ -39,15 +40,7 @@
 		}
 	};
 
-	$: setErrors('length', length);
-
-	$: disabled = !length || fetching;
-</script>
-
-<form
-	method="POST"
-	action={editing ? '?/updateStandby' : '?/addStandby'}
-	use:enhance={() => {
+	const handleEnhance: SubmitFunction = () => {
 		fetching = true;
 
 		return async ({ result, update }) => {
@@ -61,7 +54,17 @@
 			}
 			fetching = false;
 		};
-	}}
+	};
+
+	$: setErrors('length', length);
+
+	$: disabled = !length || fetching;
+</script>
+
+<form
+	method="POST"
+	action={editing ? '?/updateStandby' : '?/addStandby'}
+	use:enhance={handleEnhance}
 >
 	{#if editing}
 		<input type="hidden" name="id" value={standby?.id} />

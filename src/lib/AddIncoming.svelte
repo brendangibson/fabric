@@ -9,6 +9,7 @@
 	} from 'carbon-components-svelte';
 	import type { TIncoming } from '../fabric';
 	import InlineError from './InlineError.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	export let styleColourId: string | undefined = undefined;
 	export let incoming: TIncoming | null = null;
@@ -48,15 +49,7 @@
 		}
 	};
 
-	$: setErrors('length', length);
-
-	$: disabled = !(Boolean(length) && Boolean(expected)) || fetching;
-</script>
-
-<form
-	method="POST"
-	action={editing ? '?/updateIncoming' : '?/addIncoming'}
-	use:enhance={() => {
+	const handleEnhance: SubmitFunction = () => {
 		fetching = true;
 
 		return async ({ result, update }) => {
@@ -69,7 +62,17 @@
 			}
 			fetching = false;
 		};
-	}}
+	};
+
+	$: setErrors('length', length);
+
+	$: disabled = !(Boolean(length) && Boolean(expected)) || fetching;
+</script>
+
+<form
+	method="POST"
+	action={editing ? '?/updateIncoming' : '?/addIncoming'}
+	use:enhance={handleEnhance}
 >
 	{#if editing}
 		<input type="hidden" name="id" value={incoming?.id} />

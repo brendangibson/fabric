@@ -4,6 +4,7 @@
 	import type { TShipment } from '../fabric';
 	import InlineError from './InlineError.svelte';
 	import { invalidateAll } from '$app/navigation';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	export let styleColourId: string;
 	export let shipments: TShipment[];
@@ -45,6 +46,23 @@
 		}
 	};
 
+	const handleEnhance: SubmitFunction = () => {
+		fetching = true;
+		return async ({ update, result }) => {
+			if (result.type === 'failure') {
+				errorMsg = result.data?.error;
+			} else {
+				errorMsg = null;
+				await update();
+				await invalidateAll();
+				if (window) {
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				}
+			}
+			fetching = false;
+		};
+	};
+
 	$: setErrors('length', length);
 	$: setErrors('glenRavenId', glenRavenId);
 
@@ -57,23 +75,7 @@
 		) || fetching;
 </script>
 
-<form
-	method="POST"
-	action="?/addRoll"
-	use:enhance={() => {
-		fetching = true;
-		return async ({ update, result }) => {
-			if (result.type === 'failure') {
-				errorMsg = result.data?.error;
-			} else {
-				errorMsg = null;
-				await update();
-				await invalidateAll();
-			}
-			fetching = false;
-		};
-	}}
->
+<form method="POST" action="?/addRoll" use:enhance={handleEnhance}>
 	<input type="hidden" name="id" value={styleColourId} />
 
 	<h4>Add Roll</h4>

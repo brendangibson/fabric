@@ -12,6 +12,7 @@
 	import InlineError from './InlineError.svelte';
 	import AccessControl from './AccessControl.svelte';
 	import { addWeeks } from 'date-fns';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	export let styleColourId: string;
 	export let hold: THold | undefined = undefined;
@@ -52,15 +53,7 @@
 		}
 	};
 
-	$: setErrors('length', length);
-
-	$: disabled = !(Boolean(length) && Boolean(expires)) || fetching;
-</script>
-
-<form
-	method="POST"
-	action={editing ? '?/updateHold' : '?/addHold'}
-	use:enhance={() => {
+	const handleEnhance: SubmitFunction = () => {
 		fetching = true;
 
 		return async ({ result, update }) => {
@@ -73,8 +66,14 @@
 			}
 			fetching = false;
 		};
-	}}
->
+	};
+
+	$: setErrors('length', length);
+
+	$: disabled = !(Boolean(length) && Boolean(expires)) || fetching;
+</script>
+
+<form method="POST" action={editing ? '?/updateHold' : '?/addHold'} use:enhance={handleEnhance}>
 	{#if editing}
 		<input type="hidden" name="id" value={hold?.id} />
 	{:else}
