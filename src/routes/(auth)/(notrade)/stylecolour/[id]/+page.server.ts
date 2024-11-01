@@ -26,11 +26,11 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 			),0)
 			AS remaining`;
 
-		const holdsLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS holdsLength FROM holds WHERE "styleColourId" = ${id} AND expires > NOW()`;
+		const holdsLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS "holdsLength" FROM holds WHERE "styleColourId" = ${id} AND expires > NOW()`;
 
 		const incomingLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS "incomingLength" FROM incoming WHERE "styleColourId" = ${id}`;
 
-		const standbyLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS standbyLength FROM standby WHERE "styleColourId" = ${id}`;
+		const standbyLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS "standbyLength" FROM standby WHERE "styleColourId" = ${id}`;
 
 		const rollsPromise = db.sql`SELECT id, "glenRavenId", "originalLength", returned FROM rolls WHERE "styleColourId" = ${id}`;
 
