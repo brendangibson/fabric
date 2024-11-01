@@ -13,18 +13,21 @@
 	import Hold from './Hold.svelte';
 	import Standby from './Standby.svelte';
 	import { Tile } from 'carbon-components-svelte';
+	import { minRollSize } from '../constants';
 
 	export let styleColour: TStyleColour;
 	export let shipments: TShipment[];
 
 	$: bigRolls = [
-		...(styleColour?.rolls?.filter((roll) => !roll.returned && calculateRemaining(roll) > 0.5) ??
-			[])
+		...(styleColour?.rolls?.filter(
+			(roll) => !roll.returned && calculateRemaining(roll) > minRollSize
+		) ?? [])
 	];
 
 	$: smallRolls = [
-		...(styleColour?.rolls?.filter((roll) => !roll.returned && calculateRemaining(roll) <= 0.5) ??
-			[])
+		...(styleColour?.rolls?.filter(
+			(roll) => !roll.returned && calculateRemaining(roll) <= minRollSize
+		) ?? [])
 	];
 
 	$: sortedIncoming = [

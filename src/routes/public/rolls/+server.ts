@@ -1,5 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { handleLoadError } from '../../../db/load';
+import { minRollSize } from '../../../constants';
 
 const ALLOWED_ORIGIN = 'https://www.sienandco.com';
 
@@ -15,7 +16,7 @@ export const GET: RequestHandler = async ({ request, locals, setHeaders }) => {
 		const mainPromise = db.sql`SELECT sc.sku, 
             (SELECT COALESCE(
                             (
-                                SELECT SUM(CASE WHEN i.length > 1 THEN i.length ELSE 0 END)
+                                SELECT SUM(CASE WHEN i.length > ${minRollSize} THEN i.length ELSE 0 END)
                                 FROM (SELECT r."originalLength" - COALESCE(SUM(c.length),0) AS length, r."styleColourId" AS csi, r."originalLength" FROM rolls r
                                 LEFT JOIN cuts c ON r.id = c."rollId"
                                 WHERE NOT r.returned GROUP BY r.id
