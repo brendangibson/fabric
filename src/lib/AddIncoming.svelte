@@ -92,6 +92,7 @@
 		invalid={Boolean(errors.length)}
 		invalidText={errors.length ?? ''}
 		name="length"
+		step={0.01}
 	/>
 	<DatePicker datePickerType="single" bind:value={expected}>
 		<DatePickerInput

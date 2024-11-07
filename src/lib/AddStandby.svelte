@@ -82,6 +82,7 @@
 		invalid={Boolean(errors.length)}
 		invalidText={errors.length ?? undefined}
 		name="length"
+		step={0.01}
 	/>
 
 	<ButtonSet>
