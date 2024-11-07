@@ -22,7 +22,7 @@
 <div class="rollIcon">
 	<div
 		class="fabric"
-		style={`background-image: linear-gradient(to bottom, rgba(0,0,0,0.26) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0.32) 100%), url('${url}'); height:${height}; width: calc(70% + ${
+		style={`background-image: linear-gradient(to bottom, rgba(0,0,0,0.26) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0.7) 100%), url('${url}'); height:${height}; width: calc(70% + ${
 			getHeight(remaining) / 2
 		}vw)
         `}
@@ -30,7 +30,7 @@
 		<div
 			class="end"
 			style={`background-image:
-					radial-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.1),rgba(0,0,0,0.5),rgba(0,0,0,0.1)), url('${url}'); transform: translateX(-${
+					repeating-radial-gradient(rgba(0,0,0,0.7) 0,rgba(0,0,0,0.3) 0.07vw,rgba(0,0,0,0.6) 0.19vw,rgba(0,0,0,0.1) 0.29vw) , url('${url}'); transform: translateX(-${
 						getHeight(remaining) / 4
 					}vw);  height:${height}; width: ${endWidth}`}
 		>
@@ -61,13 +61,13 @@
 		display: inline-block;
 		text-align: center;
 		background-repeat: repeat;
-		background-size: contain;
+		background-size: cover;
 		position: relative;
 	}
 
 	.end {
 		border-radius: 50%;
-		background-size: 1vw;
+		background-size: 100%, 0.1vw;
 		position: absolute;
 		left: 0;
 		z-index: 1;
