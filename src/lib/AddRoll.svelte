@@ -36,7 +36,7 @@
 				}
 				break;
 			case 'glenRavenId':
-				if (value < 9999) {
+				if (value < 1000) {
 					errors[index] = 'Should be more digits';
 				} else {
 					errors[index] = null;
@@ -87,6 +87,7 @@
 		invalid={Boolean(errors.length)}
 		invalidText={errors.length ?? undefined}
 		name="length"
+		step={0.1}
 	/>
 
 	<NumberInput
