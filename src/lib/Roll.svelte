@@ -2,15 +2,14 @@
 	import { Button, Table } from 'carbon-components-svelte';
 	import AccessControl from './AccessControl.svelte';
 	import RollIcon from './RollIcon.svelte';
-	import { getReasonName, humanize } from '../dataFunctions/cuts';
-	import Dimensions from './Dimensions.svelte';
-	import { format, subMinutes } from 'date-fns';
+	import { humanize } from '../dataFunctions/cuts';
 	import AddCut from './AddCut.svelte';
 	import type { TRoll } from '../fabric';
 	import { enhance } from '$app/forms';
 	import InlineError from './InlineError.svelte';
 	import { calculateRemaining } from '../dataFunctions/rolls';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import Cuts from './Cuts.svelte';
 
 	export let roll: TRoll;
 
@@ -34,12 +33,6 @@
 	};
 
 	$: remaining = calculateRemaining(roll);
-
-	$: sortedCuts = [
-		...(roll?.cuts?.sort((a, b) =>
-			new Date(a.timestamp).getTime() < new Date(b.timestamp).getTime() ? 1 : -1
-		) ?? [])
-	];
 </script>
 
 <div>
@@ -87,58 +80,7 @@
 	</AccessControl>
 	<div style="height: 3vh" />
 
-	<h3>Cuts</h3>
-	{#if sortedCuts && sortedCuts.length}
-		<Table style=" tableLayout: fixed">
-			<tbody>
-				{#each sortedCuts as cut}
-					<tr>
-						<td>
-							<div class="length">
-								Length
-
-								<Dimensions
-									weight={roll.styleColour?.weight ?? 0}
-									thickness={roll.styleColour?.thickness ?? 0}
-									length={cut.length}
-								/>
-							</div>
-						</td>
-						<td>
-							<strong>{humanize(cut.length)} yard{cut.length === 1 ? '' : 's'}</strong>
-						</td>
-					</tr>
-					<tr>
-						<td>Time</td>
-						<td>
-							{format(
-								subMinutes(new Date(cut.timestamp), new Date(cut.timestamp).getTimezoneOffset()),
-								'MMMM d yyyy, hh:mm aaa'
-							)}
-						</td>
-					</tr>
-					<tr>
-						<td>Reason</td>
-						<td>{getReasonName(cut.reason)}</td>
-					</tr>
-					{#if cut.notes}
-						<tr>
-							<td>Notes</td>
-							<td>{cut.notes}</td>
-						</tr>
-					{/if}
-					{#if cut.orderId}
-						<tr>
-							<td>Order Id</td>
-							<td>{cut.orderId}</td>
-						</tr>
-					{/if}
-				{/each}
-			</tbody>
-		</Table>
-	{:else}
-		<p>Fresh roll</p>
-	{/if}
+	<Cuts {roll} />
 
 	<div style="height: 3vh" />
 	<AccessControl>
@@ -157,11 +99,3 @@
 		</form>
 	</AccessControl>
 </div>
-
-<style>
-	.length {
-		display: flex;
-		font-weight: bold;
-		align-items: baseline;
-	}
-</style>

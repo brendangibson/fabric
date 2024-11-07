@@ -37,6 +37,8 @@
 				)
 			: [])
 	];
+
+	$: console.log('styleColour.holdsLength:M ', styleColour.holdsLength, styleColour);
 </script>
 
 <div>

@@ -31,9 +31,9 @@
 		return async ({ result, update }) => {
 			// `result` is an `ActionResult` object
 			if (result.type === 'failure') {
-				pendingErrorMsg = result.data?.error;
+				deleteErrorMsg = result.data?.error;
 			} else {
-				pendingErrorMsg = null;
+				deleteErrorMsg = null;
 				await update();
 			}
 			approveButtonDisabled = false;

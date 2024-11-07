@@ -1,4 +1,5 @@
 export type TCut = {
+	id: string;
 	rollId: string;
 	length: number;
 	notes: string;
