@@ -15,8 +15,8 @@
 		return 20 * (length / 30) + coreHeight;
 	};
 
-	const height = getHeight(remaining) + 'vw';
-	const endWidth = getHeight(remaining) / 2 + 'vw';
+	$: height = getHeight(remaining) + 'vw';
+	$: endWidth = getHeight(remaining) / 2 + 'vw';
 </script>
 
 <div class="rollIcon">
