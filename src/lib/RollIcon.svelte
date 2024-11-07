@@ -67,7 +67,7 @@
 
 	.end {
 		border-radius: 50%;
-		background-size: 100%, 0.1vh;
+		background-size: 100%, 1%;
 		position: absolute;
 		left: 0;
 		z-index: 1;
