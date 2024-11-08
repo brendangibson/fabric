@@ -37,8 +37,6 @@
 				)
 			: [])
 	];
-
-	$: console.log('styleColour.holdsLength:M ', styleColour.holdsLength, styleColour);
 </script>
 
 <div>
@@ -46,33 +44,39 @@
 		<Swatch src={styleColour.swatchUrl} />
 		<div class="labelWrapper">
 			<div class="label">{styleColour.style} {styleColour.colour}</div>
-			<div>
-				{humanize(styleColour.remaining ?? 0)} yard{styleColour.remaining === 1 ? '' : 's'}
+			<div class="lineItem">
+				<span class="metric">
+					{humanize(styleColour.remaining ?? 0)} yard{styleColour.remaining === 1 ? '' : 's'}</span
+				><span class="rest">{' '}in stock</span>
 			</div>
 			{#if styleColour.holdsLength && styleColour.holdsLength > 0}
-				<div class="hold">
-					{humanize(styleColour.holdsLength)} yard{styleColour.holdsLength === 1 ? '' : 's'}{' '}
-					on hold
+				<div class="hold lineItem">
+					<span class="metric">
+						{humanize(styleColour.holdsLength)} yard{styleColour.holdsLength === 1 ? '' : 's'}</span
+					><span class="rest">{' '}on hold</span>
 				</div>
 			{/if}
 			{#if styleColour.incomingLength}
-				<div class="incoming">
-					{humanize(styleColour.incomingLength)} yard{styleColour.incomingLength === 1
-						? ' on its way'
-						: 's on their way'}
+				<div class="incoming lineItem">
+					<span class="metric">
+						{humanize(styleColour.incomingLength)} yard{styleColour.incomingLength === 1
+							? ''
+							: 's'}</span
+					><span class="rest"
+						>{styleColour.incomingLength === 1 ? ' on its way' : ' on their way'}</span
+					>
 				</div>
 			{/if}
 			{#if styleColour.standbyLength}
-				<div class="incoming">
-					{humanize(styleColour.standbyLength)} yard{styleColour.standbyLength === 1
-						? ' on standby'
-						: 's on standby'}
+				<div class="standby lineItem">
+					<span class="metric">
+						{humanize(styleColour.standbyLength)} yard{styleColour.standbyLength === 1
+							? ''
+							: 's'}</span
+					><span class="rest"
+						>{styleColour.standbyLength === 1 ? ' on standby' : ' on standby'}</span
+					>
 				</div>
-			{/if}
-			{#if styleColour.glenRavenName}
-				<i>
-					{styleColour.glenRavenName}
-				</i>
 			{/if}
 		</div>
 	</div>
@@ -222,5 +226,19 @@
 
 	.spacer {
 		height: 3vh;
+	}
+
+	.metric {
+		text-decoration: underline;
+	}
+
+	.lineItem {
+		line-height: 200%;
+		display: flex;
+		align-items: center;
+		white-space: nowrap;
+	}
+	.rest {
+		white-space-collapse: preserve;
 	}
 </style>
