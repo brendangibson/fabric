@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const { db } = locals;
 	try {
 		const mainPromise = db.sql`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour,
-            (SELECT SUM(c.length)/ extract( day from NOW() - greatest(min(c.timestamp),NOW() - INTERVAL '30000 DAY'))
+            (SELECT SUM(c.length)/ (extract( day from NOW() - greatest(min(c.timestamp),NOW() - INTERVAL '30000 DAY')) +1)
                 FROM rolls r, cuts c 
                 WHERE c."rollId" = r.id AND c.timestamp >  NOW() - INTERVAL '30000 DAY' AND r."styleColourId" = sc.id) as rate,
             (SELECT COALESCE(
