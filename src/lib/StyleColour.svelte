@@ -212,8 +212,8 @@
 		color: var(--incoming);
 	}
 
-	i {
-		font-size: smaller;
+	.standby {
+		color: var(--standby);
 	}
 
 	.rollLink {
@@ -226,10 +226,6 @@
 
 	.spacer {
 		height: 3vh;
-	}
-
-	.metric {
-		text-decoration: underline;
 	}
 
 	.lineItem {
