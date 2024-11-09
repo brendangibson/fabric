@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		const mainPromise = db.sql`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour,
             (SELECT SUM(c.length)/ (extract( day from NOW() - greatest(min(c.timestamp),NOW() - INTERVAL '30000 DAY')) +1)
                 FROM rolls r, cuts c 
-                WHERE c."rollId" = r.id AND c.timestamp >  NOW() - INTERVAL '30000 DAY' AND r."styleColourId" = sc.id) as rate,
+                WHERE c."rollId" = r.id AND c.timestamp >  NOW() - INTERVAL '30000 DAY' AND r."styleColourId" = sc.id) AS rate,
             (SELECT COALESCE(
                             (
                                 SELECT SUM(CASE WHEN i.length > ${minRollSize} THEN i.length ELSE 0 END)
@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals }) => {
             (SELECT COALESCE(SUM(length),0) FROM incoming WHERE "styleColourId" = sc.id) AS "incomingLength",
             (SELECT COALESCE(SUM(length),0) FROM standby WHERE "styleColourId" = sc.id) AS "standbyLength" 
         FROM stylescolours sc, styles s, colours c 
-        WHERE sc."colourId" = c.id and sc."styleId" = s.id 
+        WHERE sc."colourId" = c.id AND sc."styleId" = s.id 
         ORDER BY style, colour`;
 
 		const payload = { stylesColours: (await mainPromise)?.rows };

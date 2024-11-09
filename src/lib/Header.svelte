@@ -22,6 +22,7 @@
 			<AccessControl>
 				<OverflowMenuItem href="/shipments">Shipments</OverflowMenuItem>
 				<OverflowMenuItem href="/status">Status</OverflowMenuItem>
+				<OverflowMenuItem href="/charts">Charts</OverflowMenuItem>
 			</AccessControl>
 			<OverflowMenuItem href="/summary">Summary</OverflowMenuItem>
 			<AccessControl>
