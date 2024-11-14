@@ -116,8 +116,6 @@
 		]
 	};
 
-	$: console.log('data: ', data);
-
 	$: options = {
 		plugins: {
 			legend: {
@@ -268,7 +266,6 @@
 	});
 </script>
 
-<h1>Charts</h1>
 <ContentSwitcher bind:selectedIndex>
 	<Switch text="All" />
 	<Switch text="Daily" />
