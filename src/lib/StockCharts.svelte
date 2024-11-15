@@ -50,7 +50,6 @@
 
 	type TMeta = { swatchUrl: string; colour: string; style: string; styleColourId: string };
 	type TData = { x: number; y: number };
-	type TStyleColour = Record<string, { data: { datasets: [{ data: TData[] }] }; meta: TMeta }>;
 
 	let minTimestamp = allRolls[0].timestamp;
 
@@ -169,7 +168,8 @@
 				display: false
 			},
 			y: {
-				min: 0
+				min: 0,
+				max: maxSCLength
 			}
 		}
 	};
@@ -219,6 +219,22 @@
 			}
 		};
 	});
+
+	$: maxSCLength = stylesColoursData.reduce((accum, currentItem) => {
+		const d = currentItem.data.datasets[0].data;
+
+		const max =
+			d?.reduce((innerAccum, innerCurrentItem) => {
+				if (innerCurrentItem.y > innerAccum) {
+					innerAccum = innerCurrentItem.y;
+				}
+				return innerAccum;
+			}, 0) ?? 0;
+		if (max > accum) {
+			accum = max;
+		}
+		return accum;
+	}, 0);
 
 	let sortedStylesColours: { data: { datasets: { data: TData[] | undefined }[] }; meta: TMeta }[] =
 		[];
