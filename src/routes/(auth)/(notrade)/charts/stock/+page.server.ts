@@ -14,7 +14,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 		const stylesColoursCutsPromise = db.sql`SELECT timestamp, length, r."styleColourId",  sc."swatchUrl", s.name AS style, co.name AS colour 
         FROM cuts c, rolls r, styles s, colours co, stylescolours sc 
         WHERE c."rollId" = r.id AND r."styleColourId" = sc.id AND sc."colourId" = co.id AND sc."styleId" = s.id AND NOT r.returned
-
 		ORDER BY timestamp`;
 
 		const payload = {

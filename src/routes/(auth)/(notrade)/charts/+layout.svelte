@@ -12,5 +12,3 @@
 		<TabContent><slot /></TabContent>
 	</svelte:fragment>
 </Tabs>
-
-<slot />
