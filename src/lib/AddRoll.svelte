@@ -88,6 +88,7 @@
 		invalidText={errors.length ?? undefined}
 		name="length"
 		step={0.1}
+		pattern="[0-9.]*"
 	/>
 
 	<NumberInput

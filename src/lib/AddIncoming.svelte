@@ -93,6 +93,7 @@
 		invalidText={errors.length ?? ''}
 		name="length"
 		step={0.01}
+		pattern="[0-9.]*"
 	/>
 	<DatePicker datePickerType="single" bind:value={expected}>
 		<DatePickerInput

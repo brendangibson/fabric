@@ -82,6 +82,7 @@
 			step={0.01}
 			helperText="yards"
 			on:change={handleChange}
+			pattern="[0-9.]*"
 		/>
 
 		<NumberInput

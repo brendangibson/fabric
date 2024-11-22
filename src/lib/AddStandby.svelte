@@ -83,6 +83,7 @@
 		invalidText={errors.length ?? undefined}
 		name="length"
 		step={0.01}
+		pattern="[0-9.]*"
 	/>
 
 	<ButtonSet>
