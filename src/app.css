@@ -6,6 +6,16 @@
 	--incoming: #bfae14;
 	--standby: #108a3a;
 	--white: #ffffff;
+
+	--spacing-01: 0.125rem;
+	--spacing-02: 0.25rem;
+	--spacing-03: 0.5rem;
+	--spacing-04: 0.75rem;
+	--spacing-05: 1rem;
+	--spacing-06: 1.25rem;
+	--spacing-07: 0.5rem;
+
+	--content-width: 50vw;
 }
 
 h1 {

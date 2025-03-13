@@ -21,9 +21,12 @@
 		length: null
 	};
 
-	const setErrors = (index: string, value: number) => {
+	const setErrors = (index: string, value: number, reason: string) => {
 		switch (index) {
 			case 'length':
+				if (reason === 'reconciliation') {
+					break;
+				}
 				if (value === null || value === undefined || isNaN(value)) {
 					errors[index] = 'Enter the number of yards';
 				} else {
@@ -61,7 +64,7 @@
 
 	$: length = yards + inches / 36;
 
-	$: setErrors('length', length);
+	$: setErrors('length', length, reason);
 
 	$: disabled = !(length + inches > 0) || fetching;
 </script>
