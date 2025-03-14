@@ -25,6 +25,7 @@
 		switch (index) {
 			case 'length':
 				if (reason === 'reconciliation') {
+					errors[index] = null;
 					break;
 				}
 				if (value === null || value === undefined || isNaN(value)) {
@@ -66,7 +67,7 @@
 
 	$: setErrors('length', length, reason);
 
-	$: disabled = !(length + inches > 0) || fetching;
+	$: disabled = (!(length + inches > 0) && reason !== 'reconciliation') || fetching;
 </script>
 
 <form method="POST" action="?/addCut" use:enhance={handleEnhance}>
