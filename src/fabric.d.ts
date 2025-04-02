@@ -72,4 +72,5 @@ export type TStyleColour = {
 	holds?: THold[];
 	standby: TStandby[];
 	rate?: number;
+	styleId: string;
 };

@@ -9,7 +9,7 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 	const { db } = locals;
 	const id = params.id;
 	try {
-		const mainPromise = db.sql`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour, "glenRavenName",
+		const mainPromise = db.sql`SELECT sc.id, sc."swatchUrl", sc."styleId", s.name AS style, c.name AS colour, "glenRavenName",
 			s.weight, s.thickness
 			FROM stylescolours sc, styles s, colours c 
 			WHERE sc."colourId" = c.id and sc."styleId" = s.id AND sc.id=${id}`;

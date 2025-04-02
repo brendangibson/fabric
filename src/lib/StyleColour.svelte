@@ -14,6 +14,7 @@
 	import Standby from './Standby.svelte';
 	import { Tile } from 'carbon-components-svelte';
 	import { minRollSize } from '../constants';
+	import { Breadcrumb, BreadcrumbItem } from 'carbon-components-svelte';
 
 	export let styleColour: TStyleColour;
 	export let shipments: TShipment[];
@@ -38,6 +39,11 @@
 			: [])
 	];
 </script>
+
+<Breadcrumb noTrailingSlash>
+	<BreadcrumbItem href="/">All</BreadcrumbItem>
+	<BreadcrumbItem href={`/style/${styleColour.styleId}`}>{styleColour.style}</BreadcrumbItem>
+</Breadcrumb>
 
 <div>
 	<div class="top">

@@ -4,7 +4,13 @@
 	import type { TStyleColour } from '../fabric';
 
 	export let stylesColours: TStyleColour[];
+	export let styleColour: string;
 </script>
+
+<Breadcrumb noTrailingSlash>
+	<BreadcrumbItem href="/">All</BreadcrumbItem>
+	<BreadcrumbItem>{styleColour}</BreadcrumbItem>
+</Breadcrumb>
 
 <div class="stylesColours">
 	{#if stylesColours}

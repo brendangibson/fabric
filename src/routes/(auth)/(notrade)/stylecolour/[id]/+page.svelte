@@ -8,8 +8,6 @@
 		shipments?: TShipment[];
 		error?: string;
 	};
-
-	$: console.log(data?.styleColour);
 </script>
 
 {#if data?.error}
