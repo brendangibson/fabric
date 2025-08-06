@@ -67,8 +67,44 @@
 			directionallySortedStylesColours = [...sortedStylesColours];
 		}
 	}
+
+	const dataToArray = (data: TStyleColour[]): string[][] => {
+		return [
+			['Style Colour', 'Remaining', 'Incoming', 'Standby', 'Holds', 'Rate'],
+			...data.map((styleColour) => [
+				`${styleColour.style} ${styleColour.colour}`,
+				humanize(styleColour.remaining ?? 0),
+				humanize(styleColour.incomingLength ?? 0),
+				humanize(styleColour.standbyLength ?? 0),
+				humanize(styleColour.holdsLength ?? 0),
+				humanize(styleColour.rate ?? 0)
+			])
+		];
+	};
+
+	const download = (data: string[][], filename: string) => {
+		let csvContent = null;
+		csvContent = data.map((line) => line.join(',')).join('\n');
+
+		const csvData = new Blob([`${csvContent}`], {
+			type: 'text/csv;charset=utf-8;'
+		});
+		let csvURL = null;
+		csvURL = window.URL.createObjectURL(csvData);
+
+		const link = document.createElement('a');
+		link.href = csvURL;
+		link.setAttribute('download', `${filename}.csv`);
+		link.click();
+		link.remove();
+	};
 </script>
 
+<div class="link">
+	<button on:click={() => download(dataToArray(directionallySortedStylesColours), 'status')}
+		>Download CSV</button
+	>
+</div>
 <div class="tableWrapper">
 	<Table>
 		<thead>
@@ -227,8 +263,8 @@
 
 	.swatch {
 		display: block;
-		height: 20vw;
-		width: 20vw;
+		height: 10vw;
+		width: 10vw;
 	}
 
 	.tableWrapper {
@@ -244,5 +280,10 @@
 	.arrow {
 		width: 1em;
 		display: inline-block;
+	}
+
+	.link {
+		display: flex;
+		justify-content: flex-end;
 	}
 </style>

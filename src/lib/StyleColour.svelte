@@ -13,7 +13,7 @@
 	import Hold from './Hold.svelte';
 	import Standby from './Standby.svelte';
 	import { Tile } from 'carbon-components-svelte';
-	import { minRollSize } from '../constants';
+	import { minRollSize } from '$src/constants';
 	import { Breadcrumb, BreadcrumbItem } from 'carbon-components-svelte';
 
 	export let styleColour: TStyleColour;
