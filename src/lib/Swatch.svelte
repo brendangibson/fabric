@@ -8,7 +8,7 @@
 <script lang="ts">
 	export let src: string | undefined;
 
-	const url = getUrl(src);
+	$: url = getUrl(src);
 </script>
 
 <div style={`background-image: url(${url})`} />
