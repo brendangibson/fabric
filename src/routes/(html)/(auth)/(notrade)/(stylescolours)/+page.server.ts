@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		const { rows: stylesColours } =
 			await db.sql`SELECT sc.id, sc."swatchUrl", s.name AS style, c.name AS colour 
 			FROM stylescolours sc, styles s, colours c 
-			WHERE sc."colourId" = c.id and sc."styleId" = s.id 
+			WHERE sc."colourId" = c.id and sc."styleId" = s.id AND sc.hidden = false
 			ORDER BY style, colour`;
 
 		return {

@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals }) => {
             (SELECT COALESCE(SUM(length),0) FROM incoming WHERE "styleColourId" = sc.id) AS "incomingLength",
             (SELECT COALESCE(SUM(length),0) FROM standby WHERE "styleColourId" = sc.id) AS "standbyLength"
         FROM stylescolours sc, styles s, colours c 
-        WHERE sc."colourId" = c.id and sc."styleId" = s.id 
+        WHERE sc."colourId" = c.id and sc."styleId" = s.id AND sc.hidden = false
         ORDER BY style, colour`;
 
 		const payload = { stylesColours: (await mainPromise)?.rows };
