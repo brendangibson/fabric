@@ -4,17 +4,36 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
 	const { db } = locals;
 	try {
-		const cutsPromise = db.sql`SELECT timestamp, length FROM cuts c, rolls r WHERE c."rollId" = r.id AND NOT r.returned ORDER BY timestamp`;
-		const rollsPromise = db.sql`SELECT s."dateReceived" AS timestamp, r."originalLength" AS length FROM shipments s, rolls r WHERE r."shipmentId" = s.id AND NOT r.returned ORDER BY "dateReceived"`;
+		// Get all rolls with their original length and when they were received
+		// Use LEFT JOIN to include rolls even if they don't have shipments (like the status page)
+		const rollsPromise = db.sql`SELECT r.id, COALESCE(s."dateReceived", NOW()) AS timestamp, r."originalLength" AS length 
+		FROM rolls r 
+		LEFT JOIN shipments s ON r."shipmentId" = s.id 
+		WHERE NOT r.returned 
+		ORDER BY timestamp`;
 
-		const stylesColoursRollsPromise = db.sql`SELECT sh."dateReceived" AS timestamp, r."originalLength" AS length, r."styleColourId",  sc."swatchUrl", s.name AS style, co.name AS colour 
-        FROM shipments sh, rolls r, styles s, colours co, stylescolours sc 
-        WHERE r."shipmentId" = sh.id AND r."styleColourId" = sc.id AND sc."colourId" = co.id AND sc."styleId" = s.id AND NOT r.returned
+		// Get all cuts with their roll ID and timestamp
+		const cutsPromise = db.sql`SELECT c.timestamp, c.length, c."rollId" FROM cuts c, rolls r WHERE c."rollId" = r.id AND NOT r.returned ORDER BY timestamp`;
+
+		// Get style/colour specific rolls
+		const stylesColoursRollsPromise = db.sql`SELECT r.id, COALESCE(sh."dateReceived", NOW()) AS timestamp, r."originalLength" AS length, r."styleColourId", sc."swatchUrl", s.name AS style, co.name AS colour 
+        FROM rolls r 
+        LEFT JOIN shipments sh ON r."shipmentId" = sh.id
+        JOIN stylescolours sc ON r."styleColourId" = sc.id
+        JOIN styles s ON sc."styleId" = s.id
+        JOIN colours co ON sc."colourId" = co.id
+        WHERE NOT r.returned
 		ORDER BY timestamp`;
-		const stylesColoursCutsPromise = db.sql`SELECT timestamp, length, r."styleColourId",  sc."swatchUrl", s.name AS style, co.name AS colour 
-        FROM cuts c, rolls r, styles s, colours co, stylescolours sc 
-        WHERE c."rollId" = r.id AND r."styleColourId" = sc.id AND sc."colourId" = co.id AND sc."styleId" = s.id AND NOT r.returned
-		ORDER BY timestamp`;
+
+		// Get style/colour specific cuts with roll ID
+		const stylesColoursCutsPromise = db.sql`SELECT c.timestamp, c.length, c."rollId", r."styleColourId", sc."swatchUrl", s.name AS style, co.name AS colour 
+        FROM cuts c 
+        JOIN rolls r ON c."rollId" = r.id 
+        JOIN stylescolours sc ON r."styleColourId" = sc.id
+        JOIN styles s ON sc."styleId" = s.id
+        JOIN colours co ON sc."colourId" = co.id
+        WHERE NOT r.returned 
+        ORDER BY timestamp`;
 
 		const payload = {
 			allCuts: (await cutsPromise)?.rows,

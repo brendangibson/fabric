@@ -15,6 +15,7 @@
 	import 'chartjs-adapter-date-fns';
 	import { enUS } from 'date-fns/locale';
 	import Swatch from './Swatch.svelte';
+	import { minRollSize } from '$src/constants';
 
 	Chart.register(
 		Title,
@@ -27,17 +28,19 @@
 		TimeScale,
 		TimeSeriesScale
 	);
-	export let allCuts: { timestamp: number; length: number }[];
-	export let allRolls: { timestamp: number; length: number }[];
+	export let allCuts: { timestamp: number; length: number; rollId: string }[];
+	export let allRolls: { id: string; timestamp: number; length: number }[];
 	export let stylesColoursCuts: {
 		timestamp: number;
 		length: number;
+		rollId: string;
 		colour: string;
 		style: string;
 		styleColourId: string;
 		swatchUrl: string;
 	}[];
 	export let stylesColoursRolls: {
+		id: string;
 		timestamp: number;
 		length: number;
 		colour: string;
@@ -51,26 +54,88 @@
 	type TMeta = { swatchUrl: string; colour: string; style: string; styleColourId: string };
 	type TData = { x: number; y: number };
 
-	let minTimestamp = allRolls[0].timestamp;
+	// Get the earliest timestamp from rolls
+	let minTimestamp = allRolls.length > 0 ? allRolls[0].timestamp : Date.now();
 
-	$: allChanges = allRolls
-		.map((roll) => ({ x: roll.timestamp, y: roll.length }))
-		.concat(allCuts.map((cut) => ({ x: cut.timestamp, y: -1 * cut.length })))
-		.sort((a, b) => new Date(a.x).getTime() - new Date(b.x).getTime());
+	// Calculate stock levels over time using the same logic as the status page
+	// KEY CHANGE: Instead of chronological processing (applying each cut individually),
+	// we now use the same logic as the status page: sum all cuts for each roll,
+	// then subtract the total from the original length. This ensures the chart
+	// matches the status page exactly.
+	$: allData = (() => {
+		const data: TData[] = [];
 
-	let allData: TData[] = [];
-	$: allData = allChanges.reduce(
-		(accum, currentValue) => {
-			const lastItem = accum[accum.length - 1];
-			if (lastItem.x === currentValue.x) {
-				lastItem.y += currentValue.y;
-			} else {
-				accum.push({ x: currentValue.x, y: lastItem.y + currentValue.y });
+		// Sort all events chronologically
+		const events = [
+			...allRolls.map((roll) => ({
+				timestamp: roll.timestamp,
+				type: 'roll' as const,
+				rollId: roll.id,
+				length: roll.length
+			})),
+			...allCuts.map((cut) => ({
+				timestamp: cut.timestamp,
+				type: 'cut' as const,
+				rollId: cut.rollId,
+				length: cut.length
+			}))
+		].sort((a, b) => {
+			// First sort by timestamp
+			if (a.timestamp !== b.timestamp) {
+				return a.timestamp - b.timestamp;
 			}
-			return accum;
-		},
-		[{ x: minTimestamp, y: 0 }]
-	);
+			// If timestamps are equal, process rolls before cuts
+			if (a.type !== b.type) {
+				return a.type === 'roll' ? -1 : 1;
+			}
+			// If both are the same type, maintain stable order
+			return 0;
+		});
+
+		// Process events chronologically, but use status page logic for final calculation
+		events.forEach((event) => {
+			// Calculate total stock using status page logic (total cuts, not chronological)
+			const currentStock = (() => {
+				const statusPageRolls = new Map<string, number>();
+
+				// Get all rolls up to this point in time
+				const rollsUpToNow = allRolls.filter((roll) => roll.timestamp <= event.timestamp);
+				rollsUpToNow.forEach((roll) => {
+					statusPageRolls.set(roll.id, roll.length);
+				});
+
+				// Get all cuts up to this point in time
+				const cutsUpToNow = allCuts.filter((cut) => cut.timestamp <= event.timestamp);
+
+				// Calculate total cuts for each roll
+				const totalCutsByRoll = new Map<string, number>();
+				cutsUpToNow.forEach((cut) => {
+					const current = totalCutsByRoll.get(cut.rollId) || 0;
+					totalCutsByRoll.set(cut.rollId, current + cut.length);
+				});
+
+				// Apply total cuts using status page logic
+				totalCutsByRoll.forEach((totalCut, rollId) => {
+					const originalLength = statusPageRolls.get(rollId) || 0;
+					const remaining = originalLength - totalCut;
+					if (remaining > minRollSize) {
+						statusPageRolls.set(rollId, remaining);
+					} else {
+						statusPageRolls.delete(rollId);
+					}
+				});
+
+				// Sum only rolls with remaining length > minRollSize
+				return Array.from(statusPageRolls.values())
+					.filter((remaining) => remaining > minRollSize)
+					.reduce((sum, remaining) => sum + remaining, 0);
+			})();
+
+			data.push({ x: event.timestamp, y: currentStock });
+		});
+
+		return data;
+	})();
 
 	$: maxLength = allData.reduce((accum, currentItem) => {
 		if (currentItem.y > accum) {
@@ -98,7 +163,7 @@
 			},
 			tooltip: {
 				callbacks: {
-					label: function (context) {
+					label: function (context: any) {
 						return Number(context.parsed.y).toFixed(1) + ' yards';
 					}
 				}
@@ -111,7 +176,7 @@
 		responsive: true,
 		scales: {
 			x: {
-				type: 'time',
+				type: 'time' as const,
 				adapters: {
 					date: {
 						locale: enUS
@@ -141,7 +206,7 @@
 			},
 			tooltip: {
 				callbacks: {
-					label: function (context) {
+					label: function (context: any) {
 						return Number(context.parsed.y).toFixed(1) + ' yards';
 					}
 				}
@@ -154,7 +219,7 @@
 		responsive: true,
 		scales: {
 			x: {
-				type: 'time',
+				type: 'time' as const,
 				adapters: {
 					date: {
 						locale: enUS
@@ -184,30 +249,90 @@
 	);
 
 	$: stylesColoursData = Object.entries(groupedStylesColoursRolls).map(([id, rolls]) => {
-		const allChanges = rolls
-			?.map((roll) => ({ x: roll.timestamp, y: roll.length }))
-			.concat(
-				groupedStylesColoursCuts?.[id]?.map((cut) => ({ x: cut.timestamp, y: -1 * cut.length })) ??
-					[]
-			)
-			.sort((a, b) => new Date(a.x).getTime() - new Date(b.x).getTime());
+		// Calculate stock levels for this specific style/colour
+		// KEY CHANGE: Using the same status page logic for consistency
+		const stockData = (() => {
+			const data: TData[] = [];
+
+			// Sort all events chronologically for this style/colour
+			const events = [
+				...(rolls?.map((roll) => ({
+					timestamp: roll.timestamp,
+					type: 'roll' as const,
+					rollId: roll.id,
+					length: roll.length
+				})) || []),
+				...(groupedStylesColoursCuts?.[id] || []).map((cut) => ({
+					timestamp: cut.timestamp,
+					type: 'cut' as const,
+					rollId: cut.rollId,
+					length: cut.length
+				}))
+			].sort((a, b) => {
+				// First sort by timestamp
+				if (a.timestamp !== b.timestamp) {
+					return a.timestamp - b.timestamp;
+				}
+				// If timestamps are equal, process rolls before cuts
+				if (a.type !== b.type) {
+					return a.type === 'roll' ? -1 : 1;
+				}
+				// If both are the same type, maintain stable order
+				return 0;
+			});
+
+			// Process events chronologically, but use status page logic for final calculation
+			events.forEach((event) => {
+				// Calculate total stock for this style/colour using status page logic
+				const totalStock = (() => {
+					const statusPageRolls = new Map<string, number>();
+
+					// Get all rolls for this style/colour up to this point in time
+					const rollsUpToNow = (rolls || []).filter((roll) => roll.timestamp <= event.timestamp);
+					rollsUpToNow.forEach((roll) => {
+						statusPageRolls.set(roll.id, roll.length);
+					});
+
+					// Get all cuts for this style/colour up to this point in time
+					const cutsUpToNow = (groupedStylesColoursCuts?.[id] || []).filter(
+						(cut) => cut.timestamp <= event.timestamp
+					);
+
+					// Calculate total cuts for each roll
+					const totalCutsByRoll = new Map<string, number>();
+					cutsUpToNow.forEach((cut) => {
+						const current = totalCutsByRoll.get(cut.rollId) || 0;
+						totalCutsByRoll.set(cut.rollId, current + cut.length);
+					});
+
+					// Apply total cuts using status page logic
+					totalCutsByRoll.forEach((totalCut, rollId) => {
+						const originalLength = statusPageRolls.get(rollId) || 0;
+						const remaining = originalLength - totalCut;
+						if (remaining > minRollSize) {
+							statusPageRolls.set(rollId, remaining);
+						} else {
+							statusPageRolls.delete(rollId);
+						}
+					});
+
+					// Sum only rolls with remaining length > minRollSize
+					return Array.from(statusPageRolls.values())
+						.filter((remaining) => remaining > minRollSize)
+						.reduce((sum, remaining) => sum + remaining, 0);
+				})();
+
+				data.push({ x: event.timestamp, y: totalStock });
+			});
+
+			return data;
+		})();
 
 		return {
 			data: {
 				datasets: [
 					{
-						data: allChanges?.reduce(
-							(accum, currentValue) => {
-								const lastItem = accum[accum.length - 1];
-								if (lastItem.x === currentValue.x) {
-									lastItem.y += currentValue.y;
-								} else {
-									accum.push({ x: currentValue.x, y: lastItem.y + currentValue.y });
-								}
-								return accum;
-							},
-							[{ x: minTimestamp, y: 0 }]
-						)
+						data: stockData
 					}
 				]
 			},
@@ -236,8 +361,7 @@
 		return accum;
 	}, 0);
 
-	let sortedStylesColours: { data: { datasets: { data: TData[] | undefined }[] }; meta: TMeta }[] =
-		[];
+	let sortedStylesColours: { data: { datasets: { data: TData[] }[] }; meta: TMeta }[] = [];
 
 	$: sortedStylesColours = stylesColoursData.sort((a, b) => {
 		const aName = `${a.meta.style} ${a.meta.colour}`;
@@ -251,6 +375,7 @@
 	<div class="mainChartWrapper">
 		{#if allRolls}<Line {data} {options} />{/if}
 	</div>
+
 	{#each sortedStylesColours as styleColour}
 		<div>
 			<a href={`/stylecolour/${styleColour.meta.styleColourId}`} class="swatch">
