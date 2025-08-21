@@ -2,17 +2,19 @@
 	import StockCharts from '$lib/StockCharts.svelte';
 
 	export let data: {
-		allCuts: { timestamp: number; length: number }[];
-		allRolls: { timestamp: number; length: number }[];
+		allCuts: { timestamp: number; length: number; rollId: string }[];
+		allRolls: { id: string; timestamp: number; length: number }[];
 		stylesColoursCuts: {
 			timestamp: number;
 			length: number;
+			rollId: string;
 			colour: string;
 			style: string;
 			styleColourId: string;
 			swatchUrl: string;
 		}[];
 		stylesColoursRolls: {
+			id: string;
 			timestamp: number;
 			length: number;
 			colour: string;
