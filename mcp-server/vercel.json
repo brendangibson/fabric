@@ -1,0 +1,35 @@
+{
+	"version": 2,
+	"builds": [
+		{
+			"src": "api/**/*.ts",
+			"use": "@vercel/node"
+		}
+	],
+	"routes": [
+		{
+			"src": "/api/tools",
+			"dest": "/api/tools.ts"
+		},
+		{
+			"src": "/api/stock",
+			"dest": "/api/stock.ts"
+		},
+		{
+			"src": "/api/search",
+			"dest": "/api/search.ts"
+		},
+		{
+			"src": "/api/(.*)",
+			"dest": "/api/$1.ts"
+		}
+	],
+	"functions": {
+		"api/**/*.ts": {
+			"maxDuration": 30
+		}
+	},
+	"env": {
+		"POSTGRES_URL": "@postgres_url"
+	}
+}

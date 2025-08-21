@@ -1,0 +1,11 @@
+{
+	"mcpServers": {
+		"fabric-inventory": {
+			"command": "node",
+			"args": ["./dist/index.js"],
+			"env": {
+				"POSTGRES_URL": "your-postgresql-connection-string-here"
+			}
+		}
+	}
+}
