@@ -1,6 +1,6 @@
 <script lang="ts">
 	import StyleColours from '$lib/StyleColours.svelte';
-	import type { TStyleColour } from '../$src/fabric';
+	import type { TStyleColour } from '$src/fabric';
 
 	export let data: {
 		styleColours: TStyleColour[];

@@ -71,8 +71,8 @@ export const GET: RequestHandler = async ({ request }) => {
 		acceptHeader?.includes('application/mcp') || request.headers.get('x-mcp-protocol') === 'true';
 
 	if (isMCPRequest) {
-		// For MCP requests, require API key
-		const auth = validateMCPRequest(request);
+		// For MCP requests, require OAuth authentication
+		const auth = await validateMCPRequest(request);
 		if (!auth.isValid) {
 			return json(
 				{
