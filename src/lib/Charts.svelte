@@ -42,7 +42,23 @@
 
 	type TMeta = { swatchUrl: string; colour: string; style: string };
 	type TData = { x: number; y: number };
-	type TStyleColour = Record<string, { data: { datasets: [{ data: TData[] }] }; meta: TMeta }>;
+
+	// Extended dataset type that includes trendline plugin properties
+	type ExtendedDataset = {
+		data: TData[];
+		trendlineLinear?: {
+			colorMin: string;
+			lineStyle: string;
+			width: number;
+		};
+	};
+
+	// Chart.js compatible data structure
+	type ChartData = {
+		datasets: ExtendedDataset[];
+	};
+
+	type TStyleColour = Record<string, { data: { datasets: ExtendedDataset[] }; meta: TMeta }>;
 
 	let minTimestamp = allCuts[0].timestamp;
 
@@ -92,7 +108,7 @@
 				];
 				break;
 			default:
-				allData = [...allCuts?.map((item) => ({ x: item.timestamp, y: item.length }))];
+				allData = [...(allCuts?.map((item) => ({ x: item.timestamp, y: item.length })) || [])];
 		}
 	}
 
@@ -112,7 +128,7 @@
 					lineStyle: 'dashed',
 					width: 1
 				}
-			}
+			} as any
 		]
 	};
 
@@ -127,7 +143,7 @@
 			},
 			tooltip: {
 				callbacks: {
-					label: function (context) {
+					label: function (context: { parsed: { y: number } }) {
 						return context.parsed.y + ' yards';
 					}
 				}
@@ -142,7 +158,7 @@
 		responsive: true,
 		scales: {
 			x: {
-				type: 'time',
+				type: 'time' as const,
 				adapters: {
 					date: {
 						locale: enUS
@@ -169,7 +185,7 @@
 
 			tooltip: {
 				callbacks: {
-					label: function (context) {
+					label: function (context: { parsed: { y: number } }) {
 						return Number(context.parsed.y) + ' yards';
 					}
 				}
@@ -184,7 +200,7 @@
 		responsive: true,
 		scales: {
 			x: {
-				type: 'time',
+				type: 'time' as const,
 				adapters: {
 					date: {
 						locale: enUS
@@ -230,7 +246,7 @@
 		switch (buckets[selectedIndex]) {
 			case 'daily':
 			case 'monthly':
-			case 'yearly':
+			case 'yearly': {
 				let newDate = getBucketDate(currentItem);
 
 				const entry = accum[currentItem.styleColourId].data.datasets[0].data.find(
@@ -246,6 +262,7 @@
 				}
 
 				break;
+			}
 			default:
 				accum[currentItem.styleColourId].data.datasets[0].data.push({
 					x: currentItem.timestamp,
@@ -256,8 +273,7 @@
 		return accum;
 	}, {});
 
-	let sortedStylesColours: [string, { data: { datasets: [{ data: TData[] }] }; meta: TMeta }][] =
-		[];
+	let sortedStylesColours: [string, { data: { datasets: ExtendedDataset[] }; meta: TMeta }][] = [];
 
 	$: sortedStylesColours = Object.entries(stylesColoursData).sort((a, b) => {
 		const aName = `${a[1].meta.style} ${a[1].meta.colour}`;

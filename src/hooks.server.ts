@@ -23,7 +23,7 @@ const handleSignOut: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-const publicPaths = ['/sign-in', '/public'];
+const publicPaths = ['/sign-in', '/public', '/api/mcp'];
 
 export const handle = sequence(
 	dbHandler,
