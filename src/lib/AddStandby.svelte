@@ -84,6 +84,7 @@
 		name="length"
 		step={0.01}
 		pattern="[0-9.]*"
+		hideSteppers
 	/>
 
 	<ButtonSet>
