@@ -87,6 +87,7 @@
 			helperText="yards"
 			on:change={handleChange}
 			pattern="[0-9.]*"
+			hideSteppers
 		/>
 
 		<NumberInput
@@ -94,6 +95,7 @@
 			placeholder="inches"
 			helperText="inches"
 			on:change={handleChange}
+			hideSteppers
 		/>
 	</div>
 	<Select labelText="Reason" bind:selected={reason} name="reason">

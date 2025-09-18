@@ -89,6 +89,7 @@
 		name="length"
 		step={0.1}
 		pattern="[0-9.]*"
+		hideSteppers
 	/>
 
 	<NumberInput
@@ -98,6 +99,7 @@
 		invalid={Boolean(errors.glenRavenId)}
 		invalidText={errors.glenRavenId ?? undefined}
 		name="glenRavenId"
+		hideSteppers
 	/>
 
 	{#if shipments}
