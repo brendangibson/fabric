@@ -43,7 +43,8 @@
 				style={`transform: translateX(-${
 					getHeight(remaining) / 4
 				}vw); width: ${endWidth};  height:${height};`}
-			/>
+			>
+			</div>
 		</div>
 		<div class="c"></div>
 	</div>

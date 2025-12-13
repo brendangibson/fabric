@@ -8,10 +8,7 @@
 
 	const costPerYard = 80;
 
-	const formatter = new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD'
-	});
+	const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
 	let sortBy: string | null = 'name';
 	let sortDirection = true;
@@ -86,9 +83,7 @@
 		let csvContent = null;
 		csvContent = data.map((line) => line.join(',')).join('\n');
 
-		const csvData = new Blob([`${csvContent}`], {
-			type: 'text/csv;charset=utf-8;'
-		});
+		const csvData = new Blob([`${csvContent}`], { type: 'text/csv;charset=utf-8;' });
 		let csvURL = null;
 		csvURL = window.URL.createObjectURL(csvData);
 
@@ -109,7 +104,7 @@
 	<Table>
 		<thead>
 			<tr>
-				<th />
+				<th></th>
 				<th on:click={() => setSortBy('name')}
 					>Style Colour <span class="arrow"
 						>{#if sortBy === 'name'}{#if sortDirection}↑{:else}↓{/if}{/if}</span
