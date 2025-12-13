@@ -8,10 +8,18 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			db: VercelPool;
-			session: {
+			auth?: () => {
+				userId: string | null | undefined;
+				sessionId: string | null | undefined;
+				sessionClaims?: {
+					org_role?: string;
+					[x: string]: unknown;
+				};
+			};
+			session?: {
 				userId: string;
 				claims: {
-					org_role: 'string';
+					org_role: string;
 				};
 			};
 		}

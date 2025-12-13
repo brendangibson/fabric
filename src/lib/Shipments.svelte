@@ -20,7 +20,7 @@
 	<AccessControl>
 		<AddShipment />
 	</AccessControl>
-	<div style="height: 3vh" />
+	<div style="height: 3vh"></div>
 
 	<h3>Shipments</h3>
 	{#if sortedShipments}

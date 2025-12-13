@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
+	import { SignedIn, useClerkContext } from 'svelte-clerk/client';
 	import AddHold from './AddHold.svelte';
 	import type { THold } from '../fabric';
 
@@ -11,14 +11,16 @@
 	export let onSuccess = () => {
 		/*deliberate*/
 	};
+
+	const ctx = useClerkContext();
 </script>
 
-<SignedIn let:user>
+<SignedIn>
 	<AddHold
 		{styleColourId}
 		{hold}
 		{onCancel}
 		{onSuccess}
-		username={user?.username ?? user?.firstName ?? ''}
+		username={ctx.user?.username ?? ctx.user?.firstName ?? ''}
 	/>
 </SignedIn>

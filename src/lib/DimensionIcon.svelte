@@ -5,7 +5,7 @@
 
 <div class="dimensionIcon">
 	<div class="leftEnd">
-		<div class="core" />
+		<div class="core"></div>
 	</div>
 	<div class="body">
 		{#if diameter}
@@ -21,7 +21,7 @@
 			54 in <span class="horizArrows">↔</span>
 		</div>
 	</div>
-	<div class="rightEnd" />
+	<div class="rightEnd"></div>
 </div>
 
 <style>

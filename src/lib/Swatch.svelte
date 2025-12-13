@@ -11,7 +11,7 @@
 	$: url = getUrl(src);
 </script>
 
-<div style={`background-image: url(${url})`} />
+<div style={`background-image: url(${url})`}></div>
 
 <style>
 	div {

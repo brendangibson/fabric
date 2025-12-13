@@ -34,7 +34,7 @@
 						getHeight(remaining) / 4
 					}vw);  height:${height}; width: ${endWidth}`}
 		>
-			<div class="core" style={`height: ${coreHeight}vw; width: ${coreHeight / 2}vw`} />
+			<div class="core" style={`height: ${coreHeight}vw; width: ${coreHeight / 2}vw`}></div>
 		</div>
 		<div class="label">{glenRavenId}</div>
 		<div class="a" style={`width: ${endWidth};`}>
@@ -45,7 +45,7 @@
 				}vw); width: ${endWidth};  height:${height};`}
 			/>
 		</div>
-		<div class="c" />
+		<div class="c"></div>
 	</div>
 	<div class="data">
 		{humanize(remaining)}/{originalLength} yard{originalLength === 1 ? '' : 's'}

@@ -74,15 +74,15 @@
 		</tbody>
 	</Table>
 	<AccessControl>
-		<div style="height: 3vh" />
+		<div style="height: 3vh"></div>
 
 		<AddCut rollId={roll.id} {remaining} />
 	</AccessControl>
-	<div style="height: 3vh" />
+	<div style="height: 3vh"></div>
 
 	<Cuts {roll} />
 
-	<div style="height: 3vh" />
+	<div style="height: 3vh"></div>
 	<AccessControl>
 		<form
 			method="POST"

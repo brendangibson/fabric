@@ -1,9 +1,11 @@
 <script lang="ts">
-	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
+	import { SignedIn, useClerkContext } from 'svelte-clerk/client';
+
+	const ctx = useClerkContext();
 </script>
 
-<SignedIn let:user>
-	{#if user?.organizationMemberships?.[0]?.role === 'org:admin'}
+<SignedIn>
+	{#if ctx.auth.orgRole === 'org:admin'}
 		<slot />
 	{:else}
 		<slot name="else" />

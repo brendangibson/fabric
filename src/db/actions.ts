@@ -11,7 +11,7 @@ export const addHold = async (event: RequestEvent<RouteParams>) => {
 	const owner = data.get('owner')?.valueOf() as string;
 	const expires = data.get('expires')?.valueOf() as string;
 	const notes = data.get('notes')?.valueOf() as string;
-	const pending = event.locals.session.claims.org_role !== 'org:admin';
+	const pending = event.locals.session?.claims.org_role !== 'org:admin';
 
 	try {
 		const result =

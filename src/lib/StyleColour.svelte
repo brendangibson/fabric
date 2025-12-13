@@ -98,7 +98,7 @@
 				/>
 			</a>
 		{/each}
-		<div class="spacer" />
+		<div class="spacer"></div>
 	{/if}
 
 	<div class="lists">
@@ -111,12 +111,12 @@
 						<Incoming {incoming} />
 					{/each}
 				</div>
-				<div class="spacer" />
+				<div class="spacer"></div>
 			{/if}
 
 			<AccessControl>
 				<AddIncoming styleColourId={styleColour.id} />
-				<div class="spacer" />
+				<div class="spacer"></div>
 			</AccessControl>
 		</Tile>
 		<h3>Fabric on Standby</h3>
@@ -128,12 +128,12 @@
 						<Standby {standby} styleColourId={styleColour.id} />
 					{/each}
 				</div>
-				<div class="spacer" />
+				<div class="spacer"></div>
 			{/if}
 
 			<AccessControl>
 				<AddStandby styleColourId={styleColour.id} />
-				<div class="spacer" />
+				<div class="spacer"></div>
 			</AccessControl>
 		</Tile>
 		<h3>Reserved Fabric</h3>
@@ -144,24 +144,24 @@
 						<Hold {hold} styleColourId={styleColour.id} {styleColour} />
 					{/each}
 				</div>
-				<div class="spacer" />
+				<div class="spacer"></div>
 			{/if}
 
 			<AccessControl>
 				<AddHold styleColourId={styleColour.id} />
-				<div class="spacer" />
+				<div class="spacer"></div>
 			</AccessControl>
 		</Tile>
 		<Tile>
 			<AccessControl>
 				<AddRoll styleColourId={styleColour.id} {shipments} />
-				<div class="spacer" />
+				<div class="spacer"></div>
 			</AccessControl>
 		</Tile>
 	</div>
 
 	{#if smallRolls}
-		<div style="height: 3vh" />
+		<div style="height: 3vh"></div>
 		<h3>Old Rolls</h3>
 		{#each smallRolls as roll}
 			<a href={`/roll/${roll.id}`} class="rollLink" class:returned={roll.returned}>

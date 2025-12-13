@@ -37,7 +37,7 @@
 			{:else}
 				<p>No fabric reserves curently pending</p>
 			{/if}
-			<div style="height: 3vh" />
+			<div style="height: 3vh"></div>
 			<h3>Approved</h3>
 
 			{#if approvedHolds}

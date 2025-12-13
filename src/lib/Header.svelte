@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { OverflowMenu, OverflowMenuItem } from 'carbon-components-svelte';
 	import AccessControl from './AccessControl.svelte';
-	import { goto } from '$app/navigation';
-	import SignOutButton from 'clerk-sveltekit/client/SignOutButton.svelte';
-	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
+	import { SignOutButton, SignedIn, useClerkContext } from 'svelte-clerk/client';
+
+	const ctx = useClerkContext();
 </script>
 
 <div class="headerWrapper">
@@ -14,9 +14,9 @@
 		<h1>Sien + Co</h1>
 		<OverflowMenu flipped>
 			<div class="menuButton" slot="menu">☰</div>
-			<SignedIn let:user>
+			<SignedIn>
 				<OverflowMenuItem disabled>
-					{user?.firstName ?? user?.username ?? user?.emailAddresses}
+					{ctx.user?.firstName ?? ctx.user?.username ?? ctx.user?.emailAddresses[0]?.emailAddress ?? ''}
 				</OverflowMenuItem>
 			</SignedIn>
 			<AccessControl>
@@ -31,15 +31,11 @@
 				<OverflowMenuItem slot="else" href="/holds">Reserves</OverflowMenuItem>
 			</AccessControl>
 			<OverflowMenuItem danger
-				><SignOutButton
-					signOutCallback={() => {
-						goto('/sign-out');
-					}}
-				/></OverflowMenuItem
+				><SignOutButton redirectUrl="/sign-out" /></OverflowMenuItem
 			>
 		</OverflowMenu>
 	</header>
-	<div class="wrapper" />
+	<div class="wrapper"></div>
 </div>
 
 <style>
