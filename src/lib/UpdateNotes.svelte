@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Button, ButtonSet, NumberInput } from 'carbon-components-svelte';
-	import type { TStandby } from '../fabric';
+	import { Button, ButtonSet, TextInput } from 'carbon-components-svelte';
+	import type { TRoll } from '../fabric';
 	import InlineError from './InlineError.svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
-	export let styleColourId: string;
-	export let standby: TStandby | undefined = undefined;
+	export let roll: TRoll | undefined = undefined;
 	export let onCancel = () => {
 		/*deliberate*/
 	};
@@ -14,11 +13,10 @@
 		/*deliberate*/
 	};
 
-	$: editing = Boolean(standby);
-
-	$: length = editing ? standby?.length : 1;
+	let notes = roll?.notes ?? '';
 	let errors: Record<string, string | null> = {
-		length: null
+		length: null,
+		expected: null
 	};
 	let fetching = false;
 	let errorMsg: string | null = null;
@@ -44,7 +42,6 @@
 		fetching = true;
 
 		return async ({ result, update }) => {
-			// `result` is an `ActionResult` object
 			if (result.type === 'failure') {
 				errorMsg = result.data?.error;
 			} else {
@@ -57,44 +54,23 @@
 	};
 
 	$: setErrors('length', length);
-
-	$: disabled = !length || fetching;
 </script>
 
-<form
-	method="POST"
-	action={editing ? '?/updateStandby' : '?/addStandby'}
-	use:enhance={handleEnhance}
->
-	{#if editing}
-		<input type="hidden" name="id" value={standby?.id} />
-	{:else}
-		<input type="hidden" name="id" value={styleColourId} />
-	{/if}
-	<h4>
-		{#if editing}Edit{:else}Add{/if} Fabric on Standby
-	</h4>
+<form method="POST" action="?/updateNotes" use:enhance={handleEnhance}>
+	<input type="hidden" name="id" value={roll?.id} />
 
-	<NumberInput
-		labelText="Length"
-		bind:value={length}
-		placeholder="yards"
-		invalid={Boolean(errors.length)}
-		invalidText={errors.length ?? undefined}
-		name="length"
-		step={0.01}
-		pattern="[0-9.]*"
-		hideSteppers
+	<TextInput
+		bind:value={notes}
+		invalid={Boolean(errors.notes)}
+		invalidText={errors.notes ?? ''}
+		name="notes"
 	/>
 
 	<ButtonSet>
-		<Button type="submit" kind="secondary" {disabled}
-			>{#if editing}Update{:else}Add{/if}</Button
-		>
-		{#if editing}
-			<Button kind="ghost" on:click={onCancel}>Cancel</Button>
-		{/if}
+		<Button type="submit" kind="secondary">Save</Button>
+		<Button type="ghost" on:click={onCancel}>Cancel</Button>
 	</ButtonSet>
+
 	<InlineError {errorMsg} />
 </form>
 

@@ -6,6 +6,7 @@
 	export let swatchUrl: string;
 	export let remaining: number;
 	export let glenRavenId: string;
+	export let notes: string | undefined = undefined;
 
 	const url = getUrl(swatchUrl);
 
@@ -43,14 +44,16 @@
 				style={`transform: translateX(-${
 					getHeight(remaining) / 4
 				}vw); width: ${endWidth};  height:${height};`}
-			>
-			</div>
+			></div>
 		</div>
 		<div class="c"></div>
 	</div>
 	<div class="data">
 		{humanize(remaining)}/{originalLength} yard{originalLength === 1 ? '' : 's'}
 	</div>
+	{#if notes}
+		<div class="notes">{notes}</div>
+	{/if}
 </div>
 
 <style>

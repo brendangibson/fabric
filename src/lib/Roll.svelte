@@ -10,12 +10,13 @@
 	import { calculateRemaining } from '../dataFunctions/rolls';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import Cuts from './Cuts.svelte';
+	import UpdateNotes from './UpdateNotes.svelte';
 
 	export let roll: TRoll;
 
 	let fetching = false;
 	let errorMsg: string | null = null;
-
+	let editMode = false;
 	const label = `${roll.styleColour?.style} ${roll.styleColour?.colour}`;
 
 	const handleEnhance: SubmitFunction = () => {
@@ -30,6 +31,10 @@
 			}
 			fetching = false;
 		};
+	};
+
+	const handleEditClick = () => {
+		editMode = true;
 	};
 
 	$: remaining = calculateRemaining(roll);
@@ -65,12 +70,22 @@
 					</td>
 				</tr>
 			{/if}
-			{#if roll.notes}
-				<tr>
-					<td>Notes</td>
-					<td>{roll.notes}</td>
-				</tr>
-			{/if}
+			<tr>
+				<td>Notes</td>
+				<td
+					>{#if editMode}<UpdateNotes
+							{roll}
+							onCancel={() => (editMode = false)}
+							onSuccess={() => (editMode = false)}
+						/>{:else}{roll.notes}<button
+							aria-label="Edit"
+							on:click|preventDefault={handleEditClick}
+							class="edit"
+						>
+							✏️
+						</button>{/if}</td
+				>
+			</tr>
 		</tbody>
 	</Table>
 	<AccessControl>

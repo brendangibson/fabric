@@ -81,7 +81,7 @@
 	<h4>Add Roll</h4>
 
 	<NumberInput
-		label="Length"
+		labelText="Length"
 		bind:value={length}
 		placeholder="yards"
 		invalid={Boolean(errors.length)}
@@ -93,7 +93,7 @@
 	/>
 
 	<NumberInput
-		label="GlenRaven Id"
+		labelText="GlenRaven Id"
 		bind:value={glenRavenId}
 		placeholder="From sticker on bag"
 		invalid={Boolean(errors.glenRavenId)}

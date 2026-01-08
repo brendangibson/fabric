@@ -95,8 +95,10 @@
 					swatchUrl={styleColour.swatchUrl ?? ''}
 					glenRavenId={roll.glenRavenId ?? ''}
 					remaining={calculateRemaining(roll)}
+					notes={roll.notes ?? ''}
 				/>
 			</a>
+
 		{/each}
 		<div class="spacer"></div>
 	{/if}
@@ -170,6 +172,7 @@
 					swatchUrl={styleColour.swatchUrl ?? ''}
 					glenRavenId={roll.glenRavenId ?? ''}
 					remaining={calculateRemaining(roll)}
+					notes={roll.notes ?? ''}
 				/>
 			</a>
 		{/each}

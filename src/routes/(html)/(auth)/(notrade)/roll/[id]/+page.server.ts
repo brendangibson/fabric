@@ -88,5 +88,20 @@ export const actions = {
 		} catch (error) {
 			return handleActionError(`error unreturning roll: ${id}`, error);
 		}
-	}
+	},
+	updateNotes: async (event: RequestEvent) => {
+		const data = await event.request.formData();
+		const { db } = event.locals;
+		const id = data.get('id')?.valueOf() as string;
+		const notes = data.get('notes')?.valueOf() as string;
+
+		try {
+			const result = await db.sql`UPDATE rolls SET notes = ${notes} WHERE id = ${id}`;
+			if (result.rowCount !== 1) {
+				return handleActionError(`no rows updated when updating notes for roll: ${id}`);
+			}
+		} catch (error) {
+			return handleActionError(`error updating notes for roll: ${id}`, error);
+		}
+	},
 };

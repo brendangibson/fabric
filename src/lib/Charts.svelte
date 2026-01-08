@@ -1,12 +1,13 @@
 <script lang="ts">
 	import Swatch from './Swatch.svelte';
-	import { Bar } from 'svelte-chartjs';
+	import ChartBar from './ChartBar.svelte';
 	import { ContentSwitcher, Switch } from 'carbon-components-svelte';
 	import {
 		Chart,
 		Title,
 		Tooltip,
 		Legend,
+		BarController,
 		BarElement,
 		LinearScale,
 		TimeScale,
@@ -20,6 +21,7 @@
 		Title,
 		Tooltip,
 		Legend,
+		BarController,
 		BarElement,
 		LinearScale,
 		TimeScale,
@@ -144,7 +146,7 @@
 			tooltip: {
 				callbacks: {
 					label: function (context: { parsed: { y: number } }) {
-						return context.parsed.y + ' yards';
+						return Number(context.parsed.y) + ' yards';
 					}
 				}
 			}
@@ -291,7 +293,7 @@
 <div class="charts">
 	<div>All Styles and Colors</div>
 	<div class="mainChartWrapper">
-		{#if allCuts}<Bar {data} {options} />{/if}
+		{#if allCuts}<ChartBar {data} options={options as any} />{/if}
 	</div>
 	{#each sortedStylesColours as [styleColourId, styleColour]}
 		<div>
@@ -301,7 +303,7 @@
 			{`${styleColour.meta.style} ${styleColour.meta.colour}`}
 		</div>
 		<div class="chartWrapper">
-			<Bar data={styleColour.data} options={styleColourOptions} />
+			<ChartBar data={styleColour.data as any} options={styleColourOptions as any} />
 		</div>
 	{/each}
 </div>

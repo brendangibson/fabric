@@ -74,7 +74,7 @@
 	</DatePicker>
 
 	<NumberInput
-		label="Glen Raven Id"
+		labelText="Glen Raven Id"
 		bind:value={glenRavenId}
 		placeholder="from packing slip"
 		name="glenRavenId"

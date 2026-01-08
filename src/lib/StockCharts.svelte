@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Line } from 'svelte-chartjs';
+	import ChartLine from './ChartLine.svelte';
 	import {
 		Chart,
 		Title,
@@ -373,7 +373,7 @@
 <div class="charts">
 	<div>All Styles and Colors</div>
 	<div class="mainChartWrapper">
-		{#if allRolls}<Line {data} {options} />{/if}
+		{#if allRolls}<ChartLine {data} {options} />{/if}
 	</div>
 
 	{#each sortedStylesColours as styleColour}
@@ -384,7 +384,7 @@
 			{`${styleColour.meta.style} ${styleColour.meta.colour}`}
 		</div>
 		<div class="chartWrapper">
-			<Line data={styleColour.data} options={stylesColoursOptions} />
+			<ChartLine data={styleColour.data} options={stylesColoursOptions} />
 		</div>
 	{/each}
 </div>

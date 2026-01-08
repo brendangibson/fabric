@@ -78,7 +78,7 @@
 
 	<div class="length">
 		<NumberInput
-			label="Length"
+			labelText="Length"
 			bind:value={yards}
 			placeholder="yards"
 			invalid={tainted && Boolean(errors.length)}

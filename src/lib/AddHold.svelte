@@ -85,7 +85,7 @@
 	</h4>
 
 	<NumberInput
-		label="Length"
+		labelText="Length"
 		bind:value={length}
 		placeholder="yards"
 		invalid={Boolean(errors.length)}

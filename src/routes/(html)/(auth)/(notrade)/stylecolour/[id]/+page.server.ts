@@ -32,7 +32,7 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 
 		const standbyLengthPromise = db.sql`SELECT COALESCE(SUM(length),0) AS "standbyLength" FROM standby WHERE "styleColourId" = ${id}`;
 
-		const rollsPromise = db.sql`SELECT id, "glenRavenId", "originalLength", returned FROM rolls WHERE "styleColourId" = ${id}`;
+		const rollsPromise = db.sql`SELECT id, "glenRavenId", "originalLength", returned, notes FROM rolls WHERE "styleColourId" = ${id}`;
 
 		const cutsPromise = db.sql`SELECT length, "rollId" FROM cuts c, rolls r WHERE c."rollId" = r.id AND r."styleColourId" = ${id}`;
 
