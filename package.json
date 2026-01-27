@@ -11,6 +11,7 @@
 		"imagemin": "node scripts/imagemin.js",
 		"lint": "prettier --check . && eslint . && tsc",
 		"preview": "vite preview",
+		"sync-shopify": "tsx scripts/sync-shopify.ts",
 		"test": "playwright test",
 		"test:unit": "vitest"
 	},
@@ -24,6 +25,7 @@
 		"@typescript-eslint/eslint-plugin": "^8.49.0",
 		"@typescript-eslint/parser": "^8.49.0",
 		"carbon-components-svelte": "^0.95.2",
+		"dotenv": "^16.4.7",
 		"carbon-preprocess-svelte": "^0.11.16",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
@@ -36,6 +38,7 @@
 		"svelte-check": "^4.3.4",
 		"svelte-preprocess": "^6.0.3",
 		"tslib": "^2.8.1",
+		"tsx": "^4.19.2",
 		"typescript": "^5.9.3",
 		"vite": "^7.2.7",
 		"vitest": "^4.0.15"

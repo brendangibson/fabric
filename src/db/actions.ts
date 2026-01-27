@@ -2,6 +2,7 @@ import { fail, type RequestEvent } from '@sveltejs/kit';
 import type { QueryError } from '../db';
 import type { RouteParams } from '../routes/$types';
 import { addWeeks } from 'date-fns';
+import { syncQuantityToShopify } from '../lib/shopify';
 
 export const addHold = async (event: RequestEvent<RouteParams>) => {
 	const data = await event.request.formData();
@@ -20,6 +21,9 @@ export const addHold = async (event: RequestEvent<RouteParams>) => {
 		if (result.rowCount !== 1) {
 			return handleActionError(`no rows inserted when adding hold to ${id}`);
 		}
+
+		// Sync quantity to Shopify
+		await syncQuantityToShopify(db, id);
 	} catch (error) {
 		return handleActionError(`error adding hold to ${id}`, error);
 	}
@@ -46,9 +50,18 @@ export const deleteHold = async (event: RequestEvent<RouteParams>) => {
 	const { db } = event.locals;
 	const id = data.get('id')?.valueOf() as string;
 	try {
+		// Get styleColourId before deleting the hold
+		const holdResult = await db.sql`SELECT "styleColourId" FROM holds WHERE id = ${id}`;
+		const styleColourId = holdResult.rows[0]?.styleColourId;
+
 		const result = await db.sql`DELETE FROM holds WHERE id = ${id}`;
 		if (result.rowCount !== 1) {
 			return handleActionError(`no rows inserted when deleting hold: ${id}`);
+		}
+
+		// Sync quantity to Shopify
+		if (styleColourId) {
+			await syncQuantityToShopify(db, styleColourId);
 		}
 	} catch (error) {
 		return handleActionError(`error deleting hold: ${id}`, error);
@@ -69,10 +82,19 @@ export const updateHold = async (event: RequestEvent<RouteParams>) => {
 			: addWeeks(new Date(), 2).toISOString();
 
 	try {
+		// Get styleColourId before updating the hold
+		const holdResult = await db.sql`SELECT "styleColourId" FROM holds WHERE id = ${id}`;
+		const styleColourId = holdResult.rows[0]?.styleColourId;
+
 		const result =
 			await db.sql`UPDATE holds SET(length, expires, owner, notes) = (${length}, ${expires}, ${owner}, ${notes}) WHERE id = ${id}`;
 		if (result.rowCount !== 1) {
 			return handleActionError(`no rows inserted when updating hold: ${id}`);
+		}
+
+		// Sync quantity to Shopify
+		if (styleColourId) {
+			await syncQuantityToShopify(db, styleColourId);
 		}
 	} catch (error) {
 		return handleActionError(`error updating hold: ${id}`, error);

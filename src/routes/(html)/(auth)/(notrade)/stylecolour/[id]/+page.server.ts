@@ -1,6 +1,7 @@
 import type { TCut, TRoll } from '$src/fabric';
 import { addHold, deleteHold, handleActionError, updateHold } from '$src/db/actions';
 import { handleLoadError } from '$src/db/load';
+import { syncQuantityToShopify } from '$src/lib/shopify';
 import type { LayoutServerLoad } from '../../$types';
 import type { RequestEvent } from './$types.js';
 import { minRollSize } from '$src/constants';
@@ -114,6 +115,9 @@ export const actions = {
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when adding roll to ${id}`);
 			}
+
+			// Sync quantity to Shopify
+			await syncQuantityToShopify(db, id);
 		} catch (error) {
 			return handleActionError(`error adding roll to ${id}`, error);
 		}

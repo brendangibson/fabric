@@ -1,5 +1,6 @@
 import { handleActionError } from '$src/db/actions';
 import { handleLoadError } from '$src/db/load';
+import { syncQuantityToShopify } from '$src/lib/shopify';
 import type { PageServerLoad, RequestEvent } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -28,6 +29,16 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 };
 
+async function getStyleColourIdFromRoll(db: any, rollId: string): Promise<string | null> {
+	try {
+		const result = await db.sql`SELECT "styleColourId" FROM rolls WHERE id = ${rollId}`;
+		return result.rows[0]?.styleColourId || null;
+	} catch (error) {
+		console.error('Error getting styleColourId from roll:', error);
+		return null;
+	}
+}
+
 export const actions = {
 	addCut: async (event: RequestEvent) => {
 		const data = await event.request.formData();
@@ -43,6 +54,12 @@ export const actions = {
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows updated when adding cut to ${id}`);
 			}
+
+			// Sync quantity to Shopify
+			const styleColourId = await getStyleColourIdFromRoll(db, id);
+			if (styleColourId) {
+				await syncQuantityToShopify(db, styleColourId);
+			}
 		} catch (error) {
 			return handleActionError(`error adding cut to ${id}`, error);
 		}
@@ -52,9 +69,21 @@ export const actions = {
 		const { db } = event.locals;
 		const id = data.get('id')?.valueOf() as string;
 		try {
+			// Get rollId before deleting the cut
+			const cutResult = await db.sql`SELECT "rollId" FROM cuts WHERE id = ${id}`;
+			const rollId = cutResult.rows[0]?.rollId;
+
 			const result = await db.sql`DELETE FROM cuts WHERE id = ${id}`;
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when deleting cut: ${id}`);
+			}
+
+			// Sync quantity to Shopify
+			if (rollId) {
+				const styleColourId = await getStyleColourIdFromRoll(db, rollId);
+				if (styleColourId) {
+					await syncQuantityToShopify(db, styleColourId);
+				}
 			}
 		} catch (error) {
 			return handleActionError(`error deleting cut: ${id}`, error);
@@ -71,6 +100,12 @@ export const actions = {
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows updated when returning roll: ${id}`);
 			}
+
+			// Sync quantity to Shopify
+			const styleColourId = await getStyleColourIdFromRoll(db, id);
+			if (styleColourId) {
+				await syncQuantityToShopify(db, styleColourId);
+			}
 		} catch (error) {
 			return handleActionError(`error returning roll: ${id}`, error);
 		}
@@ -84,6 +119,12 @@ export const actions = {
 			const result = await db.sql`UPDATE rolls SET returned = false WHERE id = ${id}`;
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows updated when unreturning roll: ${id}`);
+			}
+
+			// Sync quantity to Shopify
+			const styleColourId = await getStyleColourIdFromRoll(db, id);
+			if (styleColourId) {
+				await syncQuantityToShopify(db, styleColourId);
 			}
 		} catch (error) {
 			return handleActionError(`error unreturning roll: ${id}`, error);
