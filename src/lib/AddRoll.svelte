@@ -30,6 +30,8 @@
 				} else {
 					if (value <= 0) {
 						errors[index] = 'Too short';
+					} else if (value > 100) {
+						errors[index] = 'Too long';
 					} else {
 						errors[index] = null;
 					}
@@ -71,7 +73,8 @@
 			Boolean(length) &&
 			Boolean(glenRavenId) &&
 			glenRavenId !== placeholderGlenRavenId &&
-			Boolean(shipmentId)
+			Boolean(shipmentId) &&
+			errors.length
 		) || fetching;
 </script>
 
