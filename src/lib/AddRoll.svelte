@@ -74,8 +74,9 @@
 			Boolean(glenRavenId) &&
 			glenRavenId !== placeholderGlenRavenId &&
 			Boolean(shipmentId) &&
-			errors.length
+			Object.values(errors).every(index => index === null)
 		) || fetching;
+
 </script>
 
 <form method="POST" action="?/addRoll" use:enhance={handleEnhance}>
