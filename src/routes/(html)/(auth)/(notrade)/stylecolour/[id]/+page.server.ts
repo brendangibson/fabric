@@ -134,6 +134,10 @@ export const actions = {
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when adding standby to ${id}`);
 			}
+
+			// Sync quantity to Shopify
+			await syncQuantityToShopify(db, id);
+			
 		} catch (error) {
 			return handleActionError(`error adding standby to ${id}`, error);
 		}
@@ -175,6 +179,8 @@ export const actions = {
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when deleting standby: ${id}`);
 			}
+			// Sync quantity to Shopify
+			await syncQuantityToShopify(db, id);
 		} catch (error) {
 			return handleActionError(`error deleting incoming: ${id}`, error);
 		}
@@ -212,6 +218,8 @@ export const actions = {
 			if (result.rowCount !== 1) {
 				return handleActionError(`no rows inserted when updating standby: ${id}`);
 			}
+			// Sync quantity to Shopify
+			await syncQuantityToShopify(db, id);
 		} catch (error) {
 			return handleActionError(`error updating standby: ${id}`, error);
 		}
