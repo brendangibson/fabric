@@ -21,6 +21,7 @@ export type THold = {
 	length: number;
 	orderId: string;
 	styleColour?: TStyleColour;
+	number?: number;
 };
 
 export type TIncoming = {

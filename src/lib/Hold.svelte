@@ -131,6 +131,14 @@
 					</td>
 				</tr>
 			{/if}
+			{#if hold.number}
+				<tr>
+					<td>Reserve #</td>
+					<td>
+						{hold.number}
+					</td>
+				</tr>
+			{/if}
 			<AccessControl>
 				{#if hold.pending}
 					<tr>
